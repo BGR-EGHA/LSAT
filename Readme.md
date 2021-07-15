@@ -10,7 +10,7 @@ LSAT is released under the GPLv3 license.
 
 ## How to run LSAT
 
-The easiest way to get LSAT is to download the most recent release [here](www.wirhabennochkeinreleaseundkeinengithubacc.de).
+The easiest way to get LSAT is to download the most recent release [here](https://github.com/BGR-EGHA/LSAT).
 
 ### Running LSAT from source
 
@@ -37,6 +37,7 @@ python -m pip install -r requirements.txt
 	You can either download a .whl file from [Christoph Gohlkes fantastic website](https://www.lfd.uci.edu/~gohlke/pythonlibs/) (Windows), 
 	build it yourself (Windows/Linux) or get it with your package manager (Linux).
 	Installing a .whl:
+
 ```
 python -m pip install *path to .whl file*
 ```
@@ -46,12 +47,6 @@ python -m pip install *path to .whl file*
 python startMenu_main.py
 ```
 
-## Icons
-
-Die Icons sind in .png und (großteils) .cdr Form unter \\bgr.local\gzh\daten\B4\IGGA\IGGA_Personal\SchuesslerN\LSAT\Icons_cdr+png zu finden.
-
 ## Feedback
 
 Bug reports are welcome! Please use GitHub issues to report bugs.
-
-Zum Starten wird das venv (\\Bgr.local\GZH\daten\B4\IGGA\IGGA_Personal\SchuesslerN\venv) und Python 3.7 benötigt.
