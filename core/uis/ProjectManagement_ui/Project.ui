@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Project</class>
+ <widget class="QDialog" name="Project">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>450</width>
+    <height>650</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="mainGridLayout">
+     <item row="3" column="1">
+      <widget class="QPushButton" name="createProjectPushButton">
+       <property name="text">
+        <string>Create project</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QGroupBox" name="spatialReferenceGroupBox">
+       <property name="title">
+        <string>Spatial Reference</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QGridLayout" name="spatialReferenceGroupBoxGridLayout">
+          <item row="10" column="2">
+           <widget class="QLineEdit" name="rightLineEdit"/>
+          </item>
+          <item row="8" column="1">
+           <widget class="QLabel" name="topLabel">
+            <property name="text">
+             <string>Top</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0" colspan="3">
+           <widget class="QLabel" name="extentLabel">
+            <property name="text">
+             <string>Extent</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="0" colspan="3">
+           <widget class="QLabel" name="cellsizeLabel">
+            <property name="text">
+             <string>Cell size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QLineEdit" name="maskRasterDatasetLineEdit"/>
+          </item>
+          <item row="13" column="1">
+           <widget class="QLabel" name="bottomLabel">
+            <property name="text">
+             <string>Bottom</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="1">
+           <widget class="QLineEdit" name="bottomLineEdit"/>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="leftLabel">
+            <property name="text">
+             <string>Left</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="maskRasterDatasetLabel">
+            <property name="text">
+             <string>Mask raster dataset (Optional)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1">
+           <widget class="QLineEdit" name="topLineEdit"/>
+          </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="maskRasterDatasetToolButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLineEdit" name="leftLineEdit"/>
+          </item>
+          <item row="15" column="0" colspan="2">
+           <widget class="QLineEdit" name="cellsizeLineEdit"/>
+          </item>
+          <item row="9" column="2">
+           <widget class="QLabel" name="rightLabel">
+            <property name="text">
+             <string>Right</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="epsgCodeLabel">
+            <property name="text">
+             <string>EPSG code</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Name of Coordinate System</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLineEdit" name="epsgCodeLineEdit"/>
+          </item>
+          <item row="6" column="1">
+           <widget class="QToolButton" name="epsgToolButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QLineEdit" name="srNameLineEdit"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QGroupBox" name="generalGroupBox">
+       <property name="title">
+        <string>General</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QGridLayout" name="generalGroupBoxGridLayout">
+          <item row="3" column="0">
+           <widget class="QLineEdit" name="projectNameLineEdit"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="projectNameLabel">
+            <property name="text">
+             <string>Project name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="descriptionLabel">
+            <property name="text">
+             <string>Description</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLineEdit" name="projectLocationLineEdit"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QToolButton" name="projectLocationToolButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="projectLocationLabel">
+            <property name="text">
+             <string>Project location</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <widget class="QTextEdit" name="descriptionTextEdit"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ImportRasterData</class>
+ <widget class="QMainWindow" name="ImportRasterData">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Import Raster</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QGridLayout" name="mainGridLayout" rowstretch="3,0,0">
+      <item row="2" column="1">
+       <widget class="QPushButton" name="applyPushButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QGroupBox" name="outputLocationGroupBox">
+        <property name="title">
+         <string>Output location</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QGridLayout" name="outputLocationGroupBoxGridLayout">
+           <item row="0" column="0">
+            <widget class="QLineEdit" name="outputLocationLineEdit"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="outputLocationToolButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QGroupBox" name="inputGroupBox">
+        <property name="title">
+         <string>Input</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <layout class="QGridLayout" name="inputGroupBoxGridLayout" rowstretch="1,0,0,0,0,0">
+           <item row="1" column="3">
+            <widget class="QToolButton" name="removeToolButton">
+             <property name="toolTip">
+              <string>Remove selected raster</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QToolButton" name="addToolButton">
+             <property name="toolTip">
+              <string>Add raster to list</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QToolButton" name="setAsMaskToolButton">
+             <property name="toolTip">
+              <string>Set selected raster as mask raster</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2" colspan="2">
+            <widget class="QCheckBox" name="maskRastercheckBox">
+             <property name="text">
+              <string>Use the Projects default Mask raster</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="maskRasterLabel">
+             <property name="text">
+              <string>Mask raster dataset</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>60</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="5" column="1">
+            <widget class="QToolButton" name="maskRasterToolButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLineEdit" name="maskRasterLineEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" rowspan="4" colspan="3">
+            <widget class="QListWidget" name="rasterCollectionListWidget">
+             <property name="acceptDrops">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropMode">
+              <enum>QAbstractItemView::NoDragDrop</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <tabstops>
+  <tabstop>rasterCollectionListWidget</tabstop>
+  <tabstop>addToolButton</tabstop>
+  <tabstop>removeToolButton</tabstop>
+  <tabstop>setAsMaskToolButton</tabstop>
+  <tabstop>maskRasterLineEdit</tabstop>
+  <tabstop>maskRasterToolButton</tabstop>
+  <tabstop>maskRastercheckBox</tabstop>
+  <tabstop>outputLocationLineEdit</tabstop>
+  <tabstop>outputLocationToolButton</tabstop>
+  <tabstop>applyPushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

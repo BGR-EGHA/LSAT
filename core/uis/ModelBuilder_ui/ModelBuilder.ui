@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ModelBuilder</class>
+ <widget class="QMainWindow" name="ModelBuilder">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1199</width>
+    <height>852</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Model Builder</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../Images/Weights_of_Evidence.png</normaloff>../../../Images/Weights_of_Evidence.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="mainGridLayout" rowstretch="1,3" rowminimumheight="0,0">
+      <item row="1" column="1">
+       <widget class="QGroupBox" name="rocGroupBox">
+        <property name="title">
+         <string>Receiver Operating Characteristics (ROC) Curve</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <layout class="QGridLayout" name="rocGroupBoxGridLayout"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QGroupBox" name="modelParamsGroupBox">
+        <property name="title">
+         <string>Model parameters</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QGridLayout" name="modelParamsGroupBoxGridLayout" rowstretch="0,0,0,0,0,0,0,0,2,0,1,0,0" columnstretch="1,0,1,1,0,0" rowminimumheight="0,0,0,0,0,0,0,0,0,0,0,0,0">
+           <item row="0" column="0">
+            <widget class="QLabel" name="landslideFeatureLabel">
+             <property name="text">
+              <string>Landslide feature </string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QToolButton" name="addWeightedLayerToolButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3" colspan="2">
+            <widget class="QLineEdit" name="modelNameLineEdit"/>
+           </item>
+           <item row="6" column="2">
+            <widget class="QToolButton" name="removefromModelLayerToolButton">
+             <property name="toolTip">
+              <string>Remove selected layer from the model</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/icons/Icons/minus.png</normaloff>:/icons/Icons/minus.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2">
+            <widget class="QToolButton" name="removeLayerToolButton">
+             <property name="toolTip">
+              <string>Remove selected layer from the layer list</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/icons/Icons/RemoveLayer.png</normaloff>:/icons/Icons/RemoveLayer.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QToolButton" name="addFeatureToolButton">
+             <property name="toolTip">
+              <string>Browse for landslide inventory to use for ROC curve generation</string>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QComboBox" name="woeLayerComboBox"/>
+           </item>
+           <item row="10" column="3" colspan="2">
+            <widget class="QTextEdit" name="expressionTextEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="5">
+            <widget class="QToolButton" name="expressionToolButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="3" rowspan="5" colspan="2">
+            <widget class="QTreeWidget" name="modelLayerTreeWidget">
+             <property name="toolTip">
+              <string>List of layers to include in the model</string>
+             </property>
+             <attribute name="headerMinimumSectionSize">
+              <number>200</number>
+             </attribute>
+             <attribute name="headerStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Model layer</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>AUC</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="loadWeightedLayerToListLabel">
+             <property name="text">
+              <string>Load weighted layer to list</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLabel" name="modelNameLabel">
+             <property name="text">
+              <string>Model name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" rowspan="9" colspan="2">
+            <widget class="QTreeWidget" name="woeLayerTreeWidget">
+             <property name="toolTip">
+              <string>List of available weighted layers in the project</string>
+             </property>
+             <attribute name="headerCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="headerDefaultSectionSize">
+              <number>90</number>
+             </attribute>
+             <attribute name="headerMinimumSectionSize">
+              <number>200</number>
+             </attribute>
+             <attribute name="headerStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Weighted layer</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>AUC</string>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QComboBox" name="landslideFeatureComboBox"/>
+           </item>
+           <item row="5" column="2">
+            <widget class="QToolButton" name="addtoModelLayerToolButton">
+             <property name="toolTip">
+              <string>Add selected weighted layer to the model</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/icons/Icons/plus.png</normaloff>:/icons/Icons/plus.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="3">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="11" column="4">
+            <widget class="QPushButton" name="updatePushButton">
+             <property name="text">
+              <string>Update...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="3">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Expression</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="4" colspan="2">
+            <widget class="QProgressBar" name="progressBar">
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QGroupBox" name="modelGroupBox">
+        <property name="title">
+         <string>Models</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QToolButton" name="WriteRastertoolButton">
+           <property name="toolTip">
+            <string>Model to Raster</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/icons/Icons/WriteRaster.png</normaloff>:/icons/Icons/WriteRaster.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QToolButton" name="ModelInfotoolButton">
+           <property name="toolTip">
+            <string>Model Info</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/icons/Icons/model_info.png</normaloff>:/icons/Icons/model_info.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QToolButton" name="DeleteModeltoolButton">
+           <property name="toolTip">
+            <string>Delete Model</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/icons/Icons/Trashbox.png</normaloff>:/icons/Icons/Trashbox.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="5">
+          <widget class="QTreeWidget" name="modelsTreeWidget">
+           <property name="minimumSize">
+            <size>
+             <width>570</width>
+             <height>0</height>
+            </size>
+           </property>
+           <attribute name="headerDefaultSectionSize">
+            <number>90</number>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>Model</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>AUC</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Factors</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Unique classes</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Show range</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QToolButton" name="ZoningtoolButton">
+           <property name="toolTip">
+            <string>Zonation</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>:/icons/Icons/zoning.png</normaloff>:/icons/Icons/zoning.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1199</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Advanced Settings</string>
+    </property>
+    <addaction name="actionAdvanced_Settings"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <action name="actionOpen_project">
+   <property name="text">
+    <string>Open project...</string>
+   </property>
+  </action>
+  <action name="actionAdvanced_Settings">
+   <property name="text">
+    <string>Advanced Settings...</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>landslideFeatureComboBox</tabstop>
+  <tabstop>addFeatureToolButton</tabstop>
+  <tabstop>woeLayerComboBox</tabstop>
+  <tabstop>addWeightedLayerToolButton</tabstop>
+  <tabstop>modelNameLineEdit</tabstop>
+  <tabstop>woeLayerTreeWidget</tabstop>
+  <tabstop>modelLayerTreeWidget</tabstop>
+  <tabstop>addtoModelLayerToolButton</tabstop>
+  <tabstop>removefromModelLayerToolButton</tabstop>
+  <tabstop>removeLayerToolButton</tabstop>
+  <tabstop>updatePushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

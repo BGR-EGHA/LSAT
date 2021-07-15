@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ANN_advset</class>
+ <widget class="QMainWindow" name="ANN_advset">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1011</width>
+    <height>221</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ANN Advanced Settings</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <item row="1" column="6">
+       <widget class="QLineEdit" name="power_tLineEdit">
+        <property name="text">
+         <string>0.5</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="9">
+       <widget class="QLabel" name="shuffleLabel">
+        <property name="toolTip">
+         <string>Whether to shuffle samples in each iteration. Only used when solver=’sgd’ or ‘adam’.</string>
+        </property>
+        <property name="text">
+         <string>shuffle</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QLineEdit" name="learning_rate_initLineEdit">
+        <property name="text">
+         <string>0.001</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="learning_rate_initLabel">
+        <property name="toolTip">
+         <string>The initial learning rate used. It controls the step-size in updating the weights. Only used when solver=’sgd’ or ‘adam’.</string>
+        </property>
+        <property name="text">
+         <string>learning_rate_init</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="QLabel" name="power_tLabel">
+        <property name="toolTip">
+         <string>The exponent for inverse scaling learning rate. It is used in updating effective learning rate when the learning_rate is set to ‘invscaling’. Only used when solver=’sgd’.</string>
+        </property>
+        <property name="text">
+         <string>power_t</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="7">
+       <widget class="QLabel" name="max_iterLabel">
+        <property name="toolTip">
+         <string>Maximum number of iterations. The solver iterates until convergence (determined by ‘tol’) or this number of iterations. For stochastic solvers (‘sgd’, ‘adam’), note that this determines the number of epochs (how many times each data point will be used), not the number of gradient steps.</string>
+        </property>
+        <property name="text">
+         <string>max_iter</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="8">
+       <widget class="QLineEdit" name="alphaLineEdit">
+        <property name="text">
+         <string>0.0001</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="8">
+       <widget class="QLineEdit" name="max_iterLineEdit">
+        <property name="text">
+         <string>200</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="11">
+       <widget class="QLineEdit" name="momentumLineEdit">
+        <property name="text">
+         <string>0.9</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="9">
+       <widget class="QLabel" name="batch_sizeLabel">
+        <property name="toolTip">
+         <string>Size of minibatches for stochastic optimizers. If the solver is ‘lbfgs’, the classifier will not use minibatch. When set to “auto”, batch_size=min(200, n_samples)</string>
+        </property>
+        <property name="text">
+         <string>batch_size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="11">
+       <widget class="QLineEdit" name="batch_sizeLineEdit">
+        <property name="text">
+         <string>auto</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="5">
+       <widget class="QLabel" name="verboseLabel">
+        <property name="toolTip">
+         <string>Whether to print progress messages to stdout.</string>
+        </property>
+        <property name="text">
+         <string>verbose</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="hidden_layer_sizesLabel">
+        <property name="toolTip">
+         <string>The ith element represents the number of neurons in the ith hidden layer.</string>
+        </property>
+        <property name="text">
+         <string>hidden_layer_sizes</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QLabel" name="solverLabel">
+        <property name="toolTip">
+         <string>    The solver for weight optimization.
+
+        ‘lbfgs’ is an optimizer in the family of quasi-Newton methods.
+        ‘sgd’ refers to stochastic gradient descent.
+        ‘adam’ refers to a stochastic gradient-based optimizer proposed by Kingma, Diederik, and Jimmy Ba
+
+    Note: The default solver ‘adam’ works pretty well on relatively large datasets (with thousands of training samples or more) in terms of both training time and validation score. For small datasets, however, ‘lbfgs’ can converge faster and perform better.</string>
+        </property>
+        <property name="text">
+         <string>solver</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="random_stateLabel">
+        <property name="toolTip">
+         <string>If int, random_state is the seed used by the random number generator; If RandomState instance, random_state is the random number generator; If None, the random number generator is the RandomState instance used by np.random.</string>
+        </property>
+        <property name="text">
+         <string>random_state</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="activationLabel">
+        <property name="toolTip">
+         <string>    Activation function for the hidden layer.
+
+        ‘identity’, no-op activation, useful to implement linear bottleneck, returns f(x) = x
+        ‘logistic’, the logistic sigmoid function, returns f(x) = 1 / (1 + exp(-x)).
+        ‘tanh’, the hyperbolic tan function, returns f(x) = tanh(x).
+        ‘relu’, the rectified linear unit function, returns f(x) = max(0, x)</string>
+        </property>
+        <property name="text">
+         <string>activation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="7">
+       <widget class="QLabel" name="alphaLabel">
+        <property name="toolTip">
+         <string>L2 penalty (regularization term) parameter.</string>
+        </property>
+        <property name="text">
+         <string>alpha</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="hidden_layer_sizesLineEdit">
+        <property name="text">
+         <string>100</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="learning_rateLabel">
+        <property name="toolTip">
+         <string>    Learning rate schedule for weight updates.
+
+        ‘constant’ is a constant learning rate given by ‘learning_rate_init’.
+        ‘invscaling’ gradually decreases the learning rate at each time step ‘t’ using an inverse scaling exponent of ‘power_t’. effective_learning_rate = learning_rate_init / pow(t, power_t)
+        ‘adaptive’ keeps the learning rate constant to ‘learning_rate_init’ as long as training loss keeps decreasing. Each time two consecutive epochs fail to decrease training loss by at least tol, or fail to increase validation score by at least tol if ‘early_stopping’ is on, the current learning rate is divided by 5.
+
+    Only used when solver='sgd'.</string>
+        </property>
+        <property name="text">
+         <string>learning_rate</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="random_stateLineEdit">
+        <property name="text">
+         <string>None</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QLabel" name="tolLabel">
+        <property name="toolTip">
+         <string>Tolerance for the optimization. When the loss or score is not improving by at least tol for n_iter_no_change consecutive iterations, unless learning_rate is set to ‘adaptive’, convergence is considered to be reached and training stops.</string>
+        </property>
+        <property name="text">
+         <string>tol</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="7">
+       <widget class="QLabel" name="warm_startLabel">
+        <property name="toolTip">
+         <string>When set to True, reuse the solution of the previous call to fit as initialization, otherwise, just erase the previous solution.</string>
+        </property>
+        <property name="text">
+         <string>warm_start</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="9">
+       <widget class="QLabel" name="momentumLabel">
+        <property name="toolTip">
+         <string>Momentum for gradient descent update. Should be between 0 and 1. Only used when solver=’sgd’.</string>
+        </property>
+        <property name="text">
+         <string>momentum</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="4">
+       <widget class="QLineEdit" name="tolLineEdit">
+        <property name="text">
+         <string>0.0001</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="nesterovs_momentumLabel">
+        <property name="toolTip">
+         <string>Whether to use Nesterov’s momentum. Only used when solver=’sgd’ and momentum &gt; 0.</string>
+        </property>
+        <property name="text">
+         <string>nesterovs_momentum</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="5">
+       <widget class="QLabel" name="validation_fractionLabel">
+        <property name="toolTip">
+         <string>The proportion of training data to set aside as validation set for early stopping. Must be between 0 and 1. Only used if early_stopping is True</string>
+        </property>
+        <property name="text">
+         <string>validation_fraction</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="7">
+       <widget class="QLabel" name="beta_1Label">
+        <property name="toolTip">
+         <string>Exponential decay rate for estimates of first moment vector in adam, should be in [0, 1). Only used when solver=’adam’</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="text">
+         <string>beta_1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="8">
+       <widget class="QLineEdit" name="beta_1LineEdit">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>0.9</string>
+        </property>
+        <property name="frame">
+         <bool>true</bool>
+        </property>
+        <property name="echoMode">
+         <enum>QLineEdit::Normal</enum>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QLabel" name="early_stoppingLabel">
+        <property name="toolTip">
+         <string>Whether to use early stopping to terminate training when validation score is not improving. If set to true, it will automatically set aside 10% of training data as validation and terminate training when validation score is not improving by at least tol for n_iter_no_change consecutive epochs. Only effective when solver=’sgd’ or ‘adam’</string>
+        </property>
+        <property name="text">
+         <string>early_stopping</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="11">
+       <widget class="QLineEdit" name="beta_2LineEdit">
+        <property name="text">
+         <string>0.999</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="9">
+       <widget class="QLabel" name="beta_2Label">
+        <property name="toolTip">
+         <string>Exponential decay rate for estimates of second moment vector in adam, should be in [0, 1). Only used when solver=’adam’</string>
+        </property>
+        <property name="text">
+         <string>beta_2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="6">
+       <widget class="QLineEdit" name="validation_fractionLineEdit">
+        <property name="text">
+         <string>0.1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="11">
+       <widget class="QPushButton" name="applyPushButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QLabel" name="epsilonLabel">
+        <property name="toolTip">
+         <string>Value for numerical stability in adam. Only used when solver=’adam’</string>
+        </property>
+        <property name="text">
+         <string>epsilon</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="2">
+       <widget class="QLineEdit" name="epsilonLineEdit">
+        <property name="text">
+         <string>0.00000001</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="3">
+       <widget class="QLabel" name="n_iter_no_changeLabel">
+        <property name="toolTip">
+         <string>Maximum number of epochs to not meet tol improvement. Only effective when solver=’sgd’ or ‘adam’</string>
+        </property>
+        <property name="text">
+         <string>n_iter_no_change</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="4">
+       <widget class="QLineEdit" name="n_iter_no_changeLineEdit">
+        <property name="text">
+         <string>10</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QComboBox" name="activationComboBox">
+        <item>
+         <property name="text">
+          <string>relu</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>identity</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>logistic</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>tanh</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QComboBox" name="solverComboBox">
+        <item>
+         <property name="text">
+          <string>adam</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>lbfgs</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>sgd</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QComboBox" name="learning_rateComboBox">
+        <item>
+         <property name="text">
+          <string>constant</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>invscaling</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>adaptive</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="11">
+       <widget class="QCheckBox" name="shuffleCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="6">
+       <widget class="QCheckBox" name="verboseCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="8">
+       <widget class="QCheckBox" name="warm_startCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QCheckBox" name="nesterovs_momentumCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="4">
+       <widget class="QCheckBox" name="early_stoppingCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="5">
+       <widget class="QLabel" name="max_funLabel">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Only used when solver=’lbfgs’. Maximum number of loss function calls. The solver iterates until convergence (determined by ‘tol’), number of iterations reaches max_iter, or this number of loss function calls. Note that number of loss function calls will be greater than or equal to the number of iterations for the &lt;span style=&quot; font-family:'Courier New';&quot;&gt;MLPClassifier&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>max_fun</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="6">
+       <widget class="QLineEdit" name="max_funLineEdit">
+        <property name="text">
+         <string>15000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="9">
+       <widget class="QPushButton" name="cancelPushButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="8">
+       <widget class="QPushButton" name="resetpushButton">
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>hidden_layer_sizesLineEdit</tabstop>
+  <tabstop>activationComboBox</tabstop>
+  <tabstop>solverComboBox</tabstop>
+  <tabstop>alphaLineEdit</tabstop>
+  <tabstop>batch_sizeLineEdit</tabstop>
+  <tabstop>learning_rateComboBox</tabstop>
+  <tabstop>learning_rate_initLineEdit</tabstop>
+  <tabstop>power_tLineEdit</tabstop>
+  <tabstop>max_iterLineEdit</tabstop>
+  <tabstop>shuffleCheckBox</tabstop>
+  <tabstop>random_stateLineEdit</tabstop>
+  <tabstop>tolLineEdit</tabstop>
+  <tabstop>verboseCheckBox</tabstop>
+  <tabstop>warm_startCheckBox</tabstop>
+  <tabstop>momentumLineEdit</tabstop>
+  <tabstop>nesterovs_momentumCheckBox</tabstop>
+  <tabstop>early_stoppingCheckBox</tabstop>
+  <tabstop>validation_fractionLineEdit</tabstop>
+  <tabstop>beta_1LineEdit</tabstop>
+  <tabstop>beta_2LineEdit</tabstop>
+  <tabstop>epsilonLineEdit</tabstop>
+  <tabstop>n_iter_no_changeLineEdit</tabstop>
+  <tabstop>max_funLineEdit</tabstop>
+  <tabstop>resetpushButton</tabstop>
+  <tabstop>cancelPushButton</tabstop>
+  <tabstop>applyPushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

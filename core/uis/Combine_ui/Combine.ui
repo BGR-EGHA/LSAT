@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Combine</class>
+ <widget class="QMainWindow" name="Combine">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>551</width>
+    <height>607</height>
+   </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Combine</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../Images/Infinite_slope.png</normaloff>../../Images/Infinite_slope.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="mainGridLayout" rowstretch="4,1,2,0">
+      <item row="2" column="1" colspan="2">
+       <widget class="QGroupBox" name="outputGroupBox">
+        <property name="title">
+         <string>Output</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <layout class="QGridLayout" name="outpitGroupBoxGridLayout">
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="combineRasterLineEdit"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="combineRasterLabel">
+             <property name="text">
+              <string>Combine raster dataset</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QToolButton" name="combineRasterToolButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QGroupBox" name="maskGroupBox">
+        <property name="title">
+         <string>Mask raster</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QGridLayout" name="maskGroupBoxGridLayout">
+           <item row="1" column="1">
+            <widget class="QToolButton" name="maskToolButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="maskLineEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="maskRasterCheckBox">
+             <property name="text">
+              <string>Use the Projects default Mask raster</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QGroupBox" name="inputGroupBox">
+        <property name="title">
+         <string>Input raster datasets</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QGridLayout" name="inputGroupBoxGridLayout" rowstretch="0,0,0,0" columnstretch="5,0">
+           <item row="0" column="1">
+            <widget class="QToolButton" name="addToolButton">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QToolButton" name="removeToolButton">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QToolButton" name="setAsMaskToolButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" rowspan="4">
+            <widget class="QListWidget" name="rasterCollectionListWidget">
+             <property name="acceptDrops">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="applyPushButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="cancelPushButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>551</width>
+     <height>18</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <tabstops>
+  <tabstop>rasterCollectionListWidget</tabstop>
+  <tabstop>addToolButton</tabstop>
+  <tabstop>removeToolButton</tabstop>
+  <tabstop>setAsMaskToolButton</tabstop>
+  <tabstop>maskRasterCheckBox</tabstop>
+  <tabstop>maskLineEdit</tabstop>
+  <tabstop>maskToolButton</tabstop>
+  <tabstop>combineRasterLineEdit</tabstop>
+  <tabstop>combineRasterToolButton</tabstop>
+  <tabstop>cancelPushButton</tabstop>
+  <tabstop>applyPushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

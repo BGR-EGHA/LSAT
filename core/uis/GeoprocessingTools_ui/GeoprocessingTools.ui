@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GeoprocessingTools</class>
+ <widget class="QMainWindow" name="GeoprocessingTools">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>630</width>
+    <height>355</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Geoprocessing Tools</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="mainGridLayout" rowstretch="0,1,0,1,0,0,0,2,0,0,0" columnstretch="0,0,0">
+      <item row="1" column="2">
+       <widget class="QToolButton" name="featureToolButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="methodLayerLabel">
+        <property name="text">
+         <string>Method layer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLineEdit" name="featureLineEdit"/>
+      </item>
+      <item row="10" column="1">
+       <widget class="QPushButton" name="cancelPushButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="outFeatureLabel">
+        <property name="text">
+         <string>Output feature</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="srCheckBox">
+        <property name="text">
+         <string>Use spatial reference of method layer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QLineEdit" name="methodLayerLineEdit"/>
+      </item>
+      <item row="10" column="2">
+       <widget class="QPushButton" name="applyPushButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0" colspan="2">
+       <widget class="QLineEdit" name="outFeatureLineEdit"/>
+      </item>
+      <item row="9" column="2">
+       <widget class="QToolButton" name="outFeatureToolButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="featureLayerLabel">
+        <property name="text">
+         <string>Feature layer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QToolButton" name="methodLayerToolButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QComboBox" name="processingComboBox">
+        <item>
+         <property name="text">
+          <string>Clip </string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Erase</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Intersect</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Symmetrical Difference</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Union</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="processingTypeLabel">
+        <property name="text">
+         <string>Processing Type</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="3">
+       <widget class="QGroupBox" name="optionalSettingsGroupBox">
+        <property name="title">
+         <string>Optional Settings</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <layout class="QGridLayout" name="optionalSettingsGroupBoxGridLayout">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="skipFailuresCheckBox">
+             <property name="toolTip">
+              <string>SKIP_FAILURES=YES/NO. Set it to YES to go on, even when a feature
+could not be inserted or a GEOS call failed.</string>
+             </property>
+             <property name="text">
+              <string>SKIP FAILURES</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="promoteToMultiCheckBox">
+             <property name="toolTip">
+              <string>PROMOTE_TO_MULTI=YES/NO. Set it to YES to convert Polygons into
+MultiPolygons, or LineStrings to MultiLineStrings.</string>
+             </property>
+             <property name="text">
+              <string>PROMOTE TO MULTI</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>630</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>featureLineEdit</tabstop>
+  <tabstop>featureToolButton</tabstop>
+  <tabstop>methodLayerLineEdit</tabstop>
+  <tabstop>methodLayerToolButton</tabstop>
+  <tabstop>srCheckBox</tabstop>
+  <tabstop>processingComboBox</tabstop>
+  <tabstop>skipFailuresCheckBox</tabstop>
+  <tabstop>promoteToMultiCheckBox</tabstop>
+  <tabstop>outFeatureLineEdit</tabstop>
+  <tabstop>outFeatureToolButton</tabstop>
+  <tabstop>cancelPushButton</tabstop>
+  <tabstop>applyPushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

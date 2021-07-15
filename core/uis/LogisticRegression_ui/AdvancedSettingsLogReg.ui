@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AdvancedSettingsLogReg</class>
+ <widget class="QWidget" name="AdvancedSettingsLogReg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QGridLayout" name="mainGridLayout">
+     <item row="0" column="0" rowspan="2" colspan="3">
+      <widget class="QGroupBox" name="advancedSettingsGroupBox">
+       <property name="title">
+        <string>Advanced Settings Logistic Regression</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="advancedSettingsGroupBoxGridLayout" columnstretch="1,2,2">
+          <item row="7" column="1">
+           <widget class="QLineEdit" name="interceptScaleLineEdit">
+            <property name="text">
+             <string>1.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="inverseRegLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inverse of regularization strength; must be a positive float. Like in support vector machines, smaller values specify stronger regularization.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Inverse regularization strenght:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="inverseRegLineEdit">
+            <property name="text">
+             <string>1.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specifies if a constant (a.k.a. bias or intercept) should be added to the decision function.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Intercept:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QLabel" name="max_iterLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of iterations taken for the solvers to converge.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Maximum iterations:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QLabel" name="multi_classLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the option chosen is ‘ovr’, then a binary problem is fit for each label. For ‘multinomial’ the loss minimised is the multinomial loss fit across the entire probability distribution, &lt;span style=&quot; font-style:italic;&quot;&gt;even when the data is binary&lt;/span&gt;. ‘multinomial’ is unavailable when solver=’liblinear’. ‘auto’ selects ‘ovr’ if the data is binary, or if solver=’liblinear’, and otherwise selects ‘multinomial’.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Multi class:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="randomStateLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Used when &lt;span style=&quot; font-family:'Courier New';&quot;&gt;solver&lt;/span&gt; == ‘sag’, ‘saga’ or ‘liblinear’ to shuffle the data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Random state:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="solverComboBox">
+            <item>
+             <property name="text">
+              <string>newton-cg</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>lbfgs</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>liblinear</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>sag</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>saga</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="penaltyLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Used to specify the norm used in the penalization. The ‘newton-cg’, ‘sag’ and ‘lbfgs’ solvers support only l2 penalties. ‘elasticnet’ is only supported by the ‘saga’ solver. If ‘none’ (not supported by the liblinear solver), no regularization is applied.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Penalty:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QComboBox" name="interceptComboBox">
+            <item>
+             <property name="text">
+              <string>False</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>True</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="10" column="1">
+           <widget class="QLineEdit" name="max_iterLineEdit">
+            <property name="text">
+             <string>100</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1">
+           <widget class="QComboBox" name="randomStateComboBox">
+            <item>
+             <property name="text">
+              <string>Integer</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Random state instance</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="penaltyComboBox">
+            <item>
+             <property name="text">
+              <string>l1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>l2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>elasticnet</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="solverLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Algorithm to use in the optimization problem.&lt;/p&gt;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For small datasets, ‘liblinear’ is a good choice, whereas ‘sag’ and ‘saga’ are faster for large ones.&lt;/li&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For multiclass problems, only ‘newton-cg’, ‘sag’, ‘saga’ and ‘lbfgs’ handle multinomial loss; ‘liblinear’ is limited to one-versus-rest schemes.&lt;/li&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;‘newton-cg’, ‘lbfgs’, ‘sag’ and ‘saga’ handle L2 or no penalty&lt;/li&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;‘liblinear’ and ‘saga’ also handle L1 penalty&lt;/li&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;‘saga’ also supports ‘elasticnet’ penalty&lt;/li&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;‘liblinear’ does not support setting &lt;span style=&quot; font-family:'Courier New';&quot;&gt;penalty='none'&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Note that ‘sag’ and ‘saga’ fast convergence is only guaranteed on features with approximately the same scale.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Solver:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="classWeightLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Weights associated with classes in the form &lt;span style=&quot; font-family:'Courier New';&quot;&gt;{class_label: weight}&lt;/span&gt;. If not given, all classes are supposed to have weight one.&lt;/p&gt;&lt;p&gt;The “balanced” mode uses the values of y to automatically adjust weights inversely proportional to class frequencies in the input data as &lt;span style=&quot; font-family:'Courier New';&quot;&gt;n_samples / (n_classes * np.bincount(y))&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Note that these weights will be multiplied with sample_weight (passed through the fit method) if sample_weight is specified.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Class weight:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="2">
+           <widget class="QLineEdit" name="randomStateLineEdit"/>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="interceptScaleLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Useful only when the solver ‘liblinear’ is used and self.fit_intercept is set to True. In this case, x becomes [x, self.intercept_scaling], i.e. a “synthetic” feature with constant value equal to intercept_scaling is appended to the instance vector. The intercept becomes &lt;span style=&quot; font-family:'Courier New';&quot;&gt;intercept_scaling * synthetic_feature_weight&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Note! the synthetic feature weight is subject to l1/l2 regularization as all other features. To lessen the effect of regularization on synthetic feature weight (and therefore on the intercept) intercept_scaling has to be increased.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Intercept Scale:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="1">
+           <widget class="QComboBox" name="multi_classComboBox">
+            <item>
+             <property name="text">
+              <string>ovr</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>multinomial</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>auto</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QComboBox" name="classWeightComboBox">
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BALANCED</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="toleranceLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tolerance for stopping criteria.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Tolerance value:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="dualLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dual or primal formulation. Dual formulation is only implemented for l2 penalty with liblinear solver. Prefer dual=False when n_samples &amp;gt; n_features.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Dual or primal formulation:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="toleranceLineEdit">
+            <property name="text">
+             <string>0.0001</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="dualComboBox">
+            <item>
+             <property name="text">
+              <string>dual</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>primal</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="12" column="1">
+           <widget class="QLineEdit" name="verboseLineEdit">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="0">
+           <widget class="QLabel" name="verboseLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For the liblinear and lbfgs solvers set verbose to any positive number for verbosity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Verbose:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="0">
+           <widget class="QLabel" name="warmStartLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When set to True, reuse the solution of the previous call to fit as initialization, otherwise, just erase the previous solution. Useless for liblinear solver&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Warm start:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="1">
+           <widget class="QComboBox" name="warmStartComboBox">
+            <item>
+             <property name="text">
+              <string>False</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>True</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="l1RatioLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The Elastic-Net mixing parameter, with &lt;span style=&quot; font-family:'Courier New';&quot;&gt;0 &amp;lt;= l1_ratio &amp;lt;= 1&lt;/span&gt;. Only used if &lt;span style=&quot; font-family:'Courier New';&quot;&gt;penalty='elasticnet'&lt;/span&gt;. Setting &lt;span style=&quot; font-family:'Courier New';&quot;&gt;l1_ratio=0&lt;/span&gt; is equivalent to using &lt;span style=&quot; font-family:'Courier New';&quot;&gt;penalty='l2'&lt;/span&gt;, while setting &lt;span style=&quot; font-family:'Courier New';&quot;&gt;l1_ratio=1&lt;/span&gt; is equivalent to using &lt;span style=&quot; font-family:'Courier New';&quot;&gt;penalty='l1'&lt;/span&gt;. For &lt;span style=&quot; font-family:'Courier New';&quot;&gt;0 &amp;lt; l1_ratio &amp;lt;1&lt;/span&gt;, the penalty is a combination of L1 and L2.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>l1 ratio:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="l1RatioComboBox">
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Float</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="14" column="0">
+           <widget class="QLabel" name="n_jobsLabel">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Number of CPU cores used when parallelizing over classes if multi_class=’ovr’”. This parameter is ignored when the &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; color:#000000;&quot;&gt;solver&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt; is set to ‘liblinear’ regardless of whether ‘multi_class’ is specified or not. &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; color:#000000;&quot;&gt;None&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt; means 1 unless in&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt; a &lt;/span&gt;&lt;a href=&quot;https://joblib.readthedocs.io/en/latest/parallel.html#joblib.parallel_backend&quot;&gt;&lt;span style=&quot; font-family:'Courier New'; color:#000000;&quot;&gt;joblib.parallel_backend&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; color:#000000;&quot;&gt; co&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt;ntext. &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New'; color:#000000;&quot;&gt;-1&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt; means using all processors.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Number of jobs:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="2">
+           <widget class="QLineEdit" name="n_jobsLineEdit"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="l1RatioLineEdit"/>
+          </item>
+          <item row="14" column="1">
+           <widget class="QComboBox" name="nJobsComboBox">
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Integer</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="15" column="0">
+           <widget class="QPushButton" name="resetToDefaultPushButton">
+            <property name="text">
+             <string>Reset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="1">
+           <widget class="QPushButton" name="cancelPushButton">
+            <property name="text">
+             <string>Cancel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="2">
+           <widget class="QPushButton" name="applyPushButton">
+            <property name="text">
+             <string>Apply</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>solverComboBox</tabstop>
+  <tabstop>penaltyComboBox</tabstop>
+  <tabstop>l1RatioComboBox</tabstop>
+  <tabstop>l1RatioLineEdit</tabstop>
+  <tabstop>dualComboBox</tabstop>
+  <tabstop>toleranceLineEdit</tabstop>
+  <tabstop>inverseRegLineEdit</tabstop>
+  <tabstop>interceptComboBox</tabstop>
+  <tabstop>interceptScaleLineEdit</tabstop>
+  <tabstop>classWeightComboBox</tabstop>
+  <tabstop>randomStateComboBox</tabstop>
+  <tabstop>randomStateLineEdit</tabstop>
+  <tabstop>max_iterLineEdit</tabstop>
+  <tabstop>multi_classComboBox</tabstop>
+  <tabstop>verboseLineEdit</tabstop>
+  <tabstop>warmStartComboBox</tabstop>
+  <tabstop>nJobsComboBox</tabstop>
+  <tabstop>n_jobsLineEdit</tabstop>
+  <tabstop>resetToDefaultPushButton</tabstop>
+  <tabstop>cancelPushButton</tabstop>
+  <tabstop>applyPushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

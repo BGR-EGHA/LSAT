@@ -1,0 +1,487 @@
+# -*- coding: utf-8 -*-
+
+from osgeo import gdal, ogr, osr, gdalconst
+import os
+import math
+import time
+import urllib
+import numpy as np
+import csv
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtNetwork import *
+import xml.etree.ElementTree as ET
+import sys
+import os
+import logging
+from core.libs.Management import Project_configuration as config
+from core.libs.GDAL_Libs.Layers import Raster, Feature, RasterLayer
+from core.libs.CustomFileDialog.CustomFileDialog import CustomFileDialog
+from core.libs.LSAT_Messages.messages_main import Messenger
+from core.widgets.GDAL_SpatialRefLib.searchCS_main import MainForm as SR_Lib
+from core.widgets.ImportData.importData_dialog import ReprojectionSettings
+from core.widgets.ImportData.importData_importRaster import ImportRaster
+from core.uis.ProjectManagement_ui.project_ui import Ui_Project
+
+
+class NewProject(QDialog):
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        self.ui = Ui_Project()
+        self.ui.setupUi(self)
+        self.setWindowIcon(QIcon(':/icons/Icons/new_project.png'))
+        self.setWindowTitle(self.tr("New Project"))
+        self.ui.srNameLineEdit.setEnabled(False)
+        self.fileDialog = CustomFileDialog()
+        self.message = Messenger()
+        self.projectLocation = ""
+
+        self.cs_lib_paths = [
+            os.path.join(
+                "core", "gdal_data", "gcs.csv"), os.path.join(
+                "core", "gdal_data", "pcs.csv")]
+        self.epsg_liste = []
+        self.cr_names = []
+        self.list_len = []
+        for path in self.cs_lib_paths:
+            with open(path) as dbfile:
+                reader = csv.DictReader(dbfile)
+                for row in reader:
+                    self.epsg_liste.append(str(row["COORD_REF_SYS_CODE"]))
+                    self.cr_names.append(str(row["COORD_REF_SYS_NAME"]))
+                self.list_len.append(len(self.epsg_liste))
+
+        self.ui.createProjectPushButton.setDefault(False)
+        self.ui.createProjectPushButton.setAutoDefault(False)
+
+        self.ui.projectLocationLineEdit.setStyleSheet(
+            'QLineEdit { background-color: %s }' % '#f2bdb0')
+        self.ui.projectNameLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+
+        self.intValidator = QIntValidator()
+        self.intLocale = self.intValidator.locale()
+        self.intLocale.toInt(".")
+        self.dblValidator = QDoubleValidator()
+        self.dblValidator.setNotation(0)  # validator has standard notation: i.e. 0.123
+
+        self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+        self.ui.epsgCodeLineEdit.setValidator(self.intValidator)
+        self.ui.epsgCodeLineEdit.textChanged.connect(self.epsgTextChanged)
+
+        self.ui.topLineEdit.setValidator(self.dblValidator)
+        self.ui.topLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+        self.ui.leftLineEdit.setValidator(self.dblValidator)
+        self.ui.leftLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+        self.ui.rightLineEdit.setValidator(self.dblValidator)
+        self.ui.rightLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+        self.ui.bottomLineEdit.setValidator(self.dblValidator)
+        self.ui.bottomLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+
+        self.ui.topLineEdit.textChanged.connect(self.checkUnits)
+        self.ui.leftLineEdit.textChanged.connect(self.checkUnits)
+        self.ui.rightLineEdit.textChanged.connect(self.checkUnits)
+        self.ui.bottomLineEdit.textChanged.connect(self.checkUnits)
+        self.ui.projectNameLineEdit.textChanged.connect(self.projectNameLineEditStyle)
+
+        self.ui.cellsizeLineEdit.setValidator(self.dblValidator)
+        self.ui.cellsizeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+        self.ui.cellsizeLineEdit.textChanged.connect(self.cellsizeLineEditStyle)
+
+    def epsgTextChanged(self):
+        if str(self.ui.epsgCodeLineEdit.text()) in self.epsg_liste:
+            self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#b5f2b0')
+            idx = self.epsg_liste.index(str(self.ui.epsgCodeLineEdit.text()))
+            self.ui.srNameLineEdit.setText(str(self.cr_names[idx]))
+            if idx <= self.list_len[0]:
+                self.ui.cellsizeLabel.setText(self.tr("Cell size [decimal degree]"))
+            else:
+                self.ui.cellsizeLabel.setText(self.tr("Cell size [meter]"))
+        else:
+            self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+
+        self.checkUnits()
+
+    def cellsizeLineEditStyle(self):
+        if self.ui.cellsizeLineEdit.text() == "":
+            self.ui.cellsizeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+        else:
+            self.ui.cellsizeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#b5f2b0')
+
+    def projectNameLineEditStyle(self):
+        if (self.ui.projectNameLineEdit.text() == "" or
+            # Checks if projectNameLineEdit is a valid windows path
+                any(x in ["<", ">", ":", "\"", "/", "\\", "|", "?", "*"] for x in str(self.ui.projectNameLineEdit.text()))):
+            self.ui.projectNameLineEdit.setStyleSheet(
+                'QLineEdit { background-color: %s }' % '#f2bdb0')
+        else:
+            self.ui.projectNameLineEdit.setStyleSheet(
+                'QLineEdit { background-color: %s }' % '#b5f2b0')
+
+    @pyqtSlot()
+    def on_projectLocationToolButton_clicked(self):
+        """
+        Sets the project location.
+        :return: None
+        """
+        self.fileDialog.openDirectory(os.getcwd())
+        if self.fileDialog.exec_() == 1 and self.fileDialog.selectedFiles():
+            self.projectLocation = os.path.normpath(self.fileDialog.selectedFiles()[0])
+            self.ui.projectLocationLineEdit.setStyleSheet(
+                'QLineEdit { background-color: %s }' % '#b5f2b0')
+            self.ui.projectLocationLineEdit.setText(self.projectLocation)
+        else:
+            self.ui.projectLocationLineEdit.setStyleSheet(
+                'QLineEdit { background-color: %s }' % '#f2bdb0')
+
+    @pyqtSlot()
+    def on_epsgToolButton_clicked(self):
+        """
+        Calls the Spatial Reference Library
+        :return: None
+        """
+        self.epsgSearch = SR_Lib(self)
+        self.epsgSearch.show()
+
+    def setEPSG_From_Search(self, epsg, name):
+        """
+        Sets the epsg code selected in the Spatial Reference Library dialog
+        :param epsg: int epsg-code
+        :param name: string, spatial reference name
+        :return: None
+        """
+        self.ui.epsgCodeLineEdit.setText(str(epsg))
+        self.ui.srNameLineEdit.setText(str(name))
+        # call the function to update the background color of epsgCodeLineEdit
+        self.updateEPSGLineColor()
+        self.checkUnits()
+
+    @pyqtSlot()
+    def on_maskRasterDatasetToolButton_clicked(self):
+        """
+        Set the parameter raster dataset.
+        """
+        self.fileDialog.openRasterFile(os.getcwd())
+        if self.fileDialog.exec_() and self.fileDialog.selectedFiles():
+            rasterFile = os.path.normpath(self.fileDialog.selectedFiles()[0])
+            self.ui.maskRasterDatasetLineEdit.setText(rasterFile)
+            self.raster = Raster(rasterFile)
+            epsg = self.raster.getEPSG_Code()
+            extent = self.raster.extent
+            self.cols = self.raster.cols
+            self.rows = self.raster.rows
+            self.proj = self.raster.getPROJCS()
+            self.ui.epsgCodeLineEdit.setText(str(epsg))
+            # call the function to update the background color of epsgCodeLineEdit
+            self.updateEPSGLineColor()
+            self.ui.leftLineEdit.setText(str(extent[0]))
+            self.ui.rightLineEdit.setText(str(extent[1]))
+            self.ui.bottomLineEdit.setText(str(extent[2]))
+            self.ui.topLineEdit.setText(str(extent[3]))
+            self.ui.cellsizeLineEdit.setText(str(self.raster.cellsize[0]))
+            self.ui.srNameLineEdit.setText(str(self.raster.getPROJCS()))
+            self.checkUnits()
+
+    def updateEPSGLineColor(self):
+        if str(self.ui.epsgCodeLineEdit.text()) == "None":
+            self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
+        else:
+            self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#b5f2b0')
+
+    def checkUnits(self):
+        sr = osr.SpatialReference()
+        self.check = False
+        if self.ui.epsgCodeLineEdit.text() != "None" and self.ui.epsgCodeLineEdit.text() != "":
+            if self.ui.epsgCodeLineEdit.text() not in self.epsg_liste:
+                return
+            else:
+                sr.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
+                unit = sr.GetAttrValue("UNIT")
+            red = 'QLineEdit { background-color: %s }' % '#f2bdb0'
+            green = 'QLineEdit { background-color: %s }' % '#b5f2b0'
+            if unit == "degree":
+                # check the top boundary
+                if (self.ui.topLineEdit.text() == "" or
+                   not (-90.0 < float(self.ui.topLineEdit.text()) < 90.0)):
+                    self.ui.topLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.topLineEdit.setStyleSheet(green)
+
+                # check the left boundary
+                if (self.ui.leftLineEdit.text() == "" or
+                   not (-180.0 < float(self.ui.leftLineEdit.text()) < 180.0)):
+                    self.ui.leftLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.leftLineEdit.setStyleSheet(green)
+
+                # check the right boundary
+                if (self.ui.rightLineEdit.text() == "" or
+                        not (-180.0 < float(self.ui.rightLineEdit.text()) < 180.0)):
+                    self.ui.rightLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.rightLineEdit.setStyleSheet(green)
+
+                # check the bottom boundary
+                if (self.ui.bottomLineEdit.text() == "" or
+                        not (-180.0 < float(self.ui.bottomLineEdit.text()) < 180.0)):
+                    self.ui.bottomLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.bottomLineEdit.setStyleSheet(green)
+
+            elif unit == "metre":
+                # check the top boundary
+                if self.ui.topLineEdit.text() == "":
+                    self.ui.topLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.topLineEdit.setStyleSheet(green)
+
+                # check the left boundary
+                if self.ui.leftLineEdit.text() == "":
+                    self.ui.leftLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.leftLineEdit.setStyleSheet(green)
+
+                # check the right boundary
+                if self.ui.rightLineEdit.text() == "":
+                    self.ui.rightLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.rightLineEdit.setStyleSheet(green)
+
+                # check the bottom boundary
+                if self.ui.bottomLineEdit.text() == "":
+                    self.ui.bottomLineEdit.setStyleSheet(red)
+                else:
+                    self.ui.bottomLineEdit.setStyleSheet(green)
+
+            # Following checks are the same for all unit types
+            # Check if right boundary > left boundary
+            # try except is necessary to deal with empty string upon startup
+            try:
+                if float(self.ui.rightLineEdit.text()) - float(self.ui.leftLineEdit.text()) <= 0.0:
+                    self.ui.rightLineEdit.setStyleSheet(red)
+                    self.ui.leftLineEdit.setStyleSheet(red)
+            except ValueError:  # LineEdit is not convertible to float
+                self.ui.rightLineEdit.setStyleSheet(red)
+                self.ui.leftLineEdit.setStyleSheet(red)
+
+            # Check if top boundary > bottom boundary
+            try:
+                if float(self.ui.topLineEdit.text()) - float(self.ui.bottomLineEdit.text()) <= 0.0:
+                    self.ui.topLineEdit.setStyleSheet(red)
+                    self.ui.bottomLineEdit.setStyleSheet(red)
+            except ValueError:  # LineEdit is not convertible to float
+                self.ui.topLineEdit.setStyleSheet(red)
+                self.ui.bottomLineEdit.setStyleSheet(red)
+
+            if self.ui.cellsizeLineEdit.text() == "":
+                return
+
+            self.check = True
+        else:
+            return
+
+    def createPolygon(self):
+        ring = ogr.Geometry(ogr.wkbLinearRing)
+        raster = Raster(self.pathRegionRaster)
+        X_min = raster.extent[0]
+        X_max = raster.extent[1]
+        Y_min = raster.extent[2]
+        Y_max = raster.extent[3]
+
+        ring.AddPoint(X_min, Y_max)
+        ring.AddPoint(X_max, Y_max)
+        ring.AddPoint(X_max, Y_min)
+        ring.AddPoint(X_min, Y_min)
+        ring.AddPoint(X_min, Y_max) # closes the polygon
+
+        poly = ogr.Geometry(ogr.wkbPolygon)
+        poly.AddGeometry(ring)
+        wkt = poly.ExportToWkt()
+
+        self.driver = ogr.GetDriverByName("ESRI Shapefile")
+        self.spr = osr.SpatialReference()
+        #spatialRef = raster.spatRef
+        #spatialRef_WKT = spatialRef.ExportToWkt()
+        self.spr.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
+
+        directory = os.path.dirname(self.pathRegionRaster)
+        self.region_shp = self.driver.CreateDataSource(os.path.join(directory, 'region.shp'))
+        self.region_lyr = self.region_shp.CreateLayer('Region', self.spr, ogr.wkbPolygon)
+        feature = ogr.Feature(self.region_lyr.GetLayerDefn())
+        polygon = ogr.CreateGeometryFromWkt(wkt)
+        feature.SetGeometry(polygon)
+        self.region_lyr.CreateFeature(feature)
+
+        geom = feature.GetGeometryRef()
+        self.area = geom.GetArea()
+        self.region_lyr = None
+        feature = None
+        self.region_shp = None
+
+        return
+
+    def createProjectMetaDataFile(self):
+        """
+        This method creates a project metadata xml-file.
+        :return: None
+        """
+        pathProject = os.path.join(self.projectLocation, self.ui.projectNameLineEdit.text())
+        projectName = self.ui.projectNameLineEdit.text()
+        metaDataFile = os.path.join(pathProject, "metadata.xml")
+        epsg = str(self.ui.epsgCodeLineEdit.text())
+        proj = str(self.proj)
+        top = str(self.ui.topLineEdit.text())
+        left = str(self.ui.leftLineEdit.text())
+        right = str(self.ui.rightLineEdit.text())
+        bottom = str(self.ui.bottomLineEdit.text())
+        area = str(self.area)
+        cellsize = str(self.ui.cellsizeLineEdit.text())
+        descr = self.ui.descriptionTextEdit.toPlainText()
+        root = ET.Element("Project")
+        name = ET.SubElement(root, "Name", name=projectName)
+        extent = ET.SubElement(root, "Extent")
+        top_ = ET.SubElement(extent, "top", top=top)
+        left_ = ET.SubElement(extent, "left", left=left)
+        right_ = ET.SubElement(extent, "right", right=right)
+        bottom_ = ET.SubElement(extent, "bottom", bottom=bottom)
+        area = ET.SubElement(extent, "Area", area=area)
+        spatRef = ET.SubElement(root, "SpatialReference", epsg=epsg)
+        projection = ET.SubElement(root, "Projection", projection=proj)
+        cell = ET.SubElement(root, "Cellsize", cellsize=cellsize)
+        description = ET.SubElement(root, "Description", descr=str(descr))
+        tree = ET.ElementTree(root)
+        tree.write(metaDataFile)
+        del metaDataFile
+        return
+
+    def _validateInputs(self):
+
+        if (str(self.projectLocation) == "" or
+                any(x in ["<", ">", "|", "?", "*"] for x in str(self.projectLocation))):
+            QMessageBox.warning(self, self.tr("Project location invalid or missing!"), self.tr(
+                "Please specify the location of the project to proceed!"))
+            return
+        if (self.ui.projectNameLineEdit.text() == "" or any(
+                x in ["<", ">", ":", "|", "?", "*"] for x in self.ui.projectNameLineEdit.text())):
+            QMessageBox.warning(self, self.tr("Project name invalid or missing!"),
+                                self.tr("Please specify the name of the project to proceed!"))
+            return
+        if self.ui.epsgCodeLineEdit.text() == "":
+            QMessageBox.warning(self, self.tr("EPSG missing"), self.tr(
+                "Please specify the spatial reference of the project to proceed!"))
+            return
+        if self.ui.topLineEdit.text() == "" or self.ui.leftLineEdit.text() == "" or self.ui.rightLineEdit.text(
+        ) == "" or self.ui.bottomLineEdit.text() == "" or self.ui.cellsizeLineEdit.text() == "":
+            QMessageBox.warning(self, self.tr("Extent missing"), self.tr(
+                "Please specify the extent of the project to proceed!"))
+            return
+        if not self.check:
+            return
+        return True
+
+    @pyqtSlot()
+    def on_createProjectPushButton_clicked(self):
+        if self._validateInputs():
+            pathProject = os.path.join(self.projectLocation, self.ui.projectNameLineEdit.text())
+            if not os.path.exists(pathProject):
+                os.makedirs(pathProject)
+                self.pathRegionRaster = os.path.join(pathProject, "region.tif")
+                os.makedirs(os.path.join(pathProject, "workspace"))
+                os.makedirs(os.path.join(pathProject, "data", "params"))
+                os.makedirs(os.path.join(pathProject, "data", "inventory", "test"))
+                os.makedirs(os.path.join(pathProject, "data", "inventory", "training"))
+                resultfolders = ["susceptibility_maps", "statistics"]
+                for resultfolder in resultfolders:
+                    os.makedirs(os.path.join(pathProject, "results", resultfolder))
+                analysistypes = ["ANN", "AHP", "LR", "WoE"]
+                for analysis in analysistypes:
+                    os.makedirs(os.path.join(pathProject, "results", analysis, "tables"))
+                    os.makedirs(os.path.join(pathProject, "results", analysis, "reports"))
+                    os.makedirs(os.path.join(pathProject, "results", analysis, "rasters"))
+            else:
+                QMessageBox.warning(
+                    self,
+                    self.tr("Project with this name already exists in this directory!"),
+                    self.tr("Specify other project name or change the host directory!"))
+                return
+
+            self.spr = osr.SpatialReference()
+            self.spr.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
+
+            NoData_value = -9999
+            driver = gdal.GetDriverByName('GTiff')
+            top = float(self.ui.topLineEdit.text())
+            bottom = float(self.ui.bottomLineEdit.text())
+            left = float(self.ui.leftLineEdit.text())
+            right = float(self.ui.rightLineEdit.text())
+            cellsize = float(self.ui.cellsizeLineEdit.text())
+
+            cols = int(round((right - left) / cellsize, 0))
+            rows = int(round((top - bottom) / cellsize, 0))
+
+            outRaster = driver.Create(self.pathRegionRaster, cols, rows, 1, gdal.GDT_Int16)
+            outRaster.SetProjection(self.spr.ExportToWkt())
+            if self.ui.maskRasterDatasetLineEdit.text() != "":
+                geoTransform = (
+                    self.raster.geoTrans[0],
+                    cellsize,
+                    self.raster.geoTrans[2],
+                    self.raster.geoTrans[3],
+                    self.raster.geoTrans[4],
+                    -cellsize)
+                array = self.raster.getArrayFromBand().astype(np.float32)
+                array[np.where(array != self.raster.nodata)] = 1
+                array[np.where(array == self.raster.nodata)] = -9999
+            else:
+                geoTransform = (left, cellsize, 0.0, top, 0.0, -cellsize)
+                array = np.ones(shape=(rows, cols))
+
+            outRaster.SetGeoTransform(geoTransform)
+            band = outRaster.GetRasterBand(1)
+            band.SetNoDataValue(NoData_value)
+
+            outRaster.GetRasterBand(1).WriteArray(array)
+            outRaster = None
+
+            self.createPolygon()
+            self.createProjectMetaDataFile()
+            self.accept()
+            self.message.getLoggingInfoProjectCreated(pathProject)
+            if os.path.isfile(self.ui.maskRasterDatasetLineEdit.text()):
+                self.importMask(
+                    self.ui.maskRasterDatasetLineEdit.text(),
+                    self.pathRegionRaster,
+                    os.path.join(
+                        pathProject,
+                        "data",
+                        "params"))
+
+    def importMask(self, rasterpath: str, maskpath: str, outputdir: str):
+        """
+        Allows the user to add his mask raster to the project.
+        """
+        importquestion = QMessageBox.question(
+            self,
+            self.tr("Add {} to project parameters?").format(
+                os.path.basename(rasterpath)),
+            self.tr("Do you want to add {} to the project parameters?").format(rasterpath),
+            QMessageBox.Yes | QMessageBox.No)
+        if importquestion == QMessageBox.Yes:
+            self.threadpool = QThreadPool()
+            resamplingtypedialog = ReprojectionSettings(rasterpath, maskpath)
+            resamplingtypedialog.show()
+            if resamplingtypedialog.exec_():  # Finish Dialog before we continue
+                resamplingtype = resamplingtypedialog.resamplingType
+            else:  # User closed the dialog
+                logging.info(self.tr("{} import canceled.").format(rasterpath))
+                return
+            self.importraster = ImportRaster(rasterpath, maskpath, outputdir, resamplingtype)
+            self.importraster.infoSignal.connect(self.logfromimport)
+            self.importraster.rasterImport()
+
+    def logfromimport(self, string):
+        """
+        Gets called by signal from Importthread to display a string in the Main Log.
+        """
+        logging.info(string)

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Reclassify</class>
+ <widget class="QMainWindow" name="Reclassify">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>892</width>
+    <height>764</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Reclassify</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,1,4,0" columnstretch="8,3,2,3,1">
+      <item row="4" column="1">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <widget class="QGroupBox" name="inputRasterGroupBox">
+        <property name="title">
+         <string>Input raster</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QGridLayout" name="inputRasterGroupBoxGridLayout">
+           <item row="0" column="0">
+            <widget class="QComboBox" name="inputRasterComboBox"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="inputRasterToolButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QGroupBox" name="outputRasterGroupBox">
+        <property name="title">
+         <string>Output raster</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QGridLayout" name="outputRasterComboBoxGridLayout">
+           <item row="0" column="0">
+            <widget class="QComboBox" name="outputRasterComboBox"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="outputRasterToolButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QGroupBox" name="classificationPropertiesGroupBox">
+        <property name="title">
+         <string>Classification properties</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QGridLayout" name="classificationPropertiesComboBoxGridLayout">
+           <item row="1" column="0">
+            <widget class="QLabel" name="classesLabel">
+             <property name="text">
+              <string>Classes</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="reclassMethodLabel">
+             <property name="text">
+              <string>Reclass method:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="intervalSizeLabel">
+             <property name="text">
+              <string>Interval size:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="classSpinBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLineEdit" name="intervalSizeLineEdit">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="2">
+            <widget class="QComboBox" name="reclassMethodComboBox">
+             <item>
+              <property name="text">
+               <string>Equal interval</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Quantile</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Defined interval</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Unique</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Manual</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QCheckBox" name="start0CheckBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Start at 0</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1" rowspan="3" colspan="4">
+       <widget class="QGroupBox" name="rasterStatisticsGroupBox">
+        <property name="title">
+         <string>Raster statistics</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <layout class="QGridLayout" name="rasterStatisticsGroupBoxGridLayout"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="2" colspan="3">
+       <widget class="QGroupBox" name="reclassTableGroupBox">
+        <property name="title">
+         <string>Reclass table</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <layout class="QGridLayout" name="reclassTableGridLayout">
+           <item row="0" column="0">
+            <widget class="QTableWidget" name="tableWidget">
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>89</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>FROM</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>TO</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>NEW VALUE</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="4" column="3" colspan="2">
+       <widget class="QPushButton" name="applyPushButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QGroupBox" name="plotGroupBox">
+        <property name="title">
+         <string>Plot</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <layout class="QGridLayout" name="plotGroupBoxGridLayout">
+           <item row="0" column="0">
+            <widget class="QFrame" name="plotFrame">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

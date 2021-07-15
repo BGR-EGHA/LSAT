@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ContingencyResults</class>
+ <widget class="QMainWindow" name="ContingencyResults">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Results - Contingency Analysis</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_6">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QTabWidget" name="mainTabWidget">
+        <property name="currentIndex">
+         <number>2</number>
+        </property>
+        <widget class="QWidget" name="frequencyTab">
+         <attribute name="title">
+          <string>Frequency table</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <layout class="QGridLayout" name="frequencyTabGridLayout">
+            <item row="0" column="0">
+             <widget class="QTableView" name="frequencyTableView"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="chi2Tab">
+         <attribute name="title">
+          <string>X²</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <layout class="QGridLayout" name="chi2TabGridLayout">
+            <item row="0" column="0">
+             <widget class="QTableView" name="chi2TableView"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="phiTab">
+         <attribute name="title">
+          <string>Phi (2x2)</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <layout class="QGridLayout" name="phiTabGridLayout">
+            <item row="0" column="0">
+             <widget class="QTableView" name="phiTableView"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <tabstops>
+  <tabstop>mainTabWidget</tabstop>
+  <tabstop>frequencyTableView</tabstop>
+  <tabstop>chi2TableView</tabstop>
+  <tabstop>phiTableView</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

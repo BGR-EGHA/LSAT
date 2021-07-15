@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file '.\SimpleGUI.ui'
+#
+# Created by: PyQt5 UI code generator 5.14.2
+#
+# WARNING! All changes made in this file will be lost!
+
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+
+class Ui_SimpleGUI(object):
+    def setupUi(self, SimpleGUI):
+        SimpleGUI.setObjectName("SimpleGUI")
+        SimpleGUI.resize(500, 250)
+        self.centralwidget = QtWidgets.QWidget(SimpleGUI)
+        self.centralwidget.setObjectName("centralwidget")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.mainGridLayout = QtWidgets.QGridLayout()
+        self.mainGridLayout.setObjectName("mainGridLayout")
+        self.okPushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.okPushButton.setObjectName("okPushButton")
+        self.mainGridLayout.addWidget(self.okPushButton, 2, 2, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.mainGridLayout.addItem(spacerItem, 2, 0, 1, 1)
+        self.inputGroupBox = QtWidgets.QGroupBox(self.centralwidget)
+        self.inputGroupBox.setObjectName("inputGroupBox")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.inputGroupBox)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.inputGroupBoxGridLayout = QtWidgets.QGridLayout()
+        self.inputGroupBoxGridLayout.setObjectName("inputGroupBoxGridLayout")
+        self.demRasterLabel = QtWidgets.QLabel(self.inputGroupBox)
+        self.demRasterLabel.setObjectName("demRasterLabel")
+        self.inputGroupBoxGridLayout.addWidget(self.demRasterLabel, 0, 0, 1, 1)
+        self.demRasterToolButton = QtWidgets.QToolButton(self.inputGroupBox)
+        self.demRasterToolButton.setObjectName("demRasterToolButton")
+        self.inputGroupBoxGridLayout.addWidget(self.demRasterToolButton, 1, 1, 1, 1)
+        self.demRasterComboBox = QtWidgets.QComboBox(self.inputGroupBox)
+        self.demRasterComboBox.setObjectName("demRasterComboBox")
+        self.inputGroupBoxGridLayout.addWidget(self.demRasterComboBox, 1, 0, 1, 1)
+        self.verticalLayout.addLayout(self.inputGroupBoxGridLayout)
+        self.mainGridLayout.addWidget(self.inputGroupBox, 0, 0, 1, 4)
+        self.outputGroupBox = QtWidgets.QGroupBox(self.centralwidget)
+        self.outputGroupBox.setObjectName("outputGroupBox")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.outputGroupBox)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.outputBoxGridLayout = QtWidgets.QGridLayout()
+        self.outputBoxGridLayout.setObjectName("outputBoxGridLayout")
+        self.outputRasterLineEdit = QtWidgets.QLineEdit(self.outputGroupBox)
+        self.outputRasterLineEdit.setObjectName("outputRasterLineEdit")
+        self.outputBoxGridLayout.addWidget(self.outputRasterLineEdit, 1, 0, 1, 1)
+        self.outputRasterLabel = QtWidgets.QLabel(self.outputGroupBox)
+        self.outputRasterLabel.setObjectName("outputRasterLabel")
+        self.outputBoxGridLayout.addWidget(self.outputRasterLabel, 0, 0, 1, 1)
+        self.outputRasterToolButton = QtWidgets.QToolButton(self.outputGroupBox)
+        self.outputRasterToolButton.setObjectName("outputRasterToolButton")
+        self.outputBoxGridLayout.addWidget(self.outputRasterToolButton, 1, 1, 1, 1)
+        self.verticalLayout_2.addLayout(self.outputBoxGridLayout)
+        self.mainGridLayout.addWidget(self.outputGroupBox, 1, 0, 1, 4)
+        self.cancelPushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.cancelPushButton.setObjectName("cancelPushButton")
+        self.mainGridLayout.addWidget(self.cancelPushButton, 2, 1, 1, 1)
+        self.mainGridLayout.setRowStretch(0, 1)
+        self.mainGridLayout.setRowStretch(1, 1)
+        self.horizontalLayout.addLayout(self.mainGridLayout)
+        SimpleGUI.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(SimpleGUI)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 500, 21))
+        self.menubar.setObjectName("menubar")
+        SimpleGUI.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(SimpleGUI)
+        self.statusbar.setObjectName("statusbar")
+        SimpleGUI.setStatusBar(self.statusbar)
+
+        self.retranslateUi(SimpleGUI)
+        QtCore.QMetaObject.connectSlotsByName(SimpleGUI)
+        SimpleGUI.setTabOrder(self.demRasterComboBox, self.demRasterToolButton)
+        SimpleGUI.setTabOrder(self.demRasterToolButton, self.outputRasterLineEdit)
+        SimpleGUI.setTabOrder(self.outputRasterLineEdit, self.outputRasterToolButton)
+        SimpleGUI.setTabOrder(self.outputRasterToolButton, self.cancelPushButton)
+        SimpleGUI.setTabOrder(self.cancelPushButton, self.okPushButton)
+
+    def retranslateUi(self, SimpleGUI):
+        _translate = QtCore.QCoreApplication.translate
+        SimpleGUI.setWindowTitle(_translate("SimpleGUI", "MainWindow"))
+        self.okPushButton.setText(_translate("SimpleGUI", "OK"))
+        self.inputGroupBox.setTitle(_translate("SimpleGUI", "Input "))
+        self.demRasterLabel.setText(_translate("SimpleGUI", "DEM raster"))
+        self.demRasterToolButton.setText(_translate("SimpleGUI", "..."))
+        self.outputGroupBox.setTitle(_translate("SimpleGUI", "Output"))
+        self.outputRasterLabel.setText(_translate("SimpleGUI", "Output raster"))
+        self.outputRasterToolButton.setText(_translate("SimpleGUI", "..."))
+        self.cancelPushButton.setText(_translate("SimpleGUI", "Cancel"))

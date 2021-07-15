@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AdvancedSettings</class>
+ <widget class="QMainWindow" name="AdvancedSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>430</width>
+    <height>380</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Advanced Settings</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="samplingGroupBox">
+      <property name="title">
+       <string>Sampling</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <layout class="QGridLayout" name="samplinGroupBoxGridLayout" columnstretch="0,0,0,0,0">
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="sampleSizeLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="whatsThis">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Training sample size&lt;/span&gt;&lt;/p&gt;&lt;p&gt;In statistical modelling the dataset is usually splitted into two parts for training and test purposes (cross-validation). The training dataset is the part that is going to be used for the establishment of the model. Thus, this data are used to calibrate the model via estimation of the weights. The opposite part can later be used to verify the model. The given option gives here the possibility to specify the size of the training dataset.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="placeholderText">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="trainingSampleNameLabel">
+           <property name="text">
+            <string>Training sample name (optional)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="4">
+          <widget class="QSlider" name="sampleSizeSlider">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="mouseTracking">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Slider Value&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="sliderPosition">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="invertedAppearance">
+            <bool>false</bool>
+           </property>
+           <property name="invertedControls">
+            <bool>false</bool>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+           <property name="tickInterval">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="subsamplesLocationLabel">
+           <property name="text">
+            <string>Look in following folder:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="sampleSizeLabel">
+           <property name="text">
+            <string>Training sample size in %:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="onTheFlySubsamplingCheckBox">
+           <property name="whatsThis">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Resampling&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Resampling is a technique that relies on random sampling without replacement (similar to bootstrapping, which however is a random sampling with replacement). Sampling several times over a population provide especially in case of small samples a suitable possibility to check the reliability of the model. The statistics over the resampling results provide a meaningful tool for that.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>On-the-fly subsampling</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="4">
+          <widget class="QToolButton" name="subsamplesLocationToolButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="5" column="0" colspan="4">
+          <widget class="QLineEdit" name="subsamplesLocationLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1" colspan="3">
+          <widget class="QLineEdit" name="testSampleNameLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="testSampleNameLabel">
+           <property name="text">
+            <string>Test sample name (optional)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1" colspan="3">
+          <widget class="QLineEdit" name="trainingSampleNameLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="numberResamplesLabel">
+           <property name="text">
+            <string>Number of Samples:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="predefinedSubsamplingCheckBox">
+           <property name="text">
+            <string>Use predefined subsamples</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QSpinBox" name="numberResamplesSpinBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>9999</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>GDAL settings</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <layout class="QGridLayout" name="gdalSettingsGroupBoxGridLayout" columnstretch="0,1,0">
+         <item row="0" column="1">
+          <widget class="QComboBox" name="rasterizeMethodComboBox">
+           <item>
+            <property name="text">
+             <string>DEFAULT</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ALL_TOUCHED</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Rasterize layer method</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="okPushButton">
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>sampleSizeLineEdit</tabstop>
+  <tabstop>sampleSizeSlider</tabstop>
+  <tabstop>onTheFlySubsamplingCheckBox</tabstop>
+  <tabstop>predefinedSubsamplingCheckBox</tabstop>
+  <tabstop>subsamplesLocationLineEdit</tabstop>
+  <tabstop>subsamplesLocationToolButton</tabstop>
+  <tabstop>trainingSampleNameLineEdit</tabstop>
+  <tabstop>testSampleNameLineEdit</tabstop>
+  <tabstop>rasterizeMethodComboBox</tabstop>
+  <tabstop>okPushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
