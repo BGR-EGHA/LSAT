@@ -128,7 +128,7 @@ class MainForm(QMainWindow):
         The software is a product developed at Federal Institute for Geosciences and Natural
         Resources (BGR) <a href="www.bgr.bunde.de/EN/">www.bgr.bunde.de/EN/</a>.<br>
         The software is distributed on GitHub and BGR's homepage. If you encounter any problems
-        while using LSAT PMS, please use GitHub Issues to report it.<br>
+        while using LSAT PM, please use GitHub Issues to report it.<br>
         LSAT is released under the <a href="http://www.gnu.org/licenses/#GPL">GNU General Public License version 3</a><br>
         """)
         aboutLSAT.exec()

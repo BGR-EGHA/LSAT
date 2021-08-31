@@ -1,6 +1,6 @@
 # LSAT
 
-LSAT PMS (Landslide Susceptibility Assessment Tools Project Manager Suite) was primarily developed to conduct landslide susceptibility analyses, it is not limited to this issue and applies to any other research dealing with supervised spatial binary classification.
+LSAT PM (Landslide Susceptibility Assessment Tools Project Manager Suite) was primarily developed to conduct landslide susceptibility analyses, it is not limited to this issue and applies to any other research dealing with supervised spatial binary classification.
 LSAT was tested on Windows and Linux (Ubuntu 20.04). LSAT uses Python3 and PyQt5.
 
 LSAT aims to be an easy to use Toolkit. Giving the user more time to focus on their research instead of the inner workings of the tools they use.
@@ -39,7 +39,7 @@ Installing a .whl:
 python -m pip install *path to .whl file*
 ```
 
-6. Start LSAT PMS
+6. Start LSAT PM
 ```
 python startMenu_main.py
 ```
