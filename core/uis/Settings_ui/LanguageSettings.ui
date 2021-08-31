@@ -56,22 +56,12 @@
             <widget class="QComboBox" name="comboBox">
              <item>
               <property name="text">
-               <string>中国</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
                <string>English</string>
               </property>
              </item>
              <item>
               <property name="text">
                <string>Deutsch</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Русский</string>
               </property>
              </item>
             </widget>
@@ -91,7 +81,7 @@
      <x>0</x>
      <y>0</y>
      <width>280</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
