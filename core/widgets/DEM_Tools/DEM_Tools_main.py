@@ -851,7 +851,10 @@ class Geoprocessing(QObject):
         :return: None
         """
         self.loggingInfoSignal.emit(self.tr("Calculate aspect..."))
-        method = self.kwargs[0]
+        if self.kwargs[1] == "Horn":
+            method = "Horn"
+        else:
+            method = "ZevenbergenThorne"
         gdal.DEMProcessing(
             self.outDataPath,
             self.inDataPath,
