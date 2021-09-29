@@ -44,6 +44,7 @@ class LogRegression(QMainWindow):
         # functions in the tree widget
         self.LM = LM()
         self.dialog = CustomFileDialog()
+        self.settings = Settings()
 
         self.toolbar = self.ui.toolBar
         self.actionAdvancedSettings = QAction(
@@ -135,7 +136,6 @@ class LogRegression(QMainWindow):
         pass
 
     def on_AdvancedSettings(self):
-        self.settings = Settings()
         self.settings.show()
 
     def fillData(self, selectedLayers):

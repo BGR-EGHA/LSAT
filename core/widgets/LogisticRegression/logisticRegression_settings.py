@@ -19,24 +19,26 @@ class Settings(QWidget):
         self.setAttribute(Qt.WA_QuitOnClose, False)
         self.configFilePath = os.path.join(
             "core", "Widgets", "LogisticRegression", "configLogReg.ini")
-        if not os.path.isfile(self.configFilePath):
-            # If the .ini file does not exist, we create it.
-            self.generateini()
-            logging.info(
-                self.tr("LR .ini not found. Generating new one: {}").format(
-                    os.path.join(
-                        os.getcwd(),
-                        self.configFilePath)))
+        self.checkini()
         self.setWindowIcon(QIcon(':/icons/Icons/Settings.png'))
         self.setWindowTitle(self.tr("Advanced Settings"))
         self.readConfigfile(self.configFilePath)
         self.loadFromConfigFile()
         self.validate()
 
+    def checkini(self) -> None:
+        """
+        Checks if configFile exists for LR, if not calls generateini to create one.
+        """
+        if not os.path.isfile(self.configFilePath):
+        # If the .ini file does not exist, we create it.
+            self.generateini()
+
     def generateini(self) -> None:
         """
         If init did not find a ini file this function generates a new one based on scipy defaults.
         """
+        iniPath = os.path.join(os.getcwd(), self.configFilePath)
         config = configparser.ConfigParser()
         defaults = {"penalty": "l2",
                     "dual": "False",
@@ -55,7 +57,8 @@ class Settings(QWidget):
                     "l1_ratio": "None"}
         config["DEFAULT"] = defaults
         config["USER_SETTINGS"] = defaults
-        with open(os.path.join(os.getcwd(), self.configFilePath), 'w') as configfile:
+        logging.info(self.tr("LR .ini not found. Generating new one: {}").format(iniPath))
+        with open(iniPath, 'w') as configfile:
             config.write(configfile)
 
     def readConfigfile(self, configfile):
