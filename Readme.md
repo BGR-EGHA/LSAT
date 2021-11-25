@@ -25,7 +25,7 @@ python -m venv venv
 ```
 .\venv\Scripts\activate
 ```
-5. Install the required packages
+6. Install the required packages
 ```
 python -m pip install -r requirements.txt
 ```
@@ -40,10 +40,56 @@ Installing a .whl file:
 python -m pip install *path to .whl file*
 ```
 
-6. Start LSAT PM
+7. Start LSAT PM
 ```
 python startMenu_main.py
 ```
+
+After the initial setup you just need to open the powershell window, activate the venv and start
+LSAT PM to run it.
+
+### Running LSAT from source on Linux (Ubuntu 20.04.3 tested)
+
+1. Download LSAT
+2. Navigate to the LSAT directory and open a Terminal (if you downloaded a zipped version you will need to extract LSAT first).
+3. Install Python packages (venv, pip, python development tools), gdal and libraries for Qt
+```
+sudo apt install python3-venv python3-pip gdal-bin libgdal-dev python3-dev '^libxcb.*-dev'
+```
+
+4. Create a virtual environment
+```
+python3 -m venv venv
+```
+
+5. Activate the virtual environment (venv should appear in the command line, indicating you were successful)
+```
+source venv/bin/activate
+```
+
+6. Install the required packages
+```
+python3 -m pip install -r requirements.txt
+```
+Additionally to the packages listed in the requirements.txt you will need GDAL (3.0.4 tested).
+Unfortunately, GDAL can usually not simply be installed with the standard pip command.
+You need to specify the version based on the gdal version installed.
+To get the installed version run
+```
+ogrinfo --version
+```
+It will output something like: "GDAL $VERSION, released $RELEASEDATE". Now install that version
+```
+python3 -m pip install gdal==$VERSION
+```
+
+7. Start LSAT PM
+```
+python3 startMenu_main.py
+```
+
+After the initial setup you just need to open a terminal, activate the venv and start
+LSAT PM to run it.
 
 ## Documentation
 
