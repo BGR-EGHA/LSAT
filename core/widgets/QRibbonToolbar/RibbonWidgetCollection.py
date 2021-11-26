@@ -15,7 +15,7 @@ if hasattr(Qt, 'AA_UseHighDpiPixmaps'):
 
 
 def gui_scale():
-    return 1.0
+    return 1
 
 
 class QRibbonWidget(QToolBar):
