@@ -558,8 +558,8 @@ class Zoning(QMainWindow):
         # get array data from model
         array = self.model["data"].astype(np.float32)
         # necessary for graphic representation (8 bit colors)
-        array[array == -9999.0] = np.nan
-        if ((array.nanmax() - array.nanmin()) / array.nanmin()) > 500:
+        array[np.where(array == -9999.0)] = np.nan
+        if ((np.nanmax(array) - np.nanmin(array))/ np.nanmin(array)) > 500:
             array = np.log(array)
 
         # get weight values and frequencies
@@ -569,7 +569,7 @@ class Zoning(QMainWindow):
         s_freq = freq[::-1]
         sort_val = s_val[np.where(~np.isnan(s_val))]
         sort_freq = s_freq[np.where(~np.isnan(s_val))]
-        cumul = np.cumsum(sort_freq.astype(np.float32) / np.nansum(sort_freq)
+        cumul = np.cumsum(sort_freq.astype(np.float32) / np.nansum(sort_freq))
         # get the minimum value in the array ignoring NaN values
         minArray = np.nanmin(sort_val)
         range = np.nanmax(sort_val) - minArray
@@ -593,9 +593,8 @@ class Zoning(QMainWindow):
             # create a bool mask based on the "Class_perc" column of the table
             # the bool mask provides ones for rows in which the percentage is less or equal than the
             # x-threshold
-            idx = (np.abs(cumul - (x / 100)).argmin()
+            idx = (np.abs(cumul - (x / 100))).argmin()
             classAreas = np.less_equal(cumul, cumul[idx])
-
             # multiply the weight column with the mask delivers weights corresponding to the
             # classes of the ROC curve, non-relevant entries becomes zero (mathematical filter!)
             weights = sort_val * classAreas
@@ -706,6 +705,7 @@ class Zoning(QMainWindow):
         values, counts = np.unique(raster.getArrayFromBand(), return_counts=True)
         value_list = []
         count_list = []
+
         for i in range(len(values)):
             if values[i] != raster.nodata:
                 value_list.append(values[i])
@@ -720,7 +720,8 @@ class Zoning(QMainWindow):
         for class_pixel in count_list:
             class_areas_real.append(float(class_pixel/total_pixels)*100)
         total_area = np.cumsum(class_areas_real)
-            
+
+
 
         rat.CreateColumn("VALUE", gdal.GFT_Integer, gdalconst.GFU_MinMax)
         rat.CreateColumn("COUNT", gdal.GFT_Integer, gdalconst.GFU_MinMax)
