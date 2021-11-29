@@ -489,6 +489,10 @@ class Zoning(QMainWindow):
             logging.error(tb)
 
     def getTresholdsFromTable(self):
+        """
+        This method read out the threshold values from the table widget.
+        :return: list of theresholds
+        """
         thresholds = []
         for i in range(self.ui.tableWidget.rowCount()):
             thresholds.append(float(self.ui.tableWidget.item(i, 5).text()))
@@ -553,11 +557,11 @@ class Zoning(QMainWindow):
     def prepareArray(self):
         # get array data from model
         array = self.model["data"].astype(np.float32)
-        array[array == -9999.0] = np.nan
         # necessary for graphic representation (8 bit colors)
-        if (array.nanmax() - array.nanmin()) / array.nanmin() > 500:
+        array[array == -9999.0] = np.nan
+        if ((array.nanmax() - array.nanmin()) / array.nanmin()) > 500:
             array = np.log(array)
-        self.previewer.addRasterLayer(array, 1.0)
+
         # get weight values and frequencies
         values, freq = np.unique(array, return_counts=True)
         # sort values
@@ -565,7 +569,7 @@ class Zoning(QMainWindow):
         s_freq = freq[::-1]
         sort_val = s_val[np.where(~np.isnan(s_val))]
         sort_freq = s_freq[np.where(~np.isnan(s_val))]
-        cumul = np.cumsum(sort_freq.astype(np.float32) / sort_freq.sum())
+        cumul = np.cumsum(sort_freq.astype(np.float32) / np.nansum(sort_freq)
         # get the minimum value in the array ignoring NaN values
         minArray = np.nanmin(sort_val)
         range = np.nanmax(sort_val) - minArray
@@ -579,6 +583,8 @@ class Zoning(QMainWindow):
         :return: None
         """
         array, sort_val, sort_freq, cumul, range, minArray = self.prepareArray()
+        self.previewer.scene.clear()
+        self.previewer.addRasterLayer(array, 1.0)
         # create a empty list
         self.classBoundaries = []
         # populate the list with imagePixelValues (0-255)
@@ -589,6 +595,7 @@ class Zoning(QMainWindow):
             # x-threshold
             idx = (np.abs(cumul - (x / 100)).argmin()
             classAreas = np.less_equal(cumul, cumul[idx])
+
             # multiply the weight column with the mask delivers weights corresponding to the
             # classes of the ROC curve, non-relevant entries becomes zero (mathematical filter!)
             weights = sort_val * classAreas
@@ -621,7 +628,7 @@ class Zoning(QMainWindow):
                 return
             self._updateProgress(True)
             array, sort_val, sort_freq, cumul, ranges, minArray = self.prepareArray()
-            maxWeight = array.max()
+            maxWeight = np.nanmax(array)
             # create a empty list
             classBoundaries = []
             # populate the list with imagePixelValues (0-255)
@@ -630,7 +637,8 @@ class Zoning(QMainWindow):
                 # create a bool mask based on the "Class_perc" column of the table
                 # the bool mask provides ones for rows in which the percentage is less or equal than the
                 # x-threshold
-                classAreas = np.less_equal(cumul, x / 100.0)
+                idx = (np.abs(cumul - (x / 100))).argmin()
+                classAreas = np.less_equal(cumul, cumul[idx])
                 # multiply the weight column with the mask delivers weights corresponding to the
                 # classes of the ROC curve, non-relevant entries becomes zero (mathematical filter!)
                 weights = sort_val * classAreas
@@ -651,7 +659,7 @@ class Zoning(QMainWindow):
                                         (array >= classBoundary))] = i + 1
                     classArray[np.where((array < classBoundary))] = i + 1
 
-            classArray[np.where(array == -9999.0)] = -9999.0
+            classArray[np.where(np.isnan(array))] = -9999.0
             self.modelPath = str(self.ui.modelComboBox.currentText())
             NoData_value = -9999.0
             driver = gdal.GetDriverByName('GTiff')
@@ -702,6 +710,17 @@ class Zoning(QMainWindow):
             if values[i] != raster.nodata:
                 value_list.append(values[i])
                 count_list.append(counts[i])
+        # total raster pixels having values
+        total_pixels = np.sum(count_list)
+        # in the following we estimate real propostion of the class areas based on the reclassification
+        # the reason is that the values in the widget table are only approximate values based on
+        # the ROC curve estimates. ROC x is however total area - total landslide area and therefore
+        # not exact estimate for the class area
+        class_areas_real = []
+        for class_pixel in count_list:
+            class_areas_real.append(float(class_pixel/total_pixels)*100)
+        total_area = np.cumsum(class_areas_real)
+            
 
         rat.CreateColumn("VALUE", gdal.GFT_Integer, gdalconst.GFU_MinMax)
         rat.CreateColumn("COUNT", gdal.GFT_Integer, gdalconst.GFU_MinMax)
@@ -729,7 +748,7 @@ class Zoning(QMainWindow):
             rat.SetValueAsString(i, 2, str(labelText))
             rat.SetValueAsDouble(i, 3, int(targetlandAreaText))
             rat.SetValueAsDouble(i, 4, float(landAreaText))
-            rat.SetValueAsDouble(i, 5, float(totalAreaText))
+            rat.SetValueAsDouble(i, 5, float(total_area[i]))
         raster.band.SetDefaultRAT(rat)
         raster = None
         self.msg.InfoBoxAnalysisCompleted(self.outRasterPath)
