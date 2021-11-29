@@ -26,7 +26,7 @@ logging.captureWarnings(True)
 class LogisticRegressionAnalysis(QObject):
     loggingInfoSignal = QtCore.pyqtSignal(str)
     resultSignal = QtCore.pyqtSignal(str)
-    doneSignal = QtCore.pyqtSignal()
+    doneSignal = QtCore.pyqtSignal(str)
 
     def __init__(self, projectPath, data_list, featurePath, tablesPath, name, settings):
         QObject.__init__(self, parent=None)
@@ -72,40 +72,46 @@ class LogisticRegressionAnalysis(QObject):
             n_jobs=n_jobs)
 
         time1 = time.perf_counter()
-        model = lr.fit(stack.T, labels)
-        scores, p_values = chi2(stack.T, labels)
-        score = lr.score(stack.T, labels)
+        try:
+            model = lr.fit(stack.T, labels)
+            scores, p_values = chi2(stack.T, labels)
+            score = lr.score(stack.T, labels)
 
-        time2 = time.perf_counter()
-        self.loggingInfoSignal.emit(
-            self.tr("Training accomplished in {} s").format(
-                round(
-                    time2 - time1, 3)))
+            time2 = time.perf_counter()
+            self.loggingInfoSignal.emit(
+                self.tr("Training accomplished in {} s").format(
+                    round(
+                        time2 - time1, 3)))
 
-        # get probability array
-        probab = model.predict_proba(stack_full.T)[:, 1]
+            # get probability array
+            probab = model.predict_proba(stack_full.T)[:, 1]
 
-        self.loggingInfoSignal.emit(self.tr("Create prediction array"))
-        sum = np.ones(shape=(stack.shape[1]))
-        sum *= model.intercept_
-        coefs = model.coef_
-        AIC = self.getAIC(nr_of_unique_parameters, model, stack, labels)
-        BIC = self.getBIC(nr_of_unique_parameters, model, stack, labels)
-        AICc = self.getAICc(nr_of_unique_parameters, model, stack, labels)
-        Statistics = self.getStatistics(self.data_list, coefs, p_values)
-        confidence_score = lr.decision_function(stack.T)
+            self.loggingInfoSignal.emit(self.tr("Create prediction array"))
+            sum = np.ones(shape=(stack.shape[1]))
+            sum *= model.intercept_
+            coefs = model.coef_
+            AIC = self.getAIC(nr_of_unique_parameters, model, stack, labels)
+            BIC = self.getBIC(nr_of_unique_parameters, model, stack, labels)
+            AICc = self.getAICc(nr_of_unique_parameters, model, stack, labels)
+            Statistics = self.getStatistics(self.data_list, coefs, p_values)
+            confidence_score = lr.decision_function(stack.T)
 
-        # calcualte auc
-        auc = roc_auc_score(labels, probab[np.where(np.ravel(noDataArray) != -9999)])
+            # calcualte auc
+            auc = roc_auc_score(labels, probab[np.where(np.ravel(noDataArray) != -9999)])
 
-        mask_array = self.maskRaster.getArrayFromBand()
-        self.result_array = np.resize(probab, new_shape=(mask_array.shape))
-        self.result_array[np.where(noDataArray == -9999)] = -9999
-        probab[np.where(noDataArray.ravel() == -9999)] = 0
-        self.results2raster(self.name)
-        self.results2npz(self.name, model.intercept_, self.data_list, coefs,
+            mask_array = self.maskRaster.getArrayFromBand()
+            self.result_array = np.resize(probab, new_shape=(mask_array.shape))
+            self.result_array[np.where(noDataArray == -9999)] = -9999
+            probab[np.where(noDataArray.ravel() == -9999)] = 0
+            self.results2raster(self.name)
+            self.results2npz(self.name, model.intercept_, self.data_list, coefs,
                          confidence_score, p_values, score, auc, AIC, BIC, AICc, Statistics)
-        self.doneSignal.emit()
+            self.doneSignal.emit("success")
+        except BaseException:
+            tb = traceback.format_exc()
+            logging.error(tb)
+            self.doneSignal.emit("error")
+
 
     def getAIC(self, nr_of_unique_parameters, model, stack, labels):
         """
@@ -258,4 +264,3 @@ class LogisticRegressionAnalysis(QObject):
                             Statistics=np.asarray(Statistics, dtype = object))
         self.loggingInfoSignal.emit(self.tr("Results saved in {}").format(path))
         self.resultSignal.emit(str(path))
-

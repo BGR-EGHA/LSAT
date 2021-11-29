@@ -77,8 +77,9 @@ class ModelBuilder_calc(QObject):
         Returns an array.
         """
         for rasterpath in rasterpathlist:
-            layerName = os.path.splitext(os.path.basename(rasterpath))[0]
-            locals()[layerName] = Raster(rasterpath).getArrayFromBand().astype(np.float32)
+            layerName = os.path.splitext(os.path.basename(rasterpath))[0].replace(" ", "")
+            raster = Raster(rasterpath)
+            locals()[layerName] = raster.getArrayFromBand().astype(np.float32)
             locals()[layerName][locals()[layerName] == -9999] = np.nan
         try:
             array = eval(expression)
@@ -177,7 +178,7 @@ class ModelBuilder_calc(QObject):
         tmpraster = os.path.join(projectpath, "workspace", "tmp_raster.tif")
         handle.rasterizeLayer(maskpath, tmpraster)
         tmprasterarray = Raster(tmpraster).getArrayFromBand()
-        model_array = sumarray[~np.isnan(sumarray)]  # sumarray without NoData
+        model_array = sumarray[~np.isnan(sumarray)] # sumarray without NoData
         model_ls_array = tmprasterarray[~np.isnan(sumarray)]  # landslide array without NoData
 
         auc = roc_auc_score(np.ravel(model_ls_array), np.ravel(model_array))

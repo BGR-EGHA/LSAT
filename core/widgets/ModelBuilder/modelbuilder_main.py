@@ -105,7 +105,7 @@ class ModelBuilder(QMainWindow):
         itemcount = self.ui.modelLayerTreeWidget.invisibleRootItem().childCount()
         for i in range(itemcount):
             item = self.ui.modelLayerTreeWidget.topLevelItem(i)
-            name = self.modelsmanager.treeContent[hash(str(item))]['Name']
+            name = self.modelsmanager.treeContent[hash(str(item))]['Name'].replace(" ", "")
             if i < (itemcount - 1):
                 expression += str(name) + " + "
             else:
