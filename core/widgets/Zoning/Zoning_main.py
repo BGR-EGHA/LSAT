@@ -553,8 +553,9 @@ class Zoning(QMainWindow):
     def prepareArray(self):
         # get array data from model
         array = self.model["data"].astype(np.float32)
+        array[array == -9999.0] = np.nan
         # necessary for graphic representation (8 bit colors)
-        if (array.max() - array.min()) / array.min() > 500:
+        if (array.nanmax() - array.nanmin()) / array.nanmin() > 500:
             array = np.log(array)
         self.previewer.addRasterLayer(array, 1.0)
         # get weight values and frequencies
@@ -562,16 +563,12 @@ class Zoning(QMainWindow):
         # sort values
         s_val = values[::-1]
         s_freq = freq[::-1]
-        if -9999.0 in s_val:
-            sort_val = s_val[:-1]
-            sort_freq = s_freq[:-1]
-        else:
-            sort_val = s_val
-            sort_freq = s_freq
+        sort_val = s_val[np.where(~np.isnan(s_val))]
+        sort_freq = s_freq[np.where(~np.isnan(s_val))]
         cumul = np.cumsum(sort_freq.astype(np.float32) / sort_freq.sum())
         # get the minimum value in the array ignoring NaN values
-        minArray = np.min(sort_val)
-        range = np.max(sort_val) - minArray
+        minArray = np.nanmin(sort_val)
+        range = np.nanmax(sort_val) - minArray
         return array, sort_val, sort_freq, cumul, range, minArray
 
     def colorClass(self):
@@ -590,7 +587,8 @@ class Zoning(QMainWindow):
             # create a bool mask based on the "Class_perc" column of the table
             # the bool mask provides ones for rows in which the percentage is less or equal than the
             # x-threshold
-            classAreas = np.less_equal(cumul, x / 100.0)
+            idx = (np.abs(cumul - (x / 100)).argmin()
+            classAreas = np.less_equal(cumul, cumul[idx])
             # multiply the weight column with the mask delivers weights corresponding to the
             # classes of the ROC curve, non-relevant entries becomes zero (mathematical filter!)
             weights = sort_val * classAreas
