@@ -76,7 +76,7 @@ class ExpressionBuilder(QMainWindow):
 
     @pyqtSlot(QModelIndex)
     def on_layersListView_doubleClicked(self, index):
-        self.addStringtoTextEdit(str(index.data()))
+        self.addStringtoTextEdit(str(index.data()).replace(" ", ""))
 
     def addStringtoTextEdit(self, str2add: str):
         """
