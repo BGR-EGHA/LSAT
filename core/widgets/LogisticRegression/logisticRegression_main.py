@@ -391,16 +391,21 @@ class LogRegression(QMainWindow):
     def on_cancelPushButton_clicked(self):
         pass
 
-    def done(self):
+    def done(self, sig):
         """
         This method is called when the thread emit a signal "done".
         It closes the logfile and updates the tree widget view.
         :param self
         :return: None
         """
-        self.ui.progressBar.setRange(0, 100)
-        self.ui.progressBar.setValue(100)
-        logging.info(self.tr("Analysis complete!"))
+        if sig == "error":
+            self.ui.progressBar.setRange(0, 100)
+            self.ui.progressBar.setValue(0)
+            logging.info(self.tr("Analysis failed!"))      
+        else:
+            self.ui.progressBar.setRange(0, 100)
+            self.ui.progressBar.setValue(100)
+            logging.info(self.tr("Analysis complete!"))
         self.ui.applyPushButton.setEnabled(True)
         self.actionShowResults.setEnabled(True)
         self.actionCreateReport.setEnabled(True)
