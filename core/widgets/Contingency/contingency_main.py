@@ -213,11 +213,11 @@ class ContingencyGUI(QMainWindow):
         self.dialog.openRasterFiles(self.projectLocation)
         if self.dialog.exec_() == 1 and self.dialog.selectedFiles():
             for file in self.dialog.selectedFiles():
-                file = os.path.normpath(file)
-                exists = self.ui.listWidget.findItems(file, Qt.MatchExactly)
+                basename = os.path.basename(file) # Can't have two files with same basename
+                exists = self.ui.listWidget.findItems(basename, Qt.MatchEndsWith)
                 if not exists:
                     self.ui.listWidget.addItem(file)
                     self.matrix_C = None
                     self.updateMatrix()
                 else:
-                    logging.info(self.tr("{} already in list. Skipping.").format(file))
+                    logging.info(self.tr("{} already in list. Skipping.").format(basename))

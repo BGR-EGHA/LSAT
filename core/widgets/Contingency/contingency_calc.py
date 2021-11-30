@@ -51,10 +51,10 @@ class Contingency(QObject):
         stack_list = []
         unique_list = []
         for path in data_pair[1]:
-            ar = Raster(path).getArrayFromBand().astype(np.int16)
-            ar[np.where(noData_array == -9999.0)] = -9999
-            stack_list.append(np.ravel(ar))
-            unique_list.append(np.unique(ar))
+            ar = Raster(path).getArrayFromBand().astype(np.float32)
+            ar[np.where(noData_array == -9999)] = np.nan
+            stack_list.append(np.ravel(ar[~np.isnan(ar)]))
+            unique_list.append(np.unique(ar[~np.isnan(ar)]))
         vstack = np.vstack(stack_list).T
 
         b = np.ascontiguousarray(vstack).view(
@@ -69,26 +69,17 @@ class Contingency(QObject):
         header_h = []
         header_v = []
         for i, value in enumerate(unique_list[0]):
-            if value == -9999:
-                pass
-            else:
-                header_v.append(str(name_v) + str(value))
+            header_v.append(str(name_v) + str(int(value)))
         for i, value in enumerate(unique_list[1]):
-            if value == -9999:
-                pass
-            else:
-                header_h.append((str(name_h) + str(value)))
+            header_h.append(str(name_h) + str(int(value)))
 
         # create cross table
-        cross_table = np.zeros(shape=(len(unique_list[0]), len(unique_list[1])))
+        cross_table = np.zeros(shape=(len(header_v), len(header_h)))
 
         for i, value in enumerate(unique_val):
-            if value[0] == -9999 or value[1] == -9999:
-                pass
-            else:
-                idx_row = list(unique_list[0]).index(value[0])
-                idx_col = list(unique_list[1]).index(value[1])
-                cross_table[idx_row, idx_col] = count[i]
+            idx_row = list(unique_list[0]).index(value[0])
+            idx_col = list(unique_list[1]).index(value[1])
+            cross_table[idx_row, idx_col] = count[i]
 
         Chi = np.zeros(shape=(cross_table.shape[0], cross_table.shape[1]))
 

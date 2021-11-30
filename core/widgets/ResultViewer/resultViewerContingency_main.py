@@ -48,20 +48,21 @@ class ContingencyMatrix(QMainWindow):
     def updateMatrixView(self):
         if self.ui.typeComboBox.currentText() == "Pearson's C":
             self.model = TableModel(self.matrix_C)
-        else:
+        else: # Cramer's V
             self.model = TableModel(self.matrix_CV)
         self.ui.tableView.setModel(self.model)
         self.ui.tableView.resizeColumnsToContents()
 
     def showDetails(self, index):
-        try:
-            if self.results is not None:
-                self.details = ContingencyResults(
-                    self.projectLocation, self.results[(index.row(), index.column())], parent=self)
-                self.details.show()
-        except BaseException:
-            tb = traceback.format_exc()
-            logging.error(tb)
+        """
+        Gets called by double clicking a field in the table.
+        Opens the Analysis Details window, if row != column (which would compare a raster against 
+        itself).
+        """
+        if self.results is not None and index.row() != index.column():
+            self.details = ContingencyResults(
+                self.projectLocation, self.results[(index.row(), index.column())], parent=self)
+            self.details.show()
 
     def exportTable(self):
         """
@@ -128,14 +129,14 @@ class ContingencyResults(QMainWindow):
         self.Phi = results[2]
         self.X2 = results[3]
         self.cross_table = results[4]
-        self.header_h = results[5]
-        self.header_v = results[6]
+        self.header_v = results[5]
+        self.header_h = results[6]
 
-        model_Phi = TableModel(self.Phi, (self.header_h, self.header_v), phi=True)
+        model_Phi = TableModel(self.Phi, (self.header_v, self.header_h), phi=True)
         self.ui.phiTableView.setModel(model_Phi)
-        model_X2 = TableModel(self.X2, (self.header_h, self.header_v))
+        model_X2 = TableModel(self.X2, (self.header_v, self.header_h))
         self.ui.chi2TableView.setModel(model_X2)
-        model_crossTab = TableModel(self.cross_table, (self.header_h, self.header_v))
+        model_crossTab = TableModel(self.cross_table, (self.header_v, self.header_h))
         self.ui.frequencyTableView.setModel(model_crossTab)
 
     def exportTable(self):
