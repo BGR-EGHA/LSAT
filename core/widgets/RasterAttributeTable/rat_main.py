@@ -21,7 +21,6 @@ class AddField(QDialog):
     """
     This class controls the GUI for add field activity.
     """
-
     def __init__(self, parent=None):
         QDialog.__init__(self, parent)
         self.ui = Ui_AddField()
@@ -62,42 +61,7 @@ class RasterAttributeTable(QMainWindow):
         self.setWindowTitle(self.tr("Raster Attribute Table - {}").format(raster_path))
         self.RAT_status = True
         self.dialog = CustomFileDialog()
-        # check rat
         self.raster_path = raster_path
-        self.raster = Raster(self.raster_path)
-        self.layerName = os.path.basename(self.raster_path)
-        self.rat = self.raster.band.GetDefaultRAT()
-        if self.rat is None:
-            bad_list = ["Float32", "CFloat32", "Float64", "CFloat64"]
-            if self.raster.dataType in bad_list:
-                logging.warning(
-                    self.tr("{} has data type {}! A RAT cannot be generated for this data type!").format(
-                        self.layerName, self.raster.dataType))
-                self.RAT_status = False
-                return
-            else:
-                reply = QMessageBox.question(
-                    self,
-                    self.tr("No RAT"),
-                    self.tr("Selected dataset has no Attribute Table. Should a RAT be generated?"),
-                    QMessageBox.Ok,
-                    QMessageBox.Cancel)
-                if reply == QMessageBox.Ok:
-                    self.generateBasicRAT()
-                    self.rat = self.raster.band.GetDefaultRAT()
-                    self.names = self.getColNames()
-                    self.table = self.rat2array()
-                else:
-                    self.RAT_status = False
-                    self.close()
-                    return
-
-        self.table = self.rat2array()
-        colNames = self.getColNames()
-
-        self.model = TableModel(self.table.tolist(), colNames)
-        self.ui.tableView.setModel(self.model)
-
         # Set up Toolbar and triggers
         self.actionSetEditable = QAction(
             QIcon(":/icons/Icons/File_Edit.png"),
@@ -145,7 +109,45 @@ class RasterAttributeTable(QMainWindow):
             self)
         actionGDALRasterInfo.triggered.connect(self.showRasterInfo)
         self.ui.toolBar.addAction(actionGDALRasterInfo)
-        self.setEditorMode(False) # initially disable editing
+        self.setEditorMode(False)  # initially disable editing
+
+    def initRAT(self, state=False):
+        """
+        Gets called by setEditorMode and saveEdits.
+        Reads the RAT and updates the the table.
+        state defines if the table is editable after creating it.
+        """
+        self.raster = Raster(self.raster_path)
+        self.layerName = os.path.basename(self.raster_path)
+        self.rat = self.raster.band.GetDefaultRAT()
+        if self.rat is None:
+            bad_list = ["Float32", "CFloat32", "Float64", "CFloat64"]
+            if self.raster.dataType in bad_list:
+                logging.warning(
+                    self.tr("{} has data type {}! A RAT cannot be generated for this data type!").format(
+                        self.layerName, self.raster.dataType))
+                self.RAT_status = False
+                return
+            else:
+                reply = QMessageBox.question(
+                    self,
+                    self.tr("No RAT"),
+                    self.tr("Selected dataset has no Attribute Table. Should a RAT be generated?"),
+                    QMessageBox.Ok,
+                    QMessageBox.Cancel)
+                if reply == QMessageBox.Ok:
+                    self.generateBasicRAT()
+                    self.rat = self.raster.band.GetDefaultRAT()
+                    self.names = self.getColNames()
+                    self.table = self.rat2array()
+                else:
+                    self.RAT_status = False
+                    self.close()
+                    return
+        self.table = self.rat2array()
+        self.colNames = self.getColNames()
+        self.model = TableModel(self.table.tolist(), self.colNames, editMode=state)
+        self.ui.tableView.setModel(self.model)
 
     def generateBasicRAT(self):
         """
@@ -165,15 +167,15 @@ class RasterAttributeTable(QMainWindow):
         self.raster.band.SetDefaultRAT(rat)
         self.raster.band.FlushCache()
 
-    def setEditorMode(self, enabled: bool):
+    def setEditorMode(self, state: bool):
         """
         Controls the edit mode of the attribute table.
         :return: None
         """
-        self.ui.tableView.setEnabled(enabled)
-        self.actionAddField.setEnabled(enabled)
-        self.actionDeleteField.setEnabled(enabled)
-        self.actionSaveEdits.setEnabled(enabled)
+        self.initRAT(state)
+        self.actionAddField.setEnabled(state)
+        self.actionDeleteField.setEnabled(state)
+        self.actionSaveEdits.setEnabled(state)
 
     def closeEvent(self, event):
         """
@@ -251,7 +253,9 @@ class RasterAttributeTable(QMainWindow):
                     rat.SetValueAsString(row, col, str(table[row][col]))
 
         self.raster.band.SetDefaultRAT(rat)
+        self.raster = None
         logging.info(self.tr("Edits saved."))
+        self.initRAT(True)
 
     def removeColumn(self):
         """
@@ -324,9 +328,8 @@ class RasterAttributeTable(QMainWindow):
             names.append(str(self.rat.GetNameOfCol(i)))
         return names
 
-
 class TableModel(QAbstractTableModel):
-    def __init__(self, datain, headerdata, parent=None, *args):
+    def __init__(self, datain, headerdata, editMode=False, parent=None, *args):
         """
         datain: list of tupels or list of lists
         headerdata: a list of strings
@@ -336,6 +339,7 @@ class TableModel(QAbstractTableModel):
         # if the model should not be edited, one can pass list of tupels to prevent overriding.
         self.arraydata = [list(elem) for elem in datain]
         self.headerdata = headerdata
+        self.editMode = editMode
 
     def rowCount(self, parent):
         return len(self.arraydata)
@@ -386,7 +390,10 @@ class TableModel(QAbstractTableModel):
 
     def flags(self, index):
         nonEditableFields = ["VALUE", "COUNT", "ID", "OID"]
-        if str(self.headerdata[index.column()]) in nonEditableFields:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.AlignCenter
+        if self.editMode == True:
+            if str(self.headerdata[index.column()]) in nonEditableFields:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.AlignCenter
+            else:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.AlignCenter | Qt.ItemIsEditable
         else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.AlignCenter | Qt.ItemIsEditable
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.AlignCenter
