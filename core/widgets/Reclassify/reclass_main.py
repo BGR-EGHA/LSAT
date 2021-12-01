@@ -82,9 +82,6 @@ class Reclass(QMainWindow):
             if self.ui.inputRasterComboBox.currentText() != "":
                 self.readRasterData()
 
-
-
-
     def onPick(self, event):
         """
         Defines action on pick event.
@@ -219,16 +216,18 @@ class Reclass(QMainWindow):
         :return: None
         """
         self.fileDialog.openRasterFile(self.projectPath)
-        if self.fileDialog.exec_() == 1:
-            for filename in self.fileDialog.selectedFiles():
-                self.ui.inputRasterComboBox.addItem(str(filename))
-                self.ui.inputRasterComboBox.setCurrentIndex(
-                    self.ui.inputRasterComboBox.findText(str(filename)))
-
-            self.readRasterData()  # in function raster data the functions getHistogram() and getClassInterval() are called
-            a, b = self.axes.get_ylim()
-            self.ui.tableWidget.setRowCount(len(self.intList))
-            self.updateHistogram()
+        if self.fileDialog.exec_() == 1 and self.fileDialog.selectedFiles()[0]:
+            filename = os.path.normpath(self.fileDialog.selectedFiles()[0])
+            self.ui.inputRasterComboBox.addItem(filename)
+            self.ui.inputRasterComboBox.setCurrentIndex(
+                self.ui.inputRasterComboBox.findText(filename))
+            self.axes.clear()
+            # Trys to remove widget. Won't initially work because we haven't added one yet.
+            try:
+                self.ui.rasterStatisticsGroupBoxGridLayout.removeWidget(self.rasterInfo)
+            except AttributeError:
+                pass
+            self.readRasterData()
 
     @pyqtSlot(int)
     def on_reclassMethodComboBox_currentIndexChanged(self):
@@ -386,10 +385,6 @@ class Reclass(QMainWindow):
 
             self.axes.plot([value, value], [a, b], color='r', linestyle='-',
                                linewidth=1, picker=5, label=str(i), zorder=2)
-
-
-
-
 
         self.axes.set_ylim(a, b)
         self.intList = validation_list
