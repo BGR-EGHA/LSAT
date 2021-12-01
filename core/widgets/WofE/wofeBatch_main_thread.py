@@ -209,9 +209,10 @@ class WofETool(QMainWindow):
         self.fileDialog.openFeatureFile(self.projectLocation)
         if self.fileDialog.exec_() == 1:
             for filename in self.fileDialog.selectedFiles():
-                self.ui.trainingFeatureComboBox.insertItem(str(filename))
+                filename = os.path.normpath(filename)
+                self.ui.trainingFeatureComboBox.insertItem(0, filename)
                 self.ui.trainingFeatureComboBox.setCurrentIndex(
-                    self.ui.trainingFeatureComboBox.findText(str(filename)))
+                    self.ui.trainingFeatureComboBox.findText(filename))
 
     def fillData(self, selectedLayers):
         """
