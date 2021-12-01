@@ -19,6 +19,7 @@ from core.uis.ImportInventory_ui.ImportInventory_ui import Ui_ImportInventory
 from core.libs.GDAL_Libs.Layers import Raster
 from core.libs.LSAT_Messages.messages_main import Messenger
 from core.libs.Analysis.Random_Sampling import RandomSampling
+from core.widgets.GeoprocessingTools.geoprocessingTools_calc import GeoprocessingToolsWorker
 import numpy as np
 
 
@@ -109,7 +110,12 @@ class ImportInventory(QMainWindow):
     @pyqtSlot()
     def on_applyPushButton_clicked(self):
         self.progress.setRange(0,0)
-        featPath = self.ui.featureLineEdit.text()
+        if self.ui.ignoreOutsideMaskCheckBox.isChecked():
+            logging.info(self.tr("Clipping feature to region.shp"))
+            featPath = self._clipBeforeImport()
+            logging.info(self.tr("Clipped feature {} created").format(featPath))
+        else:
+            featPath = self.ui.featureLineEdit.text()
         outTraining = self.ui.trainingDatasetLineEdit.text()
         outTest = self.ui.testDatasetLineEdit.text()
         if not featPath:
@@ -127,6 +133,23 @@ class ImportInventory(QMainWindow):
                          100 - percent, featPath))
         self.progress.setRange(0, 100)
         self.progress.setValue(100)
+
+    def _clipBeforeImport(self) -> str:
+        """
+        Returns a string with the path to 
+        Gets called by on_applyPushButton_clicked
+        """
+        region = os.path.join(self.projectLocation, "region.shp")
+        inputFile = self.ui.featureLineEdit.text()
+        clippedFile = os.path.join(self.projectLocation, "workspace", "clipped4import.shp")
+        args = (0, ["SKIP_FAILURES=NO", "PROMOTE_TO_MULTI=NO"], True)
+        # 0 -> clip function
+        # "SKIP_FAILURES=NO" -> Don't skip failures, raise error.
+        # "PROMOTE_TO_MULTI=NO" -> Keep feature as is.
+        # True -> Use SpatialRef of region.shp
+        clip = GeoprocessingToolsWorker(inputFile, region, clippedFile, args)
+        clip.run()
+        return clippedFile
 
     def val_sizeValue(self):
         """

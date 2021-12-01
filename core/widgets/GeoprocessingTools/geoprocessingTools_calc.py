@@ -107,11 +107,11 @@ class GeoprocessingToolsWorker(QObject):
         if os.path.exists(outShapefile):
             driver.DeleteDataSource(outShapefile)
         outDataSet = driver.CreateDataSource(outShapefile)
-        if self.feature.geometryName == "POLYGON":
+        if feature.geometryName == "POLYGON":
             geomType = ogr.wkbMultiPolygon
-        elif self.feature.geometryName == "POINT":
+        elif feature.geometryName == "POINT":
             geomType = ogr.wkbMultiPoint
-        elif self.feature.geometryName == "POLYLINE":
+        elif feature.geometryName == "POLYLINE":
             geomType = ogr.wkbMultiCurve
 
         outLayer = outDataSet.CreateLayer(os.path.basename(os.path.splitext(feature.path)[0]),
