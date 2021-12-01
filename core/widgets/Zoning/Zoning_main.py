@@ -240,7 +240,10 @@ class Zoning(QMainWindow):
         on_updatePushButton_clicked.
         Highlights the updatePushButton after the user changes cells in the table.
         """
-        self.ui.updatePushButton.setFlat(not status)
+        if status:
+            self.ui.updatePushButton.setStyleSheet("background-color: #b7cbeb")
+        else:
+            self.ui.updatePushButton.setStyleSheet("")
 
     @pyqtSlot()
     def on_modelToolButton_clicked(self):
