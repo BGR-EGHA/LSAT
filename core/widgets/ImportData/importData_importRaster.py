@@ -186,7 +186,9 @@ class ImportRaster(QObject):
             "Float32": gdal.GDT_Float32,
             "Int": gdal.GDT_Int16,
             "Int16": gdal.GDT_Int16,
-            "Int32": gdal.GDT_Int16,
+            "UInt16": gdal.GDT_UInt16,
+            "Int32": gdal.GDT_Int32,
+            "UInt32": gdal.GDT_UInt32,
             "Byte": gdal.GDT_Int16
         }
         return datatype_dic[rastertype]
