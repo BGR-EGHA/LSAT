@@ -45,7 +45,7 @@ class GeoprocessingToolsWorker(QObject):
         if feature.geometryName == "POLYGON":
             geomType = ogr.wkbMultiPolygon
         elif feature.geometryName == "POINT":
-            geomType = ogr.wkbMultiPoint
+            geomType = ogr.wkbPoint
         elif feature.geometryName == "LINESTRING":
             geomType = ogr.wkbMultiCurve
 

@@ -577,7 +577,7 @@ class Feature:
         """
         Returns name of the geometry type
         """
-        feat = self.layer.GetFeature(0)
+        feat = self.layer.GetNextFeature()
         geomRef = feat.GetGeometryRef()
         geomName = geomRef.GetGeometryName()
         return geomName
