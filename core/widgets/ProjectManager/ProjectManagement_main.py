@@ -297,7 +297,7 @@ class NewProject(QDialog):
         for feature in layer:
             geom = feature.GetGeometryRef()
             area = geom.GetArea()
-            self.area += 0 # this was calculated here for some reason
+            self.area += area # TODO move to own function
         raster = None
 
     def createProjectMetaDataFile(self):
