@@ -109,6 +109,10 @@ class ImportInventory(QMainWindow):
 
     @pyqtSlot()
     def on_applyPushButton_clicked(self):
+        """
+        Collects the Ui information and starts the import process.
+        If the users wants to clip the inventory to the region we will do that in an extra thread.
+        """
         self.progress.setRange(0,0)
         outTraining = self.ui.trainingDatasetLineEdit.text()
         outTest = self.ui.testDatasetLineEdit.text()
@@ -123,7 +127,6 @@ class ImportInventory(QMainWindow):
         if self.ui.ignoreOutsideMaskCheckBox.isChecked():
             logging.info(self.tr("Clipping feature to region.shp"))
             featPath = self._clipBeforeImport(params)
-            logging.info(self.tr("Clipped feature {} created").format(featPath))
         else:
             self.startImport(featPath, *params)
 
@@ -150,13 +153,27 @@ class ImportInventory(QMainWindow):
 
     @pyqtSlot()
     def startImport(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str):
+        """
+        Calls the import thread
+        """
         try:
             self.thread.exit() # Exit thread if we clipped the input
+            logging.info(self.tr("Clipped feature {} created").format(featPath))
         except AttributeError:
             pass
-        if seed != "":
-            random.seed(seed)
-        RandomSampling(featPath, outTrain, outTest, percent, self.srProject, i="")
+        # start import in Thread
+        self.thread = QThread()
+        self.importFunc = Import(featPath, outTrain, outTest, percent, seed, self.srProject)
+        self.importFunc.moveToThread(self.thread)
+        self.thread.started.connect(self.importFunc.run)
+        self.importFunc.finishSignal.connect(lambda: self.done(outTrain, percent, featPath, outTest))
+        self.thread.start()
+
+    def done(self, outTrain, percent, featPath, outTest):
+        """Exit Import Thread and Update Log and Ui to tell user import is done.
+        Gets called with finishSignal from Import Thread.
+        """
+        self.thread.exit()
         logging.info(
             self.tr("Successfully created {} - {}% of {}").format(outTrain, percent, featPath))
         if percent < 100:
@@ -177,3 +194,24 @@ class ImportInventory(QMainWindow):
         except AttributeError:
             # If the QCheckbox calls this function we can not change its values.
             pass
+
+class Import(QObject):
+    """
+    Calls RandomSampling in an extra thread.
+    """
+    finishSignal = pyqtSignal(str, int, str, str)
+
+    def __init__(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str, srp: object):
+        super().__init__()
+        self.featPath = featPath
+        self.outTrain = outTrain
+        self.outTest = outTest
+        self.percent = percent
+        self.seed = seed
+        self.srp = srp
+
+    def run(self):
+        if self.seed != "":
+            random.seed(self.seed)
+        RandomSampling(self.featPath, self.outTrain, self.outTest, self.percent, self.srp, i="")
+        self.finishSignal.emit(self.outTrain, self.percent, self.featPath, self.outTest)
