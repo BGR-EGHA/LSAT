@@ -42,12 +42,7 @@ class GeoprocessingToolsWorker(QObject):
         else:
             srs = feature.layer.GetSpatialRef()
 
-        if feature.geometryName == "POLYGON":
-            geomType = ogr.wkbMultiPolygon
-        elif feature.geometryName == "POINT":
-            geomType = ogr.wkbMultiPoint
-        elif feature.geometryName == "LINESTRING":
-            geomType = ogr.wkbMultiCurve
+        geomType = self._getGeomType(feature.geometryName)
 
         if self.processingType == 0:
             self.loggingInfoSignal.emit(self.tr("Perform Clip..."))
@@ -107,12 +102,7 @@ class GeoprocessingToolsWorker(QObject):
         if os.path.exists(outShapefile):
             driver.DeleteDataSource(outShapefile)
         outDataSet = driver.CreateDataSource(outShapefile)
-        if self.feature.geometryName == "POLYGON":
-            geomType = ogr.wkbMultiPolygon
-        elif self.feature.geometryName == "POINT":
-            geomType = ogr.wkbMultiPoint
-        elif self.feature.geometryName == "POLYLINE":
-            geomType = ogr.wkbMultiCurve
+        geomType = self._getGeomType(feature.geometryName)
 
         outLayer = outDataSet.CreateLayer(os.path.basename(os.path.splitext(feature.path)[0]),
                                           outSR, geom_type=geomType)
@@ -151,3 +141,16 @@ class GeoprocessingToolsWorker(QObject):
         inDataSet = None
         outDataSet = None
         return outShapefile
+
+    def _getGeomType(self, geometryName: str) -> int:
+        """
+        Returns an int representing an ogr wkb.
+        Gets called by run and reprojectLayer to adjust output geometry type to input
+        """
+        if geometryName == "POLYGON":
+            geomType = ogr.wkbMultiPolygon
+        elif geometryName == "POINT":
+            geomType = ogr.wkbPoint
+        elif geometryName == "POLYLINE":
+            geomType = ogr.wkbMultiCurve
+        return geomType

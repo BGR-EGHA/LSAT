@@ -284,42 +284,21 @@ class NewProject(QDialog):
     def createPolygon(self):
         ring = ogr.Geometry(ogr.wkbLinearRing)
         raster = Raster(self.pathRegionRaster)
-        X_min = raster.extent[0]
-        X_max = raster.extent[1]
-        Y_min = raster.extent[2]
-        Y_max = raster.extent[3]
-
-        ring.AddPoint(X_min, Y_max)
-        ring.AddPoint(X_max, Y_max)
-        ring.AddPoint(X_max, Y_min)
-        ring.AddPoint(X_min, Y_min)
-        ring.AddPoint(X_min, Y_max) # closes the polygon
-
-        poly = ogr.Geometry(ogr.wkbPolygon)
-        poly.AddGeometry(ring)
-        wkt = poly.ExportToWkt()
-
-        self.driver = ogr.GetDriverByName("ESRI Shapefile")
-        self.spr = osr.SpatialReference()
-        #spatialRef = raster.spatRef
-        #spatialRef_WKT = spatialRef.ExportToWkt()
-        self.spr.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
-
+        band = raster.data.GetRasterBand(1)
         directory = os.path.dirname(self.pathRegionRaster)
-        self.region_shp = self.driver.CreateDataSource(os.path.join(directory, 'region.shp'))
-        self.region_lyr = self.region_shp.CreateLayer('Region', self.spr, ogr.wkbPolygon)
-        feature = ogr.Feature(self.region_lyr.GetLayerDefn())
-        polygon = ogr.CreateGeometryFromWkt(wkt)
-        feature.SetGeometry(polygon)
-        self.region_lyr.CreateFeature(feature)
-
-        geom = feature.GetGeometryRef()
-        self.area = geom.GetArea()
-        self.region_lyr = None
-        feature = None
-        self.region_shp = None
-
-        return
+        shpPath = os.path.join(directory, 'region.shp')
+        driver = ogr.GetDriverByName("ESRI Shapefile")
+        datasource = driver.CreateDataSource(shpPath)
+        srsRegion = osr.SpatialReference()
+        srsRegion.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
+        layer = datasource.CreateLayer("region", srs=srsRegion)
+        gdal.Polygonize(band, band, layer, -1, [])
+        self.area = 0
+        for feature in layer:
+            geom = feature.GetGeometryRef()
+            area = geom.GetArea()
+            self.area += area # TODO move to own function
+        raster = None
 
     def createProjectMetaDataFile(self):
         """

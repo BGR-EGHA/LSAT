@@ -184,9 +184,11 @@ class ImportRaster(QObject):
         datatype_dic = {
             "Float": gdal.GDT_Float32,
             "Float32": gdal.GDT_Float32,
+            "Float64": gdal.GDT_Float64,
             "Int": gdal.GDT_Int16,
             "Int16": gdal.GDT_Int16,
-            "Int32": gdal.GDT_Int16,
+            "UInt16": gdal.GDT_Int32,
+            "Int32": gdal.GDT_Int32,
             "Byte": gdal.GDT_Int16
         }
         return datatype_dic[rastertype]

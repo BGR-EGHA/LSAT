@@ -19,6 +19,7 @@ from core.uis.ImportInventory_ui.ImportInventory_ui import Ui_ImportInventory
 from core.libs.GDAL_Libs.Layers import Raster
 from core.libs.LSAT_Messages.messages_main import Messenger
 from core.libs.Analysis.Random_Sampling import RandomSampling
+from core.widgets.GeoprocessingTools.geoprocessingTools_calc import GeoprocessingToolsWorker
 import numpy as np
 
 
@@ -108,20 +109,73 @@ class ImportInventory(QMainWindow):
 
     @pyqtSlot()
     def on_applyPushButton_clicked(self):
+        """
+        Collects the Ui information and starts the import process.
+        If the users wants to clip the inventory to the region we will do that in an extra thread.
+        """
         self.progress.setRange(0,0)
-        featPath = self.ui.featureLineEdit.text()
         outTraining = self.ui.trainingDatasetLineEdit.text()
         outTest = self.ui.testDatasetLineEdit.text()
-        if not featPath:
-            self.message.WarningMissingInput()
-            return
         percent = self.ui.sizeValueHorizontalSlider.value()
         randomseed = self.ui.RandomSeedlineEdit.text()
-        if randomseed != "":
-            random.seed(randomseed)
-        RandomSampling(featPath, outTraining, outTest, percent, self.srProject, i="")
+        if not self.ui.featureLineEdit.text():
+            self.message.WarningMissingInput()
+            return
+        else:
+            featPath = self.ui.featureLineEdit.text()
+        params = (outTraining, outTest, percent, randomseed)
+        if self.ui.ignoreOutsideMaskCheckBox.isChecked():
+            logging.info(self.tr("Clipping feature to region.shp"))
+            featPath = self._clipBeforeImport(params)
+        else:
+            self.startImport(featPath, *params)
+
+    def _clipBeforeImport(self, params: tuple) -> str:
+        """
+        Returns a string with the path to clipped file.
+        Gets called by on_applyPushButton_clicked
+        """
+        region = os.path.join(self.projectLocation, "region.shp")
+        inputFile = self.ui.featureLineEdit.text()
+        clippedFile = os.path.join(self.projectLocation, "workspace", "clipped4import.shp")
+        args = (0, ["SKIP_FAILURES=NO", "PROMOTE_TO_MULTI=NO"], True)
+        # 0 -> clip function
+        # "SKIP_FAILURES=NO" -> Don't skip failures, raise error.
+        # "PROMOTE_TO_MULTI=NO" -> Keep feature as is.
+        # True -> Use SpatialRef of region.shp
+        self.thread = QThread()
+        self.clip = GeoprocessingToolsWorker(inputFile, region, clippedFile, args)
+        self.clip.moveToThread(self.thread)
+        self.thread.started.connect(self.clip.run)
+        self.clip.finishSignal.connect(lambda: self.startImport(clippedFile, *params))
+        self.thread.start()
+        return clippedFile
+
+    @pyqtSlot()
+    def startImport(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str):
+        """
+        Calls the import thread
+        """
+        try:
+            self.thread.exit() # Exit thread if we clipped the input
+            logging.info(self.tr("Clipped feature {} created").format(featPath))
+        except AttributeError:
+            pass
+        # start import in Thread
+        self.thread = QThread()
+        self.importFunc = Import(featPath, outTrain, outTest, percent, seed, self.srProject)
+        self.importFunc.moveToThread(self.thread)
+        self.thread.started.connect(self.importFunc.run)
+        self.importFunc.finishSignal.connect(lambda: self.done(outTrain, percent, featPath, outTest))
+        self.thread.start()
+
+    def done(self, outTrain, percent, featPath, outTest):
+        """Exit Import Thread and Update Log and Ui to tell user import is done.
+        Gets called with finishSignal from Import Thread.
+        """
+        self.thread.exit()
         logging.info(
-            self.tr("Successfully created {} - {}% of {}").format(outTraining, percent, featPath))
+            self.tr("Successfully created {} - {}% of {}").format(outTrain, percent, featPath))
         if percent < 100:
             logging.info(self.tr("Successfully created {} - {}% of {}").format(outTest,
                          100 - percent, featPath))
@@ -140,3 +194,24 @@ class ImportInventory(QMainWindow):
         except AttributeError:
             # If the QCheckbox calls this function we can not change its values.
             pass
+
+class Import(QObject):
+    """
+    Calls RandomSampling in an extra thread.
+    """
+    finishSignal = pyqtSignal(str, int, str, str)
+
+    def __init__(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str, srp: object):
+        super().__init__()
+        self.featPath = featPath
+        self.outTrain = outTrain
+        self.outTest = outTest
+        self.percent = percent
+        self.seed = seed
+        self.srp = srp
+
+    def run(self):
+        if self.seed != "":
+            random.seed(self.seed)
+        RandomSampling(self.featPath, self.outTrain, self.outTest, self.percent, self.srp, i="")
+        self.finishSignal.emit(self.outTrain, self.percent, self.featPath, self.outTest)
