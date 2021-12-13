@@ -110,33 +110,26 @@ class ImportInventory(QMainWindow):
     @pyqtSlot()
     def on_applyPushButton_clicked(self):
         self.progress.setRange(0,0)
-        if self.ui.ignoreOutsideMaskCheckBox.isChecked():
-            logging.info(self.tr("Clipping feature to region.shp"))
-            featPath = self._clipBeforeImport()
-            logging.info(self.tr("Clipped feature {} created").format(featPath))
-        else:
-            featPath = self.ui.featureLineEdit.text()
         outTraining = self.ui.trainingDatasetLineEdit.text()
         outTest = self.ui.testDatasetLineEdit.text()
-        if not featPath:
-            self.message.WarningMissingInput()
-            return
         percent = self.ui.sizeValueHorizontalSlider.value()
         randomseed = self.ui.RandomSeedlineEdit.text()
-        if randomseed != "":
-            random.seed(randomseed)
-        RandomSampling(featPath, outTraining, outTest, percent, self.srProject, i="")
-        logging.info(
-            self.tr("Successfully created {} - {}% of {}").format(outTraining, percent, featPath))
-        if percent < 100:
-            logging.info(self.tr("Successfully created {} - {}% of {}").format(outTest,
-                         100 - percent, featPath))
-        self.progress.setRange(0, 100)
-        self.progress.setValue(100)
+        if not self.ui.featureLineEdit.text():
+            self.message.WarningMissingInput()
+            return
+        else:
+            featPath = self.ui.featureLineEdit.text()
+        params = (outTraining, outTest, percent, randomseed)
+        if self.ui.ignoreOutsideMaskCheckBox.isChecked():
+            logging.info(self.tr("Clipping feature to region.shp"))
+            featPath = self._clipBeforeImport(params)
+            logging.info(self.tr("Clipped feature {} created").format(featPath))
+        else:
+            self.startImport(featPath, *params)
 
-    def _clipBeforeImport(self) -> str:
+    def _clipBeforeImport(self, params: tuple) -> str:
         """
-        Returns a string with the path to 
+        Returns a string with the path to clipped file.
         Gets called by on_applyPushButton_clicked
         """
         region = os.path.join(self.projectLocation, "region.shp")
@@ -147,9 +140,30 @@ class ImportInventory(QMainWindow):
         # "SKIP_FAILURES=NO" -> Don't skip failures, raise error.
         # "PROMOTE_TO_MULTI=NO" -> Keep feature as is.
         # True -> Use SpatialRef of region.shp
-        clip = GeoprocessingToolsWorker(inputFile, region, clippedFile, args)
-        clip.run()
+        self.thread = QThread()
+        self.clip = GeoprocessingToolsWorker(inputFile, region, clippedFile, args)
+        self.clip.moveToThread(self.thread)
+        self.thread.started.connect(self.clip.run)
+        self.clip.finishSignal.connect(lambda: self.startImport(clippedFile, *params))
+        self.thread.start()
         return clippedFile
+
+    @pyqtSlot()
+    def startImport(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str):
+        try:
+            self.thread.exit() # Exit thread if we clipped the input
+        except AttributeError:
+            pass
+        if seed != "":
+            random.seed(seed)
+        RandomSampling(featPath, outTrain, outTest, percent, self.srProject, i="")
+        logging.info(
+            self.tr("Successfully created {} - {}% of {}").format(outTrain, percent, featPath))
+        if percent < 100:
+            logging.info(self.tr("Successfully created {} - {}% of {}").format(outTest,
+                         100 - percent, featPath))
+        self.progress.setRange(0, 100)
+        self.progress.setValue(100)
 
     def val_sizeValue(self):
         """
