@@ -586,7 +586,7 @@
     </message>
     <message>
         <source>True Positive Rate (Sensitivity)</source>
-        <translation>Richtig-positv-Rate (Sensitivität)</translation>
+        <translation>Richtig-Positv-Rate (Sensitivität)</translation>
     </message>
     <message>
         <source>AUC: %.2f</source>
@@ -2599,7 +2599,7 @@ MultiPolygons, or LineStrings to MultiLineStrings.</source>
     </message>
     <message>
         <source>True Positive Rate (Sensitivity)</source>
-        <translation>Richtig-positv-Rate (Sensitivität)</translation>
+        <translation>Richtig-Positv-Rate (Sensitivität)</translation>
     </message>
     <message>
         <source>Output raster {} created.</source>
@@ -4994,7 +4994,7 @@ value</source>
     </message>
     <message>
         <source>True Positive Rate (Sensitivity)</source>
-        <translation>Richtig-positv-Rate (Sensitivität)</translation>
+        <translation>Richtig-Positv-Rate (Sensitivität)</translation>
     </message>
     <message>
         <source>AUC: %.2f</source>
@@ -5061,7 +5061,7 @@ value</source>
     </message>
     <message>
         <source>True Positive Rate (Sensitivity)</source>
-        <translation>Richtig-positv-Rate (Sensitivität)</translation>
+        <translation>Richtig-Positv-Rate (Sensitivität)</translation>
     </message>
     <message>
         <source>AUC: %.2f</source>
@@ -5273,14 +5273,6 @@ value</source>
 <context>
     <name>Zoning</name>
     <message>
-        <source>Total study area</source>
-        <translation>Gesamtstudienfläche</translation>
-    </message>
-    <message>
-        <source>Landslide area</source>
-        <translation>Rutschungsfläche</translation>
-    </message>
-    <message>
         <source>Color</source>
         <translation>Farbe</translation>
     </message>
@@ -5323,6 +5315,14 @@ value</source>
     <message>
         <source>You are at the limit of maximum zones</source>
         <translation>Maximale Zonenanzahl erreicht</translation>
+    </message>
+    <message>
+        <source>False Positive Rate (1-Specificity)</source>
+        <translation>Falsch-Positiv-Rate (1-Spezifität)</translation>
+    </message>
+    <message>
+        <source>True Positive Rate (Sensitivity)</source>
+        <translation>Richtig-Positv-Rate (Sensitivität)</translation>
     </message>
     <message>
         <source>Model Info</source>
