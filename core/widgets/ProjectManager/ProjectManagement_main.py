@@ -65,6 +65,8 @@ class NewProject(QDialog):
         self.intLocale.toInt(".")
         self.dblValidator = QDoubleValidator()
         self.dblValidator.setNotation(0)  # validator has standard notation: i.e. 0.123
+        self.dblValidator.setLocale(QtCore.QLocale("en_US"))
+        # some countries by default use ',' as seperator for decimals, but we use '.'
 
         self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
         self.ui.epsgCodeLineEdit.setValidator(self.intValidator)
