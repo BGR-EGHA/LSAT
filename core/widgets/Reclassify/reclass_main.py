@@ -15,7 +15,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import matplotlib
 import traceback
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -70,9 +69,6 @@ class Reclass(QMainWindow):
 
         self.ui.tableWidget.cellChanged.connect(self.on_tableValueChanged)
 
-        self.canvas.draw()
-        self.fig.tight_layout()
-
         if self.projectPath:
             raster_data_path = os.path.join(self.projectPath, "data", "params")
             for datafile in os.listdir(raster_data_path):
@@ -81,6 +77,8 @@ class Reclass(QMainWindow):
                         0, str(os.path.join(raster_data_path, datafile)))
             if self.ui.inputRasterComboBox.currentText() != "":
                 self.readRasterData()
+        self.fig.tight_layout()
+        self.canvas.draw()
 
     def onPick(self, event):
         """
@@ -140,8 +138,8 @@ class Reclass(QMainWindow):
             self.ui.tableWidget.insertRow(rowPosition)
             self.axes.plot([event.xdata, event.xdata], [a, b], color='r', linestyle='-',
                            linewidth=1, picker=5, label=str(rowPosition), zorder=2)
-            self.canvas.draw()
             self.fig.tight_layout()
+            self.canvas.draw()
             self.update()
 
         if event.button == 1 and event.dblclick:
@@ -152,8 +150,8 @@ class Reclass(QMainWindow):
             rowPosition = int(label)
             self.ui.tableWidget.removeRow(rowPosition)
             ln.remove()
-            self.canvas.draw()
             self.fig.tight_layout()
+            self.canvas.draw()
 
     def onMotion(self, event):
         """
@@ -388,8 +386,8 @@ class Reclass(QMainWindow):
 
         self.axes.set_ylim(a, b)
         self.intList = validation_list
-        self.canvas.draw()
         self.fig.tight_layout()
+        self.canvas.draw()
         self.ui.tableWidget.blockSignals(False)
 
     def getHistogram(self):
@@ -410,8 +408,8 @@ class Reclass(QMainWindow):
         else:
             self.axes.bar(self.hist_x, self.hist_array / 1000, align="center", color = "grey", alpha = 0.5)
         a, b = self.axes.get_ylim()
-        self.canvas.draw()
         self.fig.tight_layout()
+        self.canvas.draw()
 
     def updateHistogram(self):
         """
@@ -433,8 +431,8 @@ class Reclass(QMainWindow):
             for i, value in enumerate(self.intList):
                 self.axes.plot([value, value], [a, b], color='r', linestyle='-',
                                linewidth=1, picker=5, label=str(i), zorder=2)
-            self.canvas.draw()
             self.fig.tight_layout()
+            self.canvas.draw()
         except BaseException:
             tb = traceback.format_exc()
             logging.error(tb)
