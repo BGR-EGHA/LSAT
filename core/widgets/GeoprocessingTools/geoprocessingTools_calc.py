@@ -114,7 +114,7 @@ class GeoprocessingToolsWorker(QObject):
         # get the output layer's feature definition
         outLayerDefn = outLayer.GetLayerDefn()
         outFeature = ogr.Feature(outLayerDefn)
-        # loop through the input features
+        # loop through the input features and add them
         for feat in feature.layer:
             geom = feat.GetGeometryRef()
             geom.Transform(coordTrans)
@@ -124,9 +124,6 @@ class GeoprocessingToolsWorker(QObject):
                     outLayerDefn.GetFieldDefn(i).GetNameRef(),
                     feat.GetField(i))
             outLayer.CreateFeature(outFeature)
-        # Save and close the shapefiles
-        inDataSet = None
-        outDataSet = None
         return outShapefile
 
     def _getGeomType(self, geometryName: str) -> int:
