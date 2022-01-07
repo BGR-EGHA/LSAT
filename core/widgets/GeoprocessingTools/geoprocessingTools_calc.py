@@ -95,7 +95,7 @@ class GeoprocessingToolsWorker(QObject):
         outSR.ImportFromEPSG(outSR_epsg)
         coordTrans = osr.CoordinateTransformation(inSR, outSR)
         inName, inExt = os.path.splitext(feature.path)
-        outLayerName = os.path.basename(inName) + "_proj." + inExt
+        outLayerName = os.path.basename(inName) + "_proj" + inExt
         driverstr = Feature.getDriverFromExtension(self, inExt)
         driver = ogr.GetDriverByName(driverstr)
         outShapefile = os.path.join(os.path.dirname(feature.path), outLayerName)
