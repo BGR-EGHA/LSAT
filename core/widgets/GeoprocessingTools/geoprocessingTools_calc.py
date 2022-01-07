@@ -9,14 +9,14 @@ class GeoprocessingToolsWorker(QObject):
     finishSignal = pyqtSignal()
     loggingInfoSignal = pyqtSignal(str)
 
-    def __init__(self, inDataPath, methodLayerPath, outDataPath, kwargs):
+    def __init__(self, inDataPath, methodLayerPath, outDataPath, args):
         QObject.__init__(self, parent=None)
         self.inDataPath = inDataPath
         self.methodLayerPath = methodLayerPath
         self.outDataPath = outDataPath
-        self.processingType = kwargs[0]
-        self.options = kwargs[1]
-        self.srCheckBox = kwargs[2]
+        self.processingType = args[0]
+        self.options = args[1]
+        self.srCheckBox = args[2]
 
     def run(self):
         feature = Feature(self.inDataPath)
@@ -82,11 +82,9 @@ class GeoprocessingToolsWorker(QObject):
         """
         inSR = osr.SpatialReference()
         outSR = osr.SpatialReference()
-
         if self.srCheckBox:
             inSR_epsg = int(feature.getEPSG_Code())
             outSR_epsg = int(methodLayer.getEPSG_Code())
-
         else:
             inSR_epsg = int(methodLayer.getEPSG_Code())
             outSR_epsg = int(feature.getEPSG_Code())
@@ -98,12 +96,11 @@ class GeoprocessingToolsWorker(QObject):
         outLayerName = os.path.basename(inName) + "_proj" + inExt
         driverstr = Feature.getDriverFromExtension(self, inExt)
         driver = ogr.GetDriverByName(driverstr)
-        outShapefile = os.path.join(os.path.dirname(feature.path), outLayerName)
+        outShapefile = os.path.join(os.path.dirname(methodLayer.path), outLayerName)
         if os.path.exists(outShapefile):
             driver.DeleteDataSource(outShapefile)
         outDataSet = driver.CreateDataSource(outShapefile)
         geomType = self._getGeomType(feature.geometryName)
-
         outLayer = outDataSet.CreateLayer(os.path.basename(os.path.splitext(feature.path)[0]),
                                           outSR, geom_type=geomType)
 
