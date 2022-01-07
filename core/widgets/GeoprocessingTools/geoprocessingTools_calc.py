@@ -82,6 +82,8 @@ class GeoprocessingToolsWorker(QObject):
         """
         inSR = osr.SpatialReference()
         outSR = osr.SpatialReference()
+        inSR.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
+        outSR.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
         if self.srCheckBox:
             inSR_epsg = int(feature.getEPSG_Code())
             outSR_epsg = int(methodLayer.getEPSG_Code())
@@ -101,8 +103,7 @@ class GeoprocessingToolsWorker(QObject):
             driver.DeleteDataSource(outShapefile)
         outDataSet = driver.CreateDataSource(outShapefile)
         geomType = self._getGeomType(feature.geometryName)
-        outLayer = outDataSet.CreateLayer(os.path.basename(os.path.splitext(feature.path)[0]),
-                                          outSR, geom_type=geomType)
+        outLayer = outDataSet.CreateLayer(inName, outSR, geom_type=geomType)
 
         # add fields
         inLayerDefn = feature.layerDefn
@@ -112,28 +113,17 @@ class GeoprocessingToolsWorker(QObject):
 
         # get the output layer's feature definition
         outLayerDefn = outLayer.GetLayerDefn()
-
+        outFeature = ogr.Feature(outLayerDefn)
         # loop through the input features
-        inFeature = feature.layer.GetNextFeature()
-        while inFeature:
-            # get the input geometry
-            geom = inFeature.GetGeometryRef()
-            # reproject the geometry
+        for feat in feature.layer:
+            geom = feat.GetGeometryRef()
             geom.Transform(coordTrans)
-            # create a new feature
-            outFeature = ogr.Feature(outLayerDefn)
-            # set the geometry and attribute
             outFeature.SetGeometry(geom)
             for i in range(0, outLayerDefn.GetFieldCount()):
                 outFeature.SetField(
                     outLayerDefn.GetFieldDefn(i).GetNameRef(),
-                    inFeature.GetField(i))
-            # add the feature to the shapefile
+                    feat.GetField(i))
             outLayer.CreateFeature(outFeature)
-            # dereference the features and get the next input feature
-            outFeature = None
-            inFeature = feature.layer.GetNextFeature()
-
         # Save and close the shapefiles
         inDataSet = None
         outDataSet = None
