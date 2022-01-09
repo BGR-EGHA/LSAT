@@ -309,11 +309,15 @@ class NewProject(QDialog):
         else:
             return
 
-    def createPolygon(self):
+    def createPolygon(self, projectRasterPath: str):
+        """
+        Creates a polygon (region.shp) in the project folder with the regions extent.
+        projectRasterPath is the path to the region.tif used.
+        """
         ring = ogr.Geometry(ogr.wkbLinearRing)
-        raster = Raster(self.pathRegionRaster)
+        raster = Raster(projectRasterPath)
         band = raster.data.GetRasterBand(1)
-        directory = os.path.dirname(self.pathRegionRaster)
+        directory = os.path.dirname(projectRasterPath)
         shpPath = os.path.join(directory, 'region.shp')
         driver = ogr.GetDriverByName("ESRI Shapefile")
         datasource = driver.CreateDataSource(shpPath)
@@ -451,7 +455,7 @@ class NewProject(QDialog):
             outRaster.GetRasterBand(1).WriteArray(array)
             outRaster = None
 
-            self.createPolygon()
+            self.createPolygon(self.pathRegionRaster)
             self.createProjectMetaDataFile()
             self.accept()
             self.message.getLoggingInfoProjectCreated(pathProject)
