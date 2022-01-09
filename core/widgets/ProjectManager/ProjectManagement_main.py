@@ -42,16 +42,16 @@ class NewProject(QDialog):
             os.path.join(
                 "core", "gdal_data", "gcs.csv"), os.path.join(
                 "core", "gdal_data", "pcs.csv")]
-        self.epsg_liste = []
+        self.epsg_list = []
         self.cr_names = []
         self.list_len = []
         for path in self.cs_lib_paths:
             with open(path) as dbfile:
                 reader = csv.DictReader(dbfile)
                 for row in reader:
-                    self.epsg_liste.append(str(row["COORD_REF_SYS_CODE"]))
+                    self.epsg_list.append(str(row["COORD_REF_SYS_CODE"]))
                     self.cr_names.append(str(row["COORD_REF_SYS_NAME"]))
-                self.list_len.append(len(self.epsg_liste))
+                self.list_len.append(len(self.epsg_list))
 
         self.ui.createProjectPushButton.setDefault(False)
         self.ui.createProjectPushButton.setAutoDefault(False)
@@ -92,9 +92,9 @@ class NewProject(QDialog):
         self.ui.cellsizeLineEdit.textChanged.connect(self.cellsizeLineEditStyle)
 
     def epsgTextChanged(self):
-        if str(self.ui.epsgCodeLineEdit.text()) in self.epsg_liste:
+        if str(self.ui.epsgCodeLineEdit.text()) in self.epsg_list:
             self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#b5f2b0')
-            idx = self.epsg_liste.index(str(self.ui.epsgCodeLineEdit.text()))
+            idx = self.epsg_list.index(str(self.ui.epsgCodeLineEdit.text()))
             self.ui.srNameLineEdit.setText(str(self.cr_names[idx]))
             if idx <= self.list_len[0]:
                 self.ui.cellsizeLabel.setText(self.tr("Cell size [decimal degree]"))
@@ -195,7 +195,7 @@ class NewProject(QDialog):
         sr = osr.SpatialReference()
         self.check = False
         if self.ui.epsgCodeLineEdit.text() != "None" and self.ui.epsgCodeLineEdit.text() != "":
-            if self.ui.epsgCodeLineEdit.text() not in self.epsg_liste:
+            if self.ui.epsgCodeLineEdit.text() not in self.epsg_list:
                 return
             else:
                 sr.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
