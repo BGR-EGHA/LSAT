@@ -33,7 +33,6 @@ class NewProject(QDialog):
         self.ui.setupUi(self)
         self.setWindowIcon(QIcon(':/icons/Icons/new_project.png'))
         self.setWindowTitle(self.tr("New Project"))
-        self.ui.srNameLineEdit.setEnabled(False)
         self.fileDialog = CustomFileDialog()
         self.message = Messenger()
         self.projectLocation = ""
@@ -71,6 +70,8 @@ class NewProject(QDialog):
         self.ui.epsgCodeLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
         self.ui.epsgCodeLineEdit.setValidator(self.intValidator)
         self.ui.epsgCodeLineEdit.textChanged.connect(self.epsgTextChanged)
+
+        self.ui.maskRadioButton.toggled.connect(self.on_spatialRefRadioButtons_clicked)
 
         self.ui.topLineEdit.setValidator(self.dblValidator)
         self.ui.topLineEdit.setStyleSheet('QLineEdit { background-color: %s }' % '#f2bdb0')
@@ -136,6 +137,31 @@ class NewProject(QDialog):
         else:
             self.ui.projectLocationLineEdit.setStyleSheet(
                 'QLineEdit { background-color: %s }' % '#f2bdb0')
+
+    def on_spatialRefRadioButtons_clicked(self):
+        """
+        Gets called by toogling the Spatial Reference radioButtons.
+        Checks which Spatial Reference choice the user wants to use.
+        """
+        if self.ui.maskRadioButton.isChecked():
+            self._updateSpatialRefChoiceInUi(True)
+        elif self.ui.customExtentRadioButton.isChecked():
+            self._updateSpatialRefChoiceInUi(False)
+
+    def _updateSpatialRefChoiceInUi(self, spatialRef: bool) -> None:
+        """
+        Gets called by on_spatialRefRadioButtons_clicked. Updated the Ui.
+        spatialRef is True if maskRaster is selected and False if a custom Extent is selected.
+        """
+        self.ui.maskRasterDatasetLineEdit.setEnabled(spatialRef)
+        self.ui.maskRasterDatasetToolButton.setEnabled(spatialRef)
+        self.ui.topLineEdit.setEnabled(not spatialRef)
+        self.ui.leftLineEdit.setEnabled(not spatialRef)
+        self.ui.rightLineEdit.setEnabled(not spatialRef)
+        self.ui.bottomLineEdit.setEnabled(not spatialRef)
+        self.ui.cellsizeLineEdit.setEnabled(not spatialRef)
+        if not spatialRef: # if custom extent clear mask path
+            self.ui.maskRasterDatasetLineEdit.setText("")
 
     @pyqtSlot()
     def on_epsgToolButton_clicked(self):

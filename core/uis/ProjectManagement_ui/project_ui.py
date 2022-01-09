@@ -101,6 +101,7 @@ class Ui_Project(object):
         self.epsgToolButton.setObjectName("epsgToolButton")
         self.spatialReferenceGroupBoxGridLayout.addWidget(self.epsgToolButton, 6, 1, 1, 1)
         self.srNameLineEdit = QtWidgets.QLineEdit(self.spatialReferenceGroupBox)
+        self.srNameLineEdit.setEnabled(False)
         self.srNameLineEdit.setObjectName("srNameLineEdit")
         self.spatialReferenceGroupBoxGridLayout.addWidget(self.srNameLineEdit, 4, 0, 1, 2)
         self.gridLayout.addLayout(self.spatialReferenceGroupBoxGridLayout, 1, 0, 1, 2)
