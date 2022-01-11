@@ -9,14 +9,14 @@ class GeoprocessingToolsWorker(QObject):
     finishSignal = pyqtSignal()
     loggingInfoSignal = pyqtSignal(str)
 
-    def __init__(self, inDataPath, methodLayerPath, outDataPath, kwargs):
+    def __init__(self, inDataPath, methodLayerPath, outDataPath, args):
         QObject.__init__(self, parent=None)
         self.inDataPath = inDataPath
         self.methodLayerPath = methodLayerPath
         self.outDataPath = outDataPath
-        self.processingType = kwargs[0]
-        self.options = kwargs[1]
-        self.srCheckBox = kwargs[2]
+        self.processingType = args[0]
+        self.options = args[1]
+        self.srCheckBox = args[2]
 
     def run(self):
         feature = Feature(self.inDataPath)
@@ -82,11 +82,11 @@ class GeoprocessingToolsWorker(QObject):
         """
         inSR = osr.SpatialReference()
         outSR = osr.SpatialReference()
-
+        inSR.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
+        outSR.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
         if self.srCheckBox:
             inSR_epsg = int(feature.getEPSG_Code())
             outSR_epsg = int(methodLayer.getEPSG_Code())
-
         else:
             inSR_epsg = int(methodLayer.getEPSG_Code())
             outSR_epsg = int(feature.getEPSG_Code())
@@ -95,17 +95,15 @@ class GeoprocessingToolsWorker(QObject):
         outSR.ImportFromEPSG(outSR_epsg)
         coordTrans = osr.CoordinateTransformation(inSR, outSR)
         inName, inExt = os.path.splitext(feature.path)
-        outLayerName = os.path.basename(inName) + "_proj." + inExt
+        outLayerName = os.path.basename(inName) + "_proj" + inExt
         driverstr = Feature.getDriverFromExtension(self, inExt)
         driver = ogr.GetDriverByName(driverstr)
-        outShapefile = os.path.join(os.path.dirname(feature.path), outLayerName)
+        outShapefile = os.path.join(os.path.dirname(methodLayer.path), outLayerName)
         if os.path.exists(outShapefile):
             driver.DeleteDataSource(outShapefile)
         outDataSet = driver.CreateDataSource(outShapefile)
         geomType = self._getGeomType(feature.geometryName)
-
-        outLayer = outDataSet.CreateLayer(os.path.basename(os.path.splitext(feature.path)[0]),
-                                          outSR, geom_type=geomType)
+        outLayer = outDataSet.CreateLayer(inName, outSR, geom_type=geomType)
 
         # add fields
         inLayerDefn = feature.layerDefn
@@ -115,31 +113,17 @@ class GeoprocessingToolsWorker(QObject):
 
         # get the output layer's feature definition
         outLayerDefn = outLayer.GetLayerDefn()
-
-        # loop through the input features
-        inFeature = feature.layer.GetNextFeature()
-        while inFeature:
-            # get the input geometry
-            geom = inFeature.GetGeometryRef()
-            # reproject the geometry
+        outFeature = ogr.Feature(outLayerDefn)
+        # loop through the input features and add them
+        for feat in feature.layer:
+            geom = feat.GetGeometryRef()
             geom.Transform(coordTrans)
-            # create a new feature
-            outFeature = ogr.Feature(outLayerDefn)
-            # set the geometry and attribute
             outFeature.SetGeometry(geom)
             for i in range(0, outLayerDefn.GetFieldCount()):
                 outFeature.SetField(
                     outLayerDefn.GetFieldDefn(i).GetNameRef(),
-                    inFeature.GetField(i))
-            # add the feature to the shapefile
+                    feat.GetField(i))
             outLayer.CreateFeature(outFeature)
-            # dereference the features and get the next input feature
-            outFeature = None
-            inFeature = feature.layer.GetNextFeature()
-
-        # Save and close the shapefiles
-        inDataSet = None
-        outDataSet = None
         return outShapefile
 
     def _getGeomType(self, geometryName: str) -> int:
