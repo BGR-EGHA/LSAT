@@ -322,8 +322,8 @@ class Zoning(QMainWindow):
         else:  # ubuntu
             prop = matplotlib.font_manager.FontProperties(
                 fname="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
-        self.axes.set_xlabel(self.tr("Total study area"), fontproperties=prop)
-        self.axes.set_ylabel(self.tr("Landslide area"), fontproperties=prop)
+        self.axes.set_xlabel(self.tr("False Positive Rate (1-Specificity)"), fontproperties=prop)
+        self.axes.set_ylabel(self.tr("True Positive Rate (Sensitivity)"), fontproperties=prop)
         self.axes.set_xlim([0.0, 1.0])
         self.axes.set_ylim([0.0, 1.0])
 
