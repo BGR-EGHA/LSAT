@@ -148,8 +148,12 @@ class ImportInventory(QMainWindow):
         self.clip.moveToThread(self.thread)
         self.thread.started.connect(self.clip.run)
         self.clip.finishSignal.connect(lambda: self.startImport(clippedFile, *params))
+        self.clip.loggingInfoSignal.connect(self.updateLogger)
         self.thread.start()
         return clippedFile
+
+    def updateLogger(self, message):
+        logging.info(str(message))
 
     @pyqtSlot()
     def startImport(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str):
