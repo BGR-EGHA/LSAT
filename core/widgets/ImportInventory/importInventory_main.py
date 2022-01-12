@@ -148,12 +148,17 @@ class ImportInventory(QMainWindow):
         self.clip.moveToThread(self.thread)
         self.thread.started.connect(self.clip.run)
         self.clip.finishSignal.connect(lambda: self.startImport(clippedFile, *params))
-        self.clip.loggingInfoSignal.connect(self.updateLogger)
+        self.clip.loggingInfoSignal.connect(self.updateLoggerInfo)
+        self.clip.loggingWarnSignal.connect(self.updateLoggerWarning)
         self.thread.start()
         return clippedFile
 
-    def updateLogger(self, message):
+    def updateLoggerInfo(self, message):
         logging.info(str(message))
+
+    def updateLoggerWarning(self, message):
+        logging.warn(str(message))
+        logging.warn(self.tr("Only valid geometries used."))
 
     @pyqtSlot()
     def startImport(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str):

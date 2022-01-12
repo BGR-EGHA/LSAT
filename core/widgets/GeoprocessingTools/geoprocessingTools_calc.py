@@ -8,6 +8,7 @@ from osgeo import gdal, ogr, osr
 class GeoprocessingToolsWorker(QObject):
     finishSignal = pyqtSignal()
     loggingInfoSignal = pyqtSignal(str)
+    loggingWarnSignal = pyqtSignal(str)
 
     def __init__(self, inDataPath, methodLayerPath, outDataPath, args):
         QObject.__init__(self, parent=None)
@@ -17,8 +18,12 @@ class GeoprocessingToolsWorker(QObject):
         self.processingType = args[0]
         self.options = args[1]
         self.srCheckBox = args[2]
+        self.gdalError = GDALErrorHandler()
 
     def run(self):
+        handler = self.gdalError.handler
+        gdal.PushErrorHandler(handler)
+        ogr.UseExceptions()
         feature = Feature(self.inDataPath)
         methodLayer = Feature(self.methodLayerPath)
 
@@ -43,7 +48,6 @@ class GeoprocessingToolsWorker(QObject):
             srs = feature.layer.GetSpatialRef()
 
         geomType = self._getGeomType(feature.geometryName)
-
         if self.processingType == 0:
             self.loggingInfoSignal.emit(self.tr("Perform Clip..."))
             outLayer = outSource.CreateLayer("Clipped", srs, geomType)
@@ -68,10 +72,16 @@ class GeoprocessingToolsWorker(QObject):
             self.loggingInfoSignal.emit(self.tr("Perform Union..."))
             outLayer = outSource.CreateLayer("Union", srs, geomType)
             feature.layer.Union(methodLayer.layer, outLayer, self.options)
+        if self.gdalError.errMsg: # Only if atleast one gdal error during processing
+            self.loggingWarnSignal.emit(self.tr(
+                                        "Atleast one GDAL error. Last GDAL error message: {}"
+                                        ).format(self.gdalError.errMsg))
 
         outSource = None
         feature = None
         methodLayer = None
+        ogr.DontUseExceptions()
+        gdal.PushErrorHandler() # resets GDAL Error Handling back to default
         self.finishSignal.emit()
 
     def reprojectLayer(self, feature, methodLayer) -> str:
@@ -138,3 +148,16 @@ class GeoprocessingToolsWorker(QObject):
         elif geometryName == "POLYLINE":
             geomType = ogr.wkbMultiCurve
         return geomType
+
+class GDALErrorHandler(object):
+    """Used to catch gdal exceptions during processing.
+    """
+    def __init__(self):
+        self.errLevel = gdal.CE_None
+        self.errNo = 0
+        self.errMsg = ""
+    
+    def handler(self, errLevel, errNo, errMsg):
+        self.errLevel = errLevel
+        self.errNo = errNo
+        self.errMsg = errMsg
