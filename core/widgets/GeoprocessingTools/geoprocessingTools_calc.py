@@ -72,10 +72,10 @@ class GeoprocessingToolsWorker(QObject):
             self.loggingInfoSignal.emit(self.tr("Perform Union..."))
             outLayer = outSource.CreateLayer("Union", srs, geomType)
             feature.layer.Union(methodLayer.layer, outLayer, self.options)
-        if self.gdalError.errMsg: # Only if atleast one gdal error during processing
+        if self.gdalError.errMsgs: # Only if atleast one gdal error during processing
             self.loggingWarnSignal.emit(self.tr(
-                                        "Atleast one GDAL error. Last GDAL error message: {}"
-                                        ).format(self.gdalError.errMsg))
+                                        "Atleast one GDAL error. GDAL error messages: {}"
+                                        ).format(" ".join(self.gdalError.errMsgs)))
 
         outSource = None
         feature = None
@@ -156,8 +156,10 @@ class GDALErrorHandler(object):
         self.errLevel = gdal.CE_None
         self.errNo = 0
         self.errMsg = ""
+        self.errMsgs = []
     
     def handler(self, errLevel, errNo, errMsg):
         self.errLevel = errLevel
         self.errNo = errNo
         self.errMsg = errMsg
+        self.errMsgs.append(errMsg)
