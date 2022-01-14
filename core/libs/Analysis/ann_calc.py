@@ -87,7 +87,7 @@ class ann_calc(QObject):
             score = ann.score(stack.T, labels)
             statistics = self.getStatistics(self.data_list)
 
-            # Writing results to raster and .npz
+            # Writing results to raster, .npz and .pkl
             self.results2raster(self.name)
             self.results2npz(
                 self.name,
