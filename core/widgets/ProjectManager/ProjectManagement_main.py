@@ -208,7 +208,7 @@ class NewProject(QDialog):
             self.ui.bottomLineEdit.setText(str(extent[2]))
             self.ui.topLineEdit.setText(str(extent[3]))
             self.ui.cellsizeLineEdit.setText(str(self.raster.cellsize[0]))
-            self.ui.srNameLineEdit.setText(str(self.raster.getPROJCS()))
+            self.ui.srNameLineEdit.setText(str(self.proj))
             self.checkUnits()
 
     def updateEPSGLineColor(self):
@@ -332,16 +332,15 @@ class NewProject(QDialog):
             self.area += area # TODO move to own function
         raster = None
 
-    def createProjectMetaDataFile(self):
+    def createProjectMetaDataFile(self, pathProject: str) -> None:
         """
         This method creates a project metadata xml-file.
         :return: None
         """
-        pathProject = os.path.join(self.projectLocation, self.ui.projectNameLineEdit.text())
         projectName = self.ui.projectNameLineEdit.text()
         metaDataFile = os.path.join(pathProject, "metadata.xml")
         epsg = str(self.ui.epsgCodeLineEdit.text())
-        proj = str(self.proj)
+        proj = str(self.ui.srNameLineEdit.text())
         top = str(self.ui.topLineEdit.text())
         left = str(self.ui.leftLineEdit.text())
         right = str(self.ui.rightLineEdit.text())
@@ -364,7 +363,6 @@ class NewProject(QDialog):
         tree = ET.ElementTree(root)
         tree.write(metaDataFile)
         del metaDataFile
-        return
 
     def _validateInputs(self) -> bool:
         if (str(self.projectLocation) == "" or
@@ -405,7 +403,7 @@ class NewProject(QDialog):
         # Create initial project files
         self.createRaster(pathRegionRaster)
         self.createPolygon(pathRegionRaster)
-        # self.createProjectMetaDataFile()
+        self.createProjectMetaDataFile(pathProject)
         self.accept()
         self.message.getLoggingInfoProjectCreated(pathProject)
         if os.path.isfile(self.ui.maskRasterDatasetLineEdit.text()):
