@@ -366,98 +366,61 @@ class NewProject(QDialog):
         del metaDataFile
         return
 
-    def _validateInputs(self):
-
+    def _validateInputs(self) -> bool:
         if (str(self.projectLocation) == "" or
                 any(x in ["<", ">", "|", "?", "*"] for x in str(self.projectLocation))):
             QMessageBox.warning(self, self.tr("Project location invalid or missing!"), self.tr(
                 "Please specify the location of the project to proceed!"))
-            return
+            return False
         if (self.ui.projectNameLineEdit.text() == "" or any(
                 x in ["<", ">", ":", "|", "?", "*"] for x in self.ui.projectNameLineEdit.text())):
             QMessageBox.warning(self, self.tr("Project name invalid or missing!"),
                                 self.tr("Please specify the name of the project to proceed!"))
-            return
+            return False
         if self.ui.epsgCodeLineEdit.text() == "":
             QMessageBox.warning(self, self.tr("EPSG missing"), self.tr(
                 "Please specify the spatial reference of the project to proceed!"))
-            return
+            return False
         if self.ui.topLineEdit.text() == "" or self.ui.leftLineEdit.text() == "" or self.ui.rightLineEdit.text(
         ) == "" or self.ui.bottomLineEdit.text() == "" or self.ui.cellsizeLineEdit.text() == "":
             QMessageBox.warning(self, self.tr("Extent missing"), self.tr(
                 "Please specify the extent of the project to proceed!"))
-            return
-        if not self.check:
-            return
+            return False
         return True
 
     @pyqtSlot()
     def on_createProjectPushButton_clicked(self):
-        if self._validateInputs():
-            pathProject = os.path.join(self.projectLocation, self.ui.projectNameLineEdit.text())
-            if not os.path.exists(pathProject):
-                self.createProjectDirectory(pathProject)
-            else:
-                QMessageBox.warning(
-                    self,
-                    self.tr("Project with this name already exists in this directory!"),
-                    self.tr("Specify other project name or change the host directory!"))
-                return
+        if not self._validateInputs():
+            return
+        # Create Folder structure
+        pathProject = os.path.join(self.projectLocation, self.ui.projectNameLineEdit.text())
+        if not os.path.exists(pathProject):
+            pathRegionRaster = self.createProjectDirectory(pathProject)
+        else:
+            QMessageBox.warning(
+                self,
+                self.tr("Project with this name already exists in this directory!"),
+                self.tr("Specify other project name or change the host directory!"))
+            return
+        # Create initial project files
+        self.createRaster(pathRegionRaster)
+        self.createPolygon(pathRegionRaster)
+        # self.createProjectMetaDataFile()
+        self.accept()
+        self.message.getLoggingInfoProjectCreated(pathProject)
+        if os.path.isfile(self.ui.maskRasterDatasetLineEdit.text()):
+            self.importMask(
+                self.ui.maskRasterDatasetLineEdit.text(),
+                pathRegionRaster,
+                os.path.join(
+                    pathProject,
+                    "data",
+                    "params"))
 
-            self.spr = osr.SpatialReference()
-            self.spr.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
-
-            NoData_value = -9999
-            driver = gdal.GetDriverByName('GTiff')
-            top = float(self.ui.topLineEdit.text())
-            bottom = float(self.ui.bottomLineEdit.text())
-            left = float(self.ui.leftLineEdit.text())
-            right = float(self.ui.rightLineEdit.text())
-            cellsize = float(self.ui.cellsizeLineEdit.text())
-
-            cols = int(round((right - left) / cellsize, 0))
-            rows = int(round((top - bottom) / cellsize, 0))
-
-            outRaster = driver.Create(pathRegionRaster, cols, rows, 1, gdal.GDT_Int16)
-            outRaster.SetProjection(self.spr.ExportToWkt())
-            if self.ui.maskRasterDatasetLineEdit.text() != "":
-                geoTransform = (
-                    self.raster.geoTrans[0],
-                    cellsize,
-                    self.raster.geoTrans[2],
-                    self.raster.geoTrans[3],
-                    self.raster.geoTrans[4],
-                    -cellsize)
-                array = self.raster.getArrayFromBand().astype(np.float32)
-                array[np.where(array != self.raster.nodata)] = 1
-                array[np.where(array == self.raster.nodata)] = -9999
-            else:
-                geoTransform = (left, cellsize, 0.0, top, 0.0, -cellsize)
-                array = np.ones(shape=(rows, cols))
-
-            outRaster.SetGeoTransform(geoTransform)
-            band = outRaster.GetRasterBand(1)
-            band.SetNoDataValue(NoData_value)
-
-            outRaster.GetRasterBand(1).WriteArray(array)
-            outRaster = None
-
-            self.createPolygon(pathRegionRaster)
-            self.createProjectMetaDataFile()
-            self.accept()
-            self.message.getLoggingInfoProjectCreated(pathProject)
-            if os.path.isfile(self.ui.maskRasterDatasetLineEdit.text()):
-                self.importMask(
-                    self.ui.maskRasterDatasetLineEdit.text(),
-                    pathRegionRaster,
-                    os.path.join(
-                        pathProject,
-                        "data",
-                        "params"))
-
-    def createProjectDirectory(self, pathProject: str) -> None:
+    def createProjectDirectory(self, pathProject: str) -> str:
         """
         Creates the projects directory structure at pathProject.
+        Returns path to projects region.tif.
         """
         os.makedirs(pathProject)
         pathRegionRaster = os.path.join(pathProject, "region.tif")
@@ -473,6 +436,47 @@ class NewProject(QDialog):
             os.makedirs(os.path.join(pathProject, "results", analysis, "tables"))
             os.makedirs(os.path.join(pathProject, "results", analysis, "reports"))
             os.makedirs(os.path.join(pathProject, "results", analysis, "rasters"))
+        return pathRegionRaster
+
+    def createRaster(self, pathRegionRaster: str) -> None:
+        """
+        Creates region.tif at pathRegionRaster
+        """
+        self.spr = osr.SpatialReference()
+        self.spr.ImportFromEPSG(int(self.ui.epsgCodeLineEdit.text()))
+        NoData_value = -9999
+        driver = gdal.GetDriverByName('GTiff')
+        top = float(self.ui.topLineEdit.text())
+        bottom = float(self.ui.bottomLineEdit.text())
+        left = float(self.ui.leftLineEdit.text())
+        right = float(self.ui.rightLineEdit.text())
+        cellsize = float(self.ui.cellsizeLineEdit.text())
+        cols = int(round((right - left) / cellsize, 0))
+        rows = int(round((top - bottom) / cellsize, 0))
+        outRaster = driver.Create(pathRegionRaster, cols, rows, 1, gdal.GDT_Int16)
+        outRaster.SetProjection(self.spr.ExportToWkt())
+        # Project uses mask raster
+        if os.path.isfile(self.ui.maskRasterDatasetLineEdit.text()):
+            geoTransform = (
+                self.raster.geoTrans[0],
+                cellsize,
+                self.raster.geoTrans[2],
+                self.raster.geoTrans[3],
+                self.raster.geoTrans[4],
+                -cellsize)
+            array = self.raster.getArrayFromBand().astype(np.float32)
+            array[np.where(array != self.raster.nodata)] = 1
+            array[np.where(array == self.raster.nodata)] = -9999
+        # Project coordinates by hand
+        else:
+            geoTransform = (left, cellsize, 0.0, top, 0.0, -cellsize)
+            array = np.ones(shape=(rows, cols))
+        outRaster.SetGeoTransform(geoTransform)
+        band = outRaster.GetRasterBand(1)
+        band.SetNoDataValue(NoData_value)
+
+        outRaster.GetRasterBand(1).WriteArray(array)
+        outRaster = None
 
     def importMask(self, rasterpath: str, maskpath: str, outputdir: str):
         """
