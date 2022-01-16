@@ -396,20 +396,7 @@ class NewProject(QDialog):
         if self._validateInputs():
             pathProject = os.path.join(self.projectLocation, self.ui.projectNameLineEdit.text())
             if not os.path.exists(pathProject):
-                os.makedirs(pathProject)
-                self.pathRegionRaster = os.path.join(pathProject, "region.tif")
-                os.makedirs(os.path.join(pathProject, "workspace"))
-                os.makedirs(os.path.join(pathProject, "data", "params"))
-                os.makedirs(os.path.join(pathProject, "data", "inventory", "test"))
-                os.makedirs(os.path.join(pathProject, "data", "inventory", "training"))
-                resultfolders = ["susceptibility_maps", "statistics"]
-                for resultfolder in resultfolders:
-                    os.makedirs(os.path.join(pathProject, "results", resultfolder))
-                analysistypes = ["ANN", "AHP", "LR", "WoE"]
-                for analysis in analysistypes:
-                    os.makedirs(os.path.join(pathProject, "results", analysis, "tables"))
-                    os.makedirs(os.path.join(pathProject, "results", analysis, "reports"))
-                    os.makedirs(os.path.join(pathProject, "results", analysis, "rasters"))
+                self.createProjectDirectory(pathProject)
             else:
                 QMessageBox.warning(
                     self,
@@ -431,7 +418,7 @@ class NewProject(QDialog):
             cols = int(round((right - left) / cellsize, 0))
             rows = int(round((top - bottom) / cellsize, 0))
 
-            outRaster = driver.Create(self.pathRegionRaster, cols, rows, 1, gdal.GDT_Int16)
+            outRaster = driver.Create(pathRegionRaster, cols, rows, 1, gdal.GDT_Int16)
             outRaster.SetProjection(self.spr.ExportToWkt())
             if self.ui.maskRasterDatasetLineEdit.text() != "":
                 geoTransform = (
@@ -455,18 +442,37 @@ class NewProject(QDialog):
             outRaster.GetRasterBand(1).WriteArray(array)
             outRaster = None
 
-            self.createPolygon(self.pathRegionRaster)
+            self.createPolygon(pathRegionRaster)
             self.createProjectMetaDataFile()
             self.accept()
             self.message.getLoggingInfoProjectCreated(pathProject)
             if os.path.isfile(self.ui.maskRasterDatasetLineEdit.text()):
                 self.importMask(
                     self.ui.maskRasterDatasetLineEdit.text(),
-                    self.pathRegionRaster,
+                    pathRegionRaster,
                     os.path.join(
                         pathProject,
                         "data",
                         "params"))
+
+    def createProjectDirectory(self, pathProject: str) -> None:
+        """
+        Creates the projects directory structure at pathProject.
+        """
+        os.makedirs(pathProject)
+        pathRegionRaster = os.path.join(pathProject, "region.tif")
+        os.makedirs(os.path.join(pathProject, "workspace"))
+        os.makedirs(os.path.join(pathProject, "data", "params"))
+        os.makedirs(os.path.join(pathProject, "data", "inventory", "test"))
+        os.makedirs(os.path.join(pathProject, "data", "inventory", "training"))
+        resultfolders = ("susceptibility_maps", "statistics")
+        for resultfolder in resultfolders:
+            os.makedirs(os.path.join(pathProject, "results", resultfolder))
+        analysistypes = ("ANN", "AHP", "LR", "WoE")
+        for analysis in analysistypes:
+            os.makedirs(os.path.join(pathProject, "results", analysis, "tables"))
+            os.makedirs(os.path.join(pathProject, "results", analysis, "reports"))
+            os.makedirs(os.path.join(pathProject, "results", analysis, "rasters"))
 
     def importMask(self, rasterpath: str, maskpath: str, outputdir: str):
         """
