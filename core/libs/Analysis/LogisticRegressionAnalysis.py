@@ -12,6 +12,7 @@ import time
 from core.libs.Analysis.BivariateSolver import WofE  # for statistics
 from core.libs.GDAL_Libs.Layers import Raster, Feature
 from core.libs.Rasterprepwork.rpw_main import rasterprepwork
+import joblib
 import logging
 import math
 from PyQt5 import QtCore
@@ -76,7 +77,6 @@ class LogisticRegressionAnalysis(QObject):
             model = lr.fit(stack.T, labels)
             scores, p_values = chi2(stack.T, labels)
             score = lr.score(stack.T, labels)
-
             time2 = time.perf_counter()
             self.loggingInfoSignal.emit(
                 self.tr("Training accomplished in {} s").format(
@@ -104,8 +104,19 @@ class LogisticRegressionAnalysis(QObject):
             self.result_array[np.where(noDataArray == -9999)] = -9999
             probab[np.where(noDataArray.ravel() == -9999)] = 0
             self.results2raster(self.name)
-            self.results2npz(self.name, model.intercept_, self.data_list, coefs,
-                         confidence_score, p_values, score, auc, AIC, BIC, AICc, Statistics)
+            self.results2npz(self.name,
+                model.intercept_,
+                self.data_list,
+                coefs, 
+                confidence_score,
+                p_values,
+                score, 
+                auc,
+                AIC,
+                BIC,
+                AICc,
+                Statistics)
+            self.results2pkl(self.name, model)
             self.doneSignal.emit("success")
         except BaseException:
             tb = traceback.format_exc()
@@ -264,3 +275,8 @@ class LogisticRegressionAnalysis(QObject):
                             Statistics=np.asarray(Statistics, dtype = object))
         self.loggingInfoSignal.emit(self.tr("Results saved in {}").format(path))
         self.resultSignal.emit(str(path))
+
+    def results2pkl(self, name, model) -> None:
+        path = os.path.join(self.tablesPath, name + "_model.pkl")
+        joblib.dump(model, path, compress=True)
+        self.loggingInfoSignal.emit(self.tr("Model saved in {}").format(path))

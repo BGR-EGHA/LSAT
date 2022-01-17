@@ -142,7 +142,7 @@
          <item>
           <widget class="QLineEdit" name="outputLineEdit">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT will create two files with the given name.&lt;/p&gt;&lt;p&gt;*name*.tif in \results\ANN\rasters\ and&lt;/p&gt;&lt;p&gt;*name*.npz in \results\ANN\tables\&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT will create three files with the given name.&lt;/p&gt;&lt;p&gt;*name*_ann.tif in \results\ANN\rasters\,&lt;br/&gt;*name*_tab.npz in \results\ANN\tables\ and&lt;br/&gt;*name*_model.pkl in \results\ANN\tables&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string/>
@@ -188,7 +188,7 @@
      <x>0</x>
      <y>0</y>
      <width>622</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

@@ -2,6 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from osgeo import gdal, ogr
+import joblib
 import logging
 import numpy as np
 import os
@@ -86,7 +87,7 @@ class ann_calc(QObject):
             score = ann.score(stack.T, labels)
             statistics = self.getStatistics(self.data_list)
 
-            # Writing results to raster and .npz
+            # Writing results to raster, .npz and .pkl
             self.results2raster(self.name)
             self.results2npz(
                 self.name,
@@ -96,6 +97,7 @@ class ann_calc(QObject):
                 self.settings,
                 self.featurePath,
                 statistics)
+            self.results2pkl(self.name, model)
             self.finished.emit()
         except:
             tb = traceback.format_exc()
@@ -167,3 +169,8 @@ class ann_calc(QObject):
                             Statistics=np.asarray(Statistics, dtype=object))
         self.loggingInfoSignal.emit(self.tr("Results saved in {}").format(path))
         self.resultSignal.emit(str(path))
+
+    def results2pkl(self, name, model) -> None:
+        path = os.path.join(self.tablespath, name + "_model.pkl")
+        joblib.dump(model, path, compress=True)
+        self.loggingInfoSignal.emit(self.tr("Model saved in {}").format(path))
