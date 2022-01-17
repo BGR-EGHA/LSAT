@@ -138,9 +138,9 @@ class ImportInventory(QMainWindow):
         region = os.path.join(self.projectLocation, "region.shp")
         inputFile = self.ui.featureLineEdit.text()
         clippedFile = os.path.join(self.projectLocation, "workspace", "clipped4import.shp")
-        args = (0, ["SKIP_FAILURES=NO", "PROMOTE_TO_MULTI=NO"], True)
+        args = (0, ["SKIP_FAILURES=YES", "PROMOTE_TO_MULTI=NO"], True)
         # 0 -> clip function
-        # "SKIP_FAILURES=NO" -> Don't skip failures, raise error.
+        # "SKIP_FAILURES=YES" -> Skip failures, will print error but skip to next feature.
         # "PROMOTE_TO_MULTI=NO" -> Keep feature as is.
         # True -> Use SpatialRef of region.shp
         self.thread = QThread()
@@ -148,8 +148,17 @@ class ImportInventory(QMainWindow):
         self.clip.moveToThread(self.thread)
         self.thread.started.connect(self.clip.run)
         self.clip.finishSignal.connect(lambda: self.startImport(clippedFile, *params))
+        self.clip.loggingInfoSignal.connect(self.updateLoggerInfo)
+        self.clip.loggingWarnSignal.connect(self.updateLoggerWarning)
         self.thread.start()
         return clippedFile
+
+    def updateLoggerInfo(self, message):
+        logging.info(str(message))
+
+    def updateLoggerWarning(self, message):
+        logging.warn(str(message))
+        logging.warn(self.tr("Only valid geometries used."))
 
     @pyqtSlot()
     def startImport(self, featPath: str, outTrain: str, outTest: str, percent: int, seed: str):

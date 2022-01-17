@@ -1792,6 +1792,10 @@ MultiPolygons, or LineStrings to MultiLineStrings.</source>
         <translation>Inventar aufteilen</translation>
     </message>
     <message>
+        <source>Ignore feature outside mask raster</source>
+        <translation>Feature außerhalb des Maskenrasters ignorieren</translation>
+    </message>
+    <message>
         <source>Import feature</source>
         <translation>Feature importieren</translation>
     </message>
@@ -1826,6 +1830,18 @@ MultiPolygons, or LineStrings to MultiLineStrings.</source>
     <message>
         <source>Successfully created {} - {}% of {}</source>
         <translation>Erfolgreich {} erstellt - {}% von {}</translation>
+    </message>
+    <message>
+        <source>Clipping feature to region.shp</source>
+        <translation>Clippe feature auf region.shp</translation>
+    </message>
+    <message>
+        <source>Clipped feature {} created</source>
+        <translation>Geclipptes Feature {} erstellt</translation>
+    </message>
+    <message>
+        <source>Only valid geometries used.</source>
+        <translation>Nur gültige Geometrien verwendet.</translation>
     </message>
 </context>
 <context>
@@ -4601,6 +4617,10 @@ value</source>
         <translation>Lösche...</translation>
     </message>
     <message>
+        <source>EPSG Codes of Feature and Method differ ({} / {}). Reprojecting.</source>
+        <translation>EPSG Codes von Feature und Methodenlayer unterscheiden sich ({} / {}). Reprojiziere.</translation>
+    </message>
+    <message>
         <source>Perform Clip...</source>
         <translation>Clippe...</translation>
     </message>
@@ -4611,6 +4631,10 @@ value</source>
     <message>
         <source>Perform Symmetrical Difference...</source>
         <translation>Symmetrische Differenz...</translation>
+    </message>
+    <message>
+        <source>Atleast one GDAL error. GDAL error messages: {}</source>
+        <translation>Mindestens ein GDAL Fehler. GDAL Fehlermeldungen: {}</translation>
     </message>
     <message>
         <source>Perform Union...</source>
