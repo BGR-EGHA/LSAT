@@ -197,6 +197,10 @@ class WofETool(QMainWindow):
             root = self.tree.invisibleRootItem()
             index = self.tree.currentIndex().row()
             treeItem = self.tree.topLevelItem(index)
+            # remove from LM
+            layerName = treeItem.text(0)
+            self.LM.removeTreeItemByName(layerName)
+            # remove from visibile treeWidget
             root.removeChild(treeItem)
 
     @pyqtSlot()
@@ -349,7 +353,7 @@ class WofETool(QMainWindow):
 
         # Check if the training feature combo box is not empty path and return a
         # message if path is not set
-        if str(self.ui.trainingFeatureComboBox.currentText()) == "":
+        if not os.path.isfile(self.ui.trainingFeatureComboBox.currentText()):
             QMessageBox.warning(self, self.tr("Inventory missing!"), self.tr(
                 "Select the inventory dataset to be used as training data!"))
             return
@@ -626,7 +630,6 @@ class Worker(QObject):
                         str(rasterPath), os.path.join(
                             self.workspace, "land_rast.tif"), self.rasterMethod)
 
-                    eventRaster = Raster(eventRasterPath)
                     eventRaster = Raster(eventRasterPath)
 
                     wofe = WofE(raster, eventRaster, "")  # Weight Calculation

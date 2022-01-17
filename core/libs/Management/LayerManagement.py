@@ -32,7 +32,7 @@ class LayerManagement:
         '''
         Return the pixmap item object by name
         '''
-        for key, values in self.canvasContent.iteritems():
+        for key, values in self.canvasContent.items():
             if values['Name'] == name:
                 return key
 
@@ -40,7 +40,7 @@ class LayerManagement:
         '''
         Return the tree widget item object by name
         '''
-        for key, values in self.treeContent.iteritems():
+        for key, values in self.treeContent.items():
             if values['Name'] == name:
                 return key
 
@@ -63,3 +63,10 @@ class LayerManagement:
         except BaseException:
             sourcePath = self.treeContent[item]['Source']
         return sourcePath
+
+    def removeTreeItemByName(self, name: str) -> None:
+        '''
+        Removes an item from the tree based on its name.
+        '''
+        key = self.getTreeItemByName(name)
+        self.treeContent.pop(key)
