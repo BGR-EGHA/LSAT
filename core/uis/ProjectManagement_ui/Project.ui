@@ -41,11 +41,32 @@
        <property name="title">
         <string>Spatial Reference</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="maskRadioButton">
+          <property name="text">
+           <string>Use mask raster dataset</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="customExtentRadioButton">
+          <property name="text">
+           <string>Use custom extent</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
          <layout class="QGridLayout" name="spatialReferenceGroupBoxGridLayout">
           <item row="10" column="2">
-           <widget class="QLineEdit" name="rightLineEdit"/>
+           <widget class="QLineEdit" name="rightLineEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item row="8" column="1">
            <widget class="QLabel" name="topLabel">
@@ -85,7 +106,11 @@
            </widget>
           </item>
           <item row="12" column="1">
-           <widget class="QLineEdit" name="bottomLineEdit"/>
+           <widget class="QLineEdit" name="bottomLineEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item row="9" column="0">
            <widget class="QLabel" name="leftLabel">
@@ -100,12 +125,16 @@
           <item row="0" column="0">
            <widget class="QLabel" name="maskRasterDatasetLabel">
             <property name="text">
-             <string>Mask raster dataset (Optional)</string>
+             <string>Mask raster dataset</string>
             </property>
            </widget>
           </item>
           <item row="9" column="1">
-           <widget class="QLineEdit" name="topLineEdit"/>
+           <widget class="QLineEdit" name="topLineEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item row="1" column="2">
            <widget class="QToolButton" name="maskRasterDatasetToolButton">
@@ -115,10 +144,18 @@
            </widget>
           </item>
           <item row="10" column="0">
-           <widget class="QLineEdit" name="leftLineEdit"/>
+           <widget class="QLineEdit" name="leftLineEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item row="15" column="0" colspan="2">
-           <widget class="QLineEdit" name="cellsizeLineEdit"/>
+           <widget class="QLineEdit" name="cellsizeLineEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
           <item row="9" column="2">
            <widget class="QLabel" name="rightLabel">
@@ -155,7 +192,11 @@
            </widget>
           </item>
           <item row="4" column="0" colspan="2">
-           <widget class="QLineEdit" name="srNameLineEdit"/>
+           <widget class="QLineEdit" name="srNameLineEdit">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
