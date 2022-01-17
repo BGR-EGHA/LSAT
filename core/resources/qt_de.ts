@@ -1063,8 +1063,8 @@
         <translation>Ausgabename</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT will create three files with the given name.&lt;/p&gt;&lt;p&gt;*name*_ann.tif in \results\ANN\rasters\,&lt;br/&gt;*name*_tab.npz in \results\ANN\tables\ and&lt;br/&gt;*name*_model.pkl in \results\ANN\tables&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT wird drei Dateien mit dem Namen erstellen.&lt;/p&gt;&lt;p&gt;*name*_ann.tif in \results\ANN\rasters\,&lt;br/&gt;*name*_tab.npz in \results\ANN\tables\ und&lt;br/&gt;*name*_model.pkl in \results\ANN\tables&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT will create two files with the given name.&lt;/p&gt;&lt;p&gt;*name*.tif in \results\ANN\rasters\ and&lt;/p&gt;&lt;p&gt;*name*.npz in \results\ANN\tables\&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT wird zwei Dateien mit dem Namen erstellen.&lt;/p&gt;&lt;p&gt;*name*.tif in \results\ANN\rasters\ und&lt;/p&gt;&lt;p&gt;*name*.npz in \results\ANN\tables\&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Calculate with ANN</source>
@@ -1792,6 +1792,10 @@ MultiPolygons, or LineStrings to MultiLineStrings.</source>
         <translation>Inventar aufteilen</translation>
     </message>
     <message>
+        <source>Ignore feature outside mask raster</source>
+        <translation>Feature außerhalb des Maskenrasters ignorieren</translation>
+    </message>
+    <message>
         <source>Import feature</source>
         <translation>Feature importieren</translation>
     </message>
@@ -1826,6 +1830,18 @@ MultiPolygons, or LineStrings to MultiLineStrings.</source>
     <message>
         <source>Successfully created {} - {}% of {}</source>
         <translation>Erfolgreich {} erstellt - {}% von {}</translation>
+    </message>
+    <message>
+        <source>Clipping feature to region.shp</source>
+        <translation>Clippe feature auf region.shp</translation>
+    </message>
+    <message>
+        <source>Clipped feature {} created</source>
+        <translation>Geclipptes Feature {} erstellt</translation>
+    </message>
+    <message>
+        <source>Only valid geometries used.</source>
+        <translation>Nur gültige Geometrien verwendet.</translation>
     </message>
 </context>
 <context>
@@ -2177,8 +2193,8 @@ MultiPolygons, or LineStrings to MultiLineStrings.</source>
         <translation>Ausgabename</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT will create three files with the given name.&lt;/p&gt;&lt;p&gt;*name*_lr.tif in \results\LR\rasters\,&lt;br/&gt;*name*_tab.npz in \results\LR\tables\ and&lt;br/&gt;*name*_model.pkl in \results\LR\tables&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT wird drei Dateien mit dem Namen erstellen.&lt;/p&gt;&lt;p&gt;*name*_lr.tif in \results\LR\rasters\,&lt;br/&gt;*name*_tab.npz in \results\LR\tables\ und&lt;br/&gt;*name*_model.pkl in \results\LR\tables&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT will create two files with the given name.&lt;/p&gt;&lt;p&gt;*name*.tif in \results\LR\rasters\ and&lt;/p&gt;&lt;p&gt;*name*.npz in \results\LR\tables\&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;LSAT wird zwei Dateien mit dem Namen erstellen.&lt;/p&gt;&lt;p&gt;*name*.tif in \results\LR\rasters\ und&lt;/p&gt;&lt;p&gt;*name*.npz in \results\LR\tables\&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>toolBar</source>
@@ -4601,6 +4617,10 @@ value</source>
         <translation>Lösche...</translation>
     </message>
     <message>
+        <source>EPSG Codes of Feature and Method differ ({} / {}). Reprojecting.</source>
+        <translation>EPSG Codes von Feature und Methodenlayer unterscheiden sich ({} / {}). Reprojiziere.</translation>
+    </message>
+    <message>
         <source>Perform Clip...</source>
         <translation>Clippe...</translation>
     </message>
@@ -4611,6 +4631,10 @@ value</source>
     <message>
         <source>Perform Symmetrical Difference...</source>
         <translation>Symmetrische Differenz...</translation>
+    </message>
+    <message>
+        <source>Atleast one GDAL error. GDAL error messages: {}</source>
+        <translation>Mindestens ein GDAL Fehler. GDAL Fehlermeldungen: {}</translation>
     </message>
     <message>
         <source>Perform Union...</source>
