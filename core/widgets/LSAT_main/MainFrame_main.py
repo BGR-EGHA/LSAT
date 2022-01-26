@@ -620,6 +620,9 @@ class MainFrame(QMainWindow):
         projectBasename = os.path.basename(projectLocation)
         pathLogFile = os.path.join(projectLocation, '{}.log'.format(projectBasename))
         fileLogger = logging.FileHandler(pathLogFile)
+        fileLoggerFormatter = logging.Formatter("[%(levelname)s] %(asctime)s %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S")
+        fileLogger.setFormatter(fileLoggerFormatter)
         logging.getLogger().addHandler(fileLogger)
         # clear Ui Logger
         self.mainLog.logTextBox.widget.clear()
@@ -829,13 +832,14 @@ class QPlainTextEditLogger(logging.Handler):
 
 class CustomFormatter(logging.Formatter):
     FORMATS = {
-        logging.ERROR: ("[%(levelname)s] %(message)s", QtGui.QColor("red")),
-        logging.DEBUG: ("[%(levelname)s] [%(filename)s:%(lineno)d] %(message)s", QtGui.QColor("green")),
-        logging.INFO: ("[%(levelname)s] %(message)s", QtGui.QColor("black")),
-        logging.WARNING: ("[%(levelname)s] %(message)s", QtGui.QColor(255, 136, 0))
+        logging.ERROR: ("[%(levelname)s] %(asctime)s %(message)s", QtGui.QColor("red")),
+        logging.DEBUG: ("[%(levelname)s] %(asctime)s [%(filename)s:%(lineno)d] %(message)s", QtGui.QColor("green")),
+        logging.INFO: ("[%(levelname)s] %(asctime)s %(message)s", QtGui.QColor("black")),
+        logging.WARNING: ("[%(levelname)s] %(asctime)s %(message)s", QtGui.QColor(255, 136, 0))
     }
 
     def format(self, record):
+        self.datefmt = "%Y-%m-%d %H:%M:%S"
         last_fmt = self._style._fmt
         opt = self.FORMATS.get(record.levelno)
         if opt:
