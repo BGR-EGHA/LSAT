@@ -613,7 +613,7 @@ class MainFrame(QMainWindow):
         before we stop writting to that file and clear the Log in the ui.
         """
         # remove old fileHandle
-        for logger in list(logging.getLogger().handlers):
+        for logger in logging.getLogger().handlers:
             if isinstance(logger, logging.FileHandler):
                 logging.getLogger().removeHandler(logger)
         # add new one
