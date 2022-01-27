@@ -509,8 +509,8 @@ class MainFrame(QMainWindow):
             pathMetadataFile = os.path.join(self.projectLocation, 'metadata.xml')
 
             if os.path.exists(pathMetadataFile):
-                self.projectMetadata = ET.parse(os.path.join(self.projectLocation, 'metadata.xml'))
-                root = self.projectMetadata.getroot()
+                projectMetadata = ET.parse(os.path.join(self.projectLocation, 'metadata.xml'))
+                root = projectMetadata.getroot()
                 for ptype in root.iter('Type'):
                     self.projectType = ptype.attrib['analysis']
             else:
@@ -545,31 +545,33 @@ class MainFrame(QMainWindow):
         self.fileDialog.openProject(location)
         if self.fileDialog.exec_() == 1 and self.fileDialog.selectedFiles():
             projectLocation = self.fileDialog.selectedFiles()[0]
-            try:
-                self.projectLocation = os.path.normpath(projectLocation)
-                project = self.loadProjectStructure()
-                if not project:
-                    return False
-                else:
-                    self.message.getLoggingInfoOnLoadingProject(self.projectLocation)
-                    return True
-            except BaseException:
-                QMessageBox.warning(self, self.tr("Open project failed"), self.tr(
-                    "No selection or invalid project file selected!"))
+            # try:
+            self.projectLocation = os.path.normpath(projectLocation)
+            project = self.loadProjectStructure()
+            if not project:
                 return False
+            else:
+                self.message.getLoggingInfoOnLoadingProject(self.projectLocation)
+                return True
+            # except BaseException:
+                # QMessageBox.warning(self, self.tr("Open project failed"), self.tr(
+                    # "No selection or invalid project file selected!"))
+                # return False
         else:
             return False
 
     def loadProjectStructure(self):
         """
-        This method generate a project structure based on the project metadata information.
-        :return: None
+        Gets called whenever we load a project in LSAT.
+        Checks the Metadata file, closes opened widgets, updates the logging file if any and updates
+        the window title.
+        :return: Bool
         """
         pathMetadataFile = os.path.join(self.projectLocation, 'metadata.xml')
+        self.updateFileLogger(self.projectLocation)
         configuration = config.Configuration()
-
         if os.path.exists(pathMetadataFile):
-            self.projectMetadata = ET.parse(os.path.join(str(self.projectLocation), 'metadata.xml'))
+            projectMetadata = ET.parse(pathMetadataFile)
 
             projectlist = self.config.getProjects()
             new_list = []
@@ -603,6 +605,27 @@ class MainFrame(QMainWindow):
         else:
             self.message.ErrorLoadProject()
             return False
+
+    def updateFileLogger(self, projectLocation: str) -> None:
+        """
+        Gets called by loadProjectStructure.
+        Updates the logger to write to the file in the project directory. If we opened a project
+        before we stop writting to that file and clear the Log in the ui.
+        """
+        # remove old fileHandle
+        for logger in logging.getLogger().handlers:
+            if isinstance(logger, logging.FileHandler):
+                logging.getLogger().removeHandler(logger)
+        # add new one
+        projectBasename = os.path.basename(projectLocation)
+        pathLogFile = os.path.join(projectLocation, '{}.log'.format(projectBasename))
+        fileLogger = logging.FileHandler(pathLogFile)
+        fileLoggerFormatter = logging.Formatter("[%(levelname)s] %(asctime)s %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S")
+        fileLogger.setFormatter(fileLoggerFormatter)
+        logging.getLogger().addHandler(fileLogger)
+        # clear Ui Logger
+        self.mainLog.logTextBox.widget.clear()
 
     def on_open_file(self):
         pass
@@ -807,16 +830,16 @@ class QPlainTextEditLogger(logging.Handler):
         self.widget.appendHtml(msg)
         QApplication.processEvents()
 
-
 class CustomFormatter(logging.Formatter):
     FORMATS = {
-        logging.ERROR: ("[%(levelname)s] %(message)s", QtGui.QColor("red")),
-        logging.DEBUG: ("[%(levelname)s] [%(filename)s:%(lineno)d] %(message)s", QtGui.QColor("green")),
-        logging.INFO: ("[%(levelname)s] %(message)s", QtGui.QColor("black")),
-        logging.WARNING: ("[%(levelname)s] %(message)s", QtGui.QColor(255, 136, 0))
+        logging.ERROR: ("[%(levelname)s] %(asctime)s %(message)s", QtGui.QColor("red")),
+        logging.DEBUG: ("[%(levelname)s] %(asctime)s [%(filename)s:%(lineno)d] %(message)s", QtGui.QColor("green")),
+        logging.INFO: ("[%(levelname)s] %(asctime)s %(message)s", QtGui.QColor("black")),
+        logging.WARNING: ("[%(levelname)s] %(asctime)s %(message)s", QtGui.QColor(255, 136, 0))
     }
 
     def format(self, record):
+        self.datefmt = "%Y-%m-%d %H:%M:%S"
         last_fmt = self._style._fmt
         opt = self.FORMATS.get(record.levelno)
         if opt:
