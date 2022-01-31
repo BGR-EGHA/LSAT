@@ -194,7 +194,7 @@ class SensitivityReclass(QMainWindow):
         self.ui.reclassTableTableWidget.setHorizontalHeaderItem(0, colName1)
         colName2 = QTableWidgetItem(self.tr("New value"))
         self.ui.reclassTableTableWidget.setHorizontalHeaderItem(1, colName2)
-        a, b = self.axesSC.get_ylim()
+        bottom, top = self.axesSC.get_ylim()
         validation_list = [self.raster.max]
         for child in self.axesSC.get_children():
             if isinstance(child, matplotlib.lines.Line2D) and len(str(child.get_label())) < 4:
@@ -206,21 +206,17 @@ class SensitivityReclass(QMainWindow):
         for i, value in enumerate(validation_list):
             if i == 0:
                 item0 = QTableWidgetItem(F"{self.raster.min:.2f}-{value:.2f}")
-                item0.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-                self.ui.reclassTableTableWidget.setItem(i, 0, QTableWidgetItem(item0))
             else:
                 item0 = QTableWidgetItem(F"{validation_list[i-1]:.2f}-{value:.2f}")
-                item0.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-                self.ui.reclassTableTableWidget.setItem(i, 0, item0)
-            # if i = 0 we create a second QTableWidgetItem for item0 is this intentional?
+            item0.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+            self.ui.reclassTableTableWidget.setItem(i, 0, item0)
 
             item1 = QTableWidgetItem(f"{i + 1}")
             item1.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             self.ui.reclassTableTableWidget.setItem(i, 1, item1)
 
-            self.axesSC.plot([value, value], [a, b], color='r', linestyle='-',
+            self.axesSC.plot([value, value], [bottom, top], color='r', linestyle='-',
                              linewidth=1, picker=5, label=str(i), zorder=2)
-        self.axesSC.set_ylim(a, b)
         self.reclass_list = validation_list
         self.canvas.draw()
         self.fig.tight_layout()
@@ -400,7 +396,8 @@ class SensitivityReclass(QMainWindow):
         """
         Checks if Input Raster and Feature are given and then starts preprocessing()
         """
-        if self.ui.inputRasterComboBox.currentText() == "" or self.ui.inputFeatureComboBox.currentText() == "":
+        if (not self.ui.inputRasterComboBox.currentText() or
+                not self.ui.inputFeatureComboBox.currentText()):
             self.msg.WarningMissingInput()
             return
         if int(self.ui.quantileSpinBox.value()) < 2:
@@ -438,7 +435,10 @@ class SensitivityReclass(QMainWindow):
         for i in y_val:
             value = value + i
             y.append(value)
+        oldBottom, oldTop = self.axesSC.get_ylim()
+        oldBottom, oldTop = self.axesSC.get_ylim()
+        Top = max(y) if max(y) > oldTop else oldTop
+        Bottom = min(y) if min(y) < oldBottom else oldBottom
+        self.axesSC.set_ylim(Bottom, Top)
         self.axesSC.plot(x, y, label=f"{self.ui.quantileSpinBox.value()}_quantils")
         self.update()
-        self.canvas.draw()
-        self.fig.tight_layout()
