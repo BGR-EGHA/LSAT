@@ -335,7 +335,11 @@ class SensitivityReclass(QMainWindow):
         We clear the Matplotlib Subplots and update them with new Raster Information
         """
         self.axesHist.clear()
+        self.axesHist.set_xlabel(self.tr('Value'))
+        self.axesHist.set_ylabel(self.tr('Pixel count'))
         self.axesSC.clear()
+        self.axesSC.set_xlabel(self.tr('Value'))
+        self.axesSC.set_ylabel(self.tr('Cumulative sC'))
         self.readRasterData()
 
     @pyqtSlot(int)
