@@ -194,15 +194,15 @@ class SensitivityReclass(QMainWindow):
         self.ui.reclassTableTableWidget.setHorizontalHeaderItem(0, colName1)
         colName2 = QTableWidgetItem(self.tr("New value"))
         self.ui.reclassTableTableWidget.setHorizontalHeaderItem(1, colName2)
-        bottom, top = self.axesSC.get_ylim()
         validation_list = [self.raster.max]
         for child in self.axesSC.get_children():
             if isinstance(child, matplotlib.lines.Line2D) and len(str(child.get_label())) < 4:
                 validation_list.append(child.get_xdata()[0])
                 child.remove()
-        validation_list = sorted(np.unique(validation_list).tolist())
+        validation_list = np.unique(validation_list).tolist()
 
         self.ui.reclassTableTableWidget.setRowCount(len(validation_list))
+        bottom, top = self.axesSC.get_ylim()
         for i, value in enumerate(validation_list):
             if i == 0:
                 item0 = QTableWidgetItem(F"{self.raster.min:.2f}-{value:.2f}")
@@ -210,7 +210,6 @@ class SensitivityReclass(QMainWindow):
                 item0 = QTableWidgetItem(F"{validation_list[i-1]:.2f}-{value:.2f}")
             item0.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             self.ui.reclassTableTableWidget.setItem(i, 0, item0)
-
             item1 = QTableWidgetItem(f"{i + 1}")
             item1.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
             self.ui.reclassTableTableWidget.setItem(i, 1, item1)
@@ -219,6 +218,7 @@ class SensitivityReclass(QMainWindow):
                              linewidth=1, picker=5, label=str(i), zorder=2)
         self.reclass_list = validation_list
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
     def reclassByTable(self):
@@ -436,9 +436,9 @@ class SensitivityReclass(QMainWindow):
             value = value + i
             y.append(value)
         oldBottom, oldTop = self.axesSC.get_ylim()
-        oldBottom, oldTop = self.axesSC.get_ylim()
-        Top = max(y) if max(y) > oldTop else oldTop
-        Bottom = min(y) if min(y) < oldBottom else oldBottom
+        # 1 to keep a tiny distance to border
+        Top = max(y)+1 if max(y) > oldTop else oldTop
+        Bottom = min(y)-1 if min(y) < oldBottom else oldBottom
         self.axesSC.set_ylim(Bottom, Top)
         self.axesSC.plot(x, y, label=f"{self.ui.quantileSpinBox.value()}_quantils")
         self.update()
