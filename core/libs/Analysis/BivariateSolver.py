@@ -173,17 +173,20 @@ class WofE:
                         float(prior))
 
             # W_NEG
-            self.table['W_NEG'][i] = np.log((float(landsl_total) -
-                                             float(self.table['Landslides'][i])) /
-                                            (float(area_total) -
-                                             float(self.table['Class'][i])) /
-                                            ((float(area_total) -
-                                              float(landsl_total) -
-                                                float(self.table['Class'][i]) +
-                                                float(self.table['Landslides'][i])) /
-                                             ((float(area_total) -
-                                               float(self.table['Class'][i])))) /
-                                            float(prior))
+            if self.table["Landslides"][i] == landsl_total:
+                self.table["W_NEG"][i] = float(0)
+            else:
+                self.table['W_NEG'][i] = np.log((float(landsl_total) -
+                                                 float(self.table['Landslides'][i])) /
+                                                (float(area_total) -
+                                                 float(self.table['Class'][i])) /
+                                                ((float(area_total) -
+                                                  float(landsl_total) -
+                                                    float(self.table['Class'][i]) +
+                                                    float(self.table['Landslides'][i])) /
+                                                 ((float(area_total) -
+                                                   float(self.table['Class'][i])))) /
+                                                float(prior))
 
             # Calculate Contrast
             self.table['Contrast'][i] = float(
