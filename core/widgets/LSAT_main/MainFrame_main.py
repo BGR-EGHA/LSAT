@@ -79,6 +79,7 @@ class MainFrame(QMainWindow):
         # Main Log
         self.mainLog = LogForm()
         self.dockWidgetLog = QDockWidget(self.tr("Main Log"), self)
+        self.dockWidgetLog.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
         self.dockWidgetLog.setWidget(self.mainLog)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dockWidgetLog)
 
@@ -139,13 +140,11 @@ class MainFrame(QMainWindow):
         viewPane.addRibbonWidget(self.catalogCheckBox, (0, 0, 1, 1))
         self.catalogCheckBox.setChecked(True)
         self.catalogCheckBox.stateChanged.connect(self.on_showCatalog)
-        self.catalog.visibilityChanged.connect(self.on_catalog_visibilityChanged)
 
         self.logCheckBox = QRibbonCheckBox(self, self.tr("Main Log"))
         viewPane.addRibbonWidget(self.logCheckBox, (1, 0, 1, 1))
         self.logCheckBox.setChecked(True)
         self.logCheckBox.stateChanged.connect(self.on_showLog)
-        self.dockWidgetLog.visibilityChanged.connect(self.on_mainLog_visibilityChanged)
 
         # Settings
         settingsPane = projectTab.addRibbonPane(self.tr("Settings"), "Vertical")
@@ -386,29 +385,6 @@ class MainFrame(QMainWindow):
             self.on_zoning,
             None)
         analysisPane.addRibbonWidget(QRibbonButton(self, self.zoning_action))
-
-    # @pyqtSlot()
-    def on_catalog_visibilityChanged(self):
-        """
-        Controls the check state of the catalog check box
-        on changes of catalog visibility
-        :return: None
-        """
-        if self.catalog.isVisible():
-            self.catalogCheckBox.setChecked(True)
-        else:
-            self.catalogCheckBox.setChecked(False)
-
-    def on_mainLog_visibilityChanged(self):
-        """
-        Controls the check state of the log check box
-        on changes of log dock widget visibility
-        :return: None
-        """
-        if self.dockWidgetLog.isVisible():
-            self.logCheckBox.setChecked(True)
-        else:
-            self.logCheckBox.setChecked(False)
 
     def on_languageSettings(self):
         """

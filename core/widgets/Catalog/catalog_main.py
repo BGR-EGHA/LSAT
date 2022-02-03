@@ -32,6 +32,7 @@ class Catalog(QDockWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle(self.tr("Catalog"))
+        self.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
         self.model = QFileSystemModel()
         self.view = TreeView()  # QTreeView with SizeHint
         self.view.setStyleSheet("QHeaderView::section { background-color:#b7cbeb }")
