@@ -79,6 +79,7 @@ class MainFrame(QMainWindow):
         # Main Log
         self.mainLog = LogForm()
         self.dockWidgetLog = QDockWidget(self.tr("Main Log"), self)
+        self.dockWidgetLog.setFeatures(QDockWidget.NoDockWidgetFeatures)
         self.dockWidgetLog.setWidget(self.mainLog)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.dockWidgetLog)
 
