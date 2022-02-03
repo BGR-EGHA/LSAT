@@ -32,7 +32,7 @@ class Catalog(QDockWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle(self.tr("Catalog"))
-        self.setFeatures(QDockWidget.NoDockWidgetFeatures)
+        self.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
         self.model = QFileSystemModel()
         self.view = TreeView()  # QTreeView with SizeHint
         self.view.setStyleSheet("QHeaderView::section { background-color:#b7cbeb }")
@@ -194,8 +194,6 @@ class Catalog(QDockWidget):
         :param index: QIndex
         :return: None
         """
-        if type(index) == QMouseEvent: # user double clicked the titlebar
-            return
         fileInfo = self.model.fileInfo(index)
         fname = os.path.normpath(fileInfo.absoluteFilePath())
         try:
