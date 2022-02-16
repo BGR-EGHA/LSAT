@@ -476,8 +476,13 @@ class NewProject(QDialog):
                 self.raster.geoTrans[4],
                 -cellsize)
             array = self.raster.getArrayFromBand().astype(np.float32)
-            array[np.where(array != self.raster.nodata)] = 1
-            array[np.where(array == self.raster.nodata)] = -9999
+            if np.isnan(self.raster.nodata):
+                np.nan_to_num(array, copy=False, nan=-9999)
+                rasterNoData = -9999
+            else:
+                rasterNoData = self.raster.nodata
+            array[array != rasterNoData] = 1
+            array[array == rasterNoData] = -9999
         # Project coordinates by hand
         else:
             geoTransform = (left, cellsize, 0.0, top, 0.0, -cellsize)
