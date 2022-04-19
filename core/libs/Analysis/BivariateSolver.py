@@ -213,18 +213,18 @@ class WofE:
                 self.table['VAR_NEG'][i] = 1 + 1 / (float(area_total) - float(landsl_total) - float(
                     self.table['Class'][i]) + float(self.table['Landslides'][i]))
 
-            # Calculate Variance
-            var_neg_sum = float(self.table['VAR_NEG'].sum())
-            self.table['Variance'][i] = float(
-                self.table['VAR_POS'][i]) + float(var_neg_sum) - float(self.table['VAR_NEG'][i])
-
         W_neg_sum = float(self.table['W_NEG'].sum())
+        var_neg_sum = float(self.table['VAR_NEG'].sum())
         for i in range(len(self.stack)):
 
             # Calculate Weight
 
             self.table['Weight'][i] = float(self.table['W_POS'][i]) + \
                 float(W_neg_sum) - float(self.table['W_NEG'][i])
+
+            # Calculate Variance
+            self.table['Variance'][i] = float(
+                self.table['VAR_POS'][i]) + float(var_neg_sum) - float(self.table['VAR_NEG'][i])
 
             # Calculate Posterior
 
