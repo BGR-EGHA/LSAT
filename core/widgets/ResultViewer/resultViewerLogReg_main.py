@@ -56,8 +56,8 @@ class ResultsForm(QMainWindow):
             shared_resultfunc.setChildItem(self, 3, i, info_settings[i], str(value), self.tree)
 
         shared_resultfunc.setTopLevelItem(self, 4, self.tr("Model metrics"), None, self.tree)
-        info = (self.tr("AIC"), self.tr("BIC"), self.tr("AICc"), self.tr("AUC"))
-        values = (result["AIC"], result["BIC"], result["AICc"], result["auc"])
+        info = (self.tr("Intercept"), self.tr("AIC"), self.tr("BIC"), self.tr("AICc"), self.tr("AUC"))
+        values = (result["intercept"][0], result["AIC"], result["BIC"], result["AICc"], result["auc"])
         for i, value in enumerate(values):
             shared_resultfunc.setChildItem(
                 self, 4, i, info[i], "{:.5f}".format(value), self.tree, str(value))
