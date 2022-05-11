@@ -225,14 +225,17 @@ class woe_report(QObject):
         Adds Matplotlib graphics as seen in the Result Viewer.
         """
         fig = Figure()
+
         labels = PlotFunctions.getLabels(result)
         self._add_plothistogram(fig, result, labels)
         self._add_plotlandslidedistribution(fig, result, labels)
         self._add_plotweightdistribution(fig, result, labels)
         self._add_plotroc(fig, result)
+        fig.set_size_inches(8, 6)
         fig.tight_layout()
+
         tmp_path = os.path.join(project_path, "workspace", "tmp_fig.png")
-        fig.savefig(tmp_path)
+        fig.savefig(tmp_path, dpi = 300)
         doc.add_picture(tmp_path, width=docx.shared.Cm(15))
         os.remove(tmp_path)
 
@@ -241,6 +244,8 @@ class woe_report(QObject):
         Adds a subplot to fig with a histogram of raster values.
         """
         histogram = fig.add_subplot(221)
+        histogram.text(0.03, 0.97, "a)", transform=histogram.transAxes,
+                    fontsize=12, va='top')
         histogram.set_xlabel(self.tr('Classes'), fontproperties=prop)
         histogram.set_ylabel(self.tr('Class pixel count'), fontproperties=prop)
         histogram.set_ylim(0, result["tab"]['Class'].max() * 1.1)
@@ -260,6 +265,8 @@ class woe_report(QObject):
         Adds a subplot to fig showing the landslide distribution in class
         """
         lsdistribution = fig.add_subplot(222)
+        lsdistribution.text(0.03, 0.97, "b)", transform=lsdistribution.transAxes,
+                       fontsize=12, va='top')
         lsdistribution.set_xlabel(self.tr('Classes'), fontproperties=prop)
         lsdistribution.set_ylabel(self.tr('Landslide pixel count'), fontproperties=prop)
         lsdistribution.set_xlim(0, len(result["tab"]) + 1)
@@ -288,6 +295,8 @@ class woe_report(QObject):
         Adds a plot to fig showing the distribution of the weights
         """
         weightdistribution = fig.add_subplot(223)
+        weightdistribution.text(0.03, 0.97, "c)", transform=weightdistribution.transAxes,
+                            fontsize=12, va='top')
         weightdistribution.set_xlabel(self.tr('Classes'), fontproperties=prop)
         weightdistribution.set_ylabel(self.tr('Total weight'), fontproperties=prop)
         weightdistribution.set_xlim(0, len(result["tab"]) + 1)
@@ -339,6 +348,8 @@ class woe_report(QObject):
         Adds a ROC Curve to fig.
         """
         rocplot = fig.add_subplot(224)
+        rocplot.text(0.03, 0.97, "d)", transform=rocplot.transAxes,
+                                fontsize=12, va='top')
         rocplot.set_xlabel(self.tr('False Positive Rate (1-Specificity)'),
                            fontproperties=prop)
         rocplot.set_ylabel(self.tr('True Positive Rate (Sensitivity)'),
@@ -378,17 +389,14 @@ class woe_report(QObject):
             for i in range(len(unique) - 1):
                 auc.append((unique[i + 1] - unique[i]) * mean_y[i + 1] - (
                     (unique[i + 1] - unique[i]) * (mean_y[i + 1] - mean_y[i]) / 2))
-            for i in range(len(result['roc_x'])):
-                rocplot.plot(result['roc_x'][i], result['roc_y'][i], color="black", linewidth=0.5)
-            rocplot.plot(
-                unique,
-                mean_y,
-                color="red",
-                linewidth=2,
-                label=self.tr("mean: %.2f") %
-                (sum(auc)))
-        rocplot.plot(x0, y0, label=self.tr("prior: 0.5"), color="blue")
-        rocplot.legend(loc="lower right")
+
+            rocplot.fill_between(unique, min_y, max_y, color="grey", linestyle="--", alpha=0.5,
+                                 label=self.tr("range: %.2f - %.2f") % (
+                                     result['auc'].max(), result['auc'].min()))
+            rocplot.plot(unique, mean_y, color="red", linewidth=2,
+                         label=self.tr("mean: %.2f") % (sum(auc)))
+            rocplot.plot(x0, y0, label=self.tr("prior: 0.5"), color="blue")
+            rocplot.legend(loc="lower right")
 
     def _add_tableweight(self, doc, result, raster):
         """
