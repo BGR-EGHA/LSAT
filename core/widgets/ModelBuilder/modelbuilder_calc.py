@@ -1,4 +1,5 @@
 import math
+import random
 import numpy as np
 import os, logging, traceback
 from PyQt5.QtCore import *
@@ -27,6 +28,7 @@ class ModelBuilder_calc(QObject):
         self.analysistype = inputs[5]
         self.modelname = inputs[6]  # str - Model name
         self.expression = inputs[7] # str - Expression to build the array
+        self.randomseed = inputs[8] # str/None - Random Seed only necessary for On-the-Fly
         self.spatref = spatref
         self.axes_roc = axes_roc
         self.canvas_roc = canvas_roc  # Used to update the plot
@@ -44,7 +46,7 @@ class ModelBuilder_calc(QObject):
         if self.analysistype == 1:  # On-the-fly Subsampling
             self.ontheflymodel(self.projectpath, self.samplecount, self.featurepath,
                                self.progfraction, self.samplesize, sumarray, maskpath, self.spatref,
-                               0)
+                               self.randomseed, 0)
             analysisstr = "On-the-fly subsampling"
             featurepath = self.featurepath
             samplecount = self.samplecount
@@ -64,7 +66,7 @@ class ModelBuilder_calc(QObject):
         path = self.savemodel(self.projectpath, self.modelname, auc,
                               sumarray, fpr_unique, min_tpr, max_tpr, mean_tpr,
                               median_tpr, self.uniques, self.all_auc, analysisstr, featurepath,
-                              samplecount)  # Save
+                              samplecount, self.randomseed)  # Save
         self.updateplot(fpr_unique, min_tpr, max_tpr, self.modelname, mean_tpr)  # Update Plot
         self.dataSignal.emit(path)
         self.finishSignal.emit()
@@ -92,11 +94,13 @@ class ModelBuilder_calc(QObject):
             logging.error(tb)
 
     def ontheflymodel(self, projectpath, samplecount, featurepath, proincrement, samplesize,
-                      sumarray, maskpath, spatref, progress=0):
+                      sumarray, maskpath, spatref, randomseed, progress=0):
         """
         Gets called by run.
         Generates a model with on the fly subsampled inventory.
         """
+        if randomseed:
+            random.seed(randomseed)
         outtraining, outtest = self._getFeaturePaths(featurepath, projectpath)
         for i in range(samplecount):
             RandomSampling(featurepath, outtraining, outtest, percent=samplesize, srProject=spatref,
@@ -238,7 +242,7 @@ class ModelBuilder_calc(QObject):
         self.canvas_roc.draw()
 
     def savemodel(self, projectpath, modelname, auc, sumarray, fpr_unique, min_tpr, max_tpr, mean_tpr,
-                  median_tpr, uniques, all_auc, analysisstr, featurepath, samplecount):
+                  median_tpr, uniques, all_auc, analysisstr, featurepath, samplecount, randomseed):
         """
         Gets called by run.
         Replaces NaN with the default NoData value (-9999) before saving the model as npz.
@@ -250,5 +254,6 @@ class ModelBuilder_calc(QObject):
                             roc_x=fpr_unique, roc_ymean=mean_tpr, roc_ymax = max_tpr, roc_ymedian = median_tpr,
                             roc_ymin = min_tpr,
                             analysistype=analysisstr, featurepath=featurepath,
-                            samplecount=samplecount, expression = self.expression)
+                            samplecount=samplecount, expression = self.expression,
+                            randomseed = randomseed)
         return path

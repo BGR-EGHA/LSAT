@@ -657,11 +657,13 @@ class ModelBuilder(QMainWindow):
         Gets called by on_updatePushButton_clicked.
         Gathers information from the ui to start the calculation
         """
+        randomseed = None # only needed for On-the-fly
         if self.advanced.ui.onTheFlySubsamplingCheckBox.isChecked():  # On-the-fly
             analysistype = 1
             subsamplelocation = ""
             samplesize = int(self.advanced.ui.sampleSizeLineEdit.text())
             samplecount = self.advanced.ui.numberResamplesSpinBox.value()
+            randomseed = self.advanced.ui.randomSeedLineEdit.text()
         elif self.advanced.ui.predefinedSubsamplingCheckBox.isChecked():  # Predefined Samples
             analysistype = 2
             subsamplelocation = self.advanced.ui.subsamplesLocationLineEdit.text()
@@ -687,7 +689,7 @@ class ModelBuilder(QMainWindow):
             path = self.modelsmanager.treeContent[hash(str(item))]['Source']
             params_list.append(path)
         inputs = (params_list, featurepath, samplecount, samplesize,
-                  subsamplelocation, analysistype, modelname, expression)
+                  subsamplelocation, analysistype, modelname, expression, randomseed)
         return inputs
 
     def updateProgressBar(self, progress: int):

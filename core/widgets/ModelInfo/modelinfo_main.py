@@ -44,6 +44,10 @@ class ModelInfo(QMainWindow):
         self.ui.treeWidget.topLevelItem(5).setText(
             1, str(model["analysistype"]))  # e.g. Subsampling type
         self.ui.treeWidget.topLevelItem(6).setText(1, self._getInputFeature(model))
+        if model["randomseed"] != None: # only for on-the-fly subsampled models
+            self.ui.treeWidget.topLevelItem(7).setText(1, str(model["randomseed"]))
+        else:
+            self.ui.treeWidget.takeTopLevelItem(7)
 
     def _getInputFeature(self, model) -> str:
         """
