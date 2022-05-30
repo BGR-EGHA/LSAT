@@ -257,6 +257,25 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>projectLocationLineEdit</tabstop>
+  <tabstop>projectLocationToolButton</tabstop>
+  <tabstop>projectNameLineEdit</tabstop>
+  <tabstop>descriptionTextEdit</tabstop>
+  <tabstop>maskRadioButton</tabstop>
+  <tabstop>customExtentRadioButton</tabstop>
+  <tabstop>maskRasterDatasetLineEdit</tabstop>
+  <tabstop>maskRasterDatasetToolButton</tabstop>
+  <tabstop>srNameLineEdit</tabstop>
+  <tabstop>epsgCodeLineEdit</tabstop>
+  <tabstop>epsgToolButton</tabstop>
+  <tabstop>topLineEdit</tabstop>
+  <tabstop>leftLineEdit</tabstop>
+  <tabstop>rightLineEdit</tabstop>
+  <tabstop>bottomLineEdit</tabstop>
+  <tabstop>cellsizeLineEdit</tabstop>
+  <tabstop>createProjectPushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

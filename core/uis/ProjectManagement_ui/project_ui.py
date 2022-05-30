@@ -139,6 +139,22 @@ class Ui_Project(object):
 
         self.retranslateUi(Project)
         QtCore.QMetaObject.connectSlotsByName(Project)
+        Project.setTabOrder(self.projectLocationLineEdit, self.projectLocationToolButton)
+        Project.setTabOrder(self.projectLocationToolButton, self.projectNameLineEdit)
+        Project.setTabOrder(self.projectNameLineEdit, self.descriptionTextEdit)
+        Project.setTabOrder(self.descriptionTextEdit, self.maskRadioButton)
+        Project.setTabOrder(self.maskRadioButton, self.customExtentRadioButton)
+        Project.setTabOrder(self.customExtentRadioButton, self.maskRasterDatasetLineEdit)
+        Project.setTabOrder(self.maskRasterDatasetLineEdit, self.maskRasterDatasetToolButton)
+        Project.setTabOrder(self.maskRasterDatasetToolButton, self.srNameLineEdit)
+        Project.setTabOrder(self.srNameLineEdit, self.epsgCodeLineEdit)
+        Project.setTabOrder(self.epsgCodeLineEdit, self.epsgToolButton)
+        Project.setTabOrder(self.epsgToolButton, self.topLineEdit)
+        Project.setTabOrder(self.topLineEdit, self.leftLineEdit)
+        Project.setTabOrder(self.leftLineEdit, self.rightLineEdit)
+        Project.setTabOrder(self.rightLineEdit, self.bottomLineEdit)
+        Project.setTabOrder(self.bottomLineEdit, self.cellsizeLineEdit)
+        Project.setTabOrder(self.cellsizeLineEdit, self.createProjectPushButton)
 
     def retranslateUi(self, Project):
         _translate = QtCore.QCoreApplication.translate
