@@ -12,6 +12,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
 import os
+import random
 
 from core.libs.GDAL_Libs.Layers import Raster, Feature, RasterLayer
 from core.libs.Management.LayerManagement import LayerManagement as LM
@@ -432,6 +433,7 @@ class WofETool(QMainWindow):
         self.nameAppendix = self.getAppend()
 
         # set the analysis type and number of subsamples based on advanced settings
+        randomseed = None # only needed for onTheFlySubsample
         if self.onTheFlySubsample:
             self.numberSubsamples = self.advanced.ui.numberResamplesSpinBox.value()
             # If the user only wants one subsample we analyse the complete feature
@@ -439,6 +441,8 @@ class WofETool(QMainWindow):
                 self.analysisType = 2
                 if self.numberSubsamples == "" or None:
                     self.numberSubsamples = 1
+                if self.advanced.ui.randomSeedLineEdit.text(): # only if not empty
+                    randomseed = self.advanced.ui.randomSeedLineEdit.text()
             else:
                 self.analysisType = 1
                 self.numberSubsamples = 1
@@ -473,7 +477,7 @@ class WofETool(QMainWindow):
         kwargs = (self.spatRefProject, self.LayerManager, self.featurePath, self.outTraining,
                   self.outTest, self.rasterMethod, self.analysisType, self.workspace,
                   self.outputTableLocation, self.sampleSize, self.numberSubsamples,
-                  self.subsamplesPath, self.projectLocation, self.nameAppendix)
+                  self.subsamplesPath, self.projectLocation, self.nameAppendix, randomseed)
         self.thread = QThread()
         self.worker = Worker(kwargs)
         self.worker.moveToThread(self.thread)
@@ -499,7 +503,7 @@ class Worker(QObject):
         self.spatRefProject, self.LayerManager, self.featurePath, self.outTraining, \
             self.outTest, self.rasterMethod, self.analysisType, self.workspace,\
             self.outputTableLocation, self.sampleSize, self.numberSubsamples, \
-            self.subsamplesPath, self.projectLocation, self.nameAppendix = kwargs
+            self.subsamplesPath, self.projectLocation, self.nameAppendix, self.randomseed = kwargs
 
     @pyqtSlot()
     def crossValidation(self):
@@ -760,6 +764,7 @@ class Worker(QObject):
             barvalue_fraction = float(100 / int(self.numberSubsamples))
             raster = None
 
+            random.seed(self.randomseed)
             for i in range(int(self.numberSubsamples)):
                 raster = Raster(rasterPath)
                 outTest = self.outTest
@@ -832,7 +837,8 @@ class Worker(QObject):
                 self.outputTableLocation,
                 self.sampleSize,
                 self.analysisType,
-                self.numberSubsamples)
+                self.numberSubsamples,
+                self.randomseed)
             source = (rasterPath, self.featurePath)
             auc = auc
             roc_x = x_auc

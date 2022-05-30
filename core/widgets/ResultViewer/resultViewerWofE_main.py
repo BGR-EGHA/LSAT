@@ -60,6 +60,13 @@ class ResultViewerWofE(QMainWindow):
         shared_resultfunc.setChildItem(
             self, 1, 2, self.tr("Number of subsamples"), str(
                 result["metadata"][4]), self.ui.modelTreeWidget)
+        try:
+            result["metadata"][5]
+            shared_resultfunc.setChildItem(
+                self, 1, 3, self.tr("Seed used to Initialize random"), str(
+                    result["metadata"][5]), self.ui.modelTreeWidget)
+        except IndexError: # only on the fly subsampling uses a randomseed
+            pass 
         # path to raster file
         shared_resultfunc.setTopLevelItem(
             self,
