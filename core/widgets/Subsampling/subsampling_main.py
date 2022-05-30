@@ -27,16 +27,9 @@ class Subsampling(QMainWindow):
         self.setWindowIcon(QIcon(':/icons/Icons/random_subset.png'))
 
         self.ui.sizeTrainingLineEdit.textChanged.connect(self.val_sizeValue)
-        self.ui.sizeTrainingLineEdit.setText("80")
-        self.ui.horizontalSlider.setRange(1, 100)
         self.ui.numberOfSubsamplesLineEdit.textChanged.connect(self.val_sizeValue)
-        self.ui.numberOfSubsamplesLineEdit.setText("1")
         self.progress = QProgressBar()
         self.ui.mainGridLayout.addWidget(self.progress)
-        if self.ui.keepTestCheckBox.checkState() == False:
-            self.ui.nameOfTestDatasetLineEdit.setEnabled(False)
-        else:
-            self.ui.nameOfTestDatasetLineEdit.setEnabled(True)
         self.fileDialog = CustomFileDialog()
         self.message = Messenger()
 
