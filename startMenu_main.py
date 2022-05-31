@@ -165,6 +165,7 @@ def start():
     Gets called when LSAT starts.
     Pynsist (the installer for windows) needs an entryfunction to create a usable installer.
     """
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     gdal.AllRegister()
     app = QApplication(sys.argv)
     splash_pix = QPixmap(':/icons/Icons/SplashScreen.png')
