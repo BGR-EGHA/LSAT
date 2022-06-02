@@ -164,6 +164,7 @@ class SinglePlot(QMainWindow):
         self.ax.set_xticklabels(labels)
         self.ax.bar(x, y, align='center')
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
     def plot2(self, labels):
@@ -195,6 +196,7 @@ class SinglePlot(QMainWindow):
             self.ax.set_xticks(range(1, len(self.resultTable) + 1))
             self.ax.set_xticklabels(labels)
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
     def plot3(self, labels):
@@ -251,6 +253,7 @@ class SinglePlot(QMainWindow):
             self.ax.set_xticks(range(1, len(self.resultTable) + 1))
             self.ax.set_xticklabels(labels)
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
     def plot4(self):
@@ -320,6 +323,7 @@ class SinglePlot(QMainWindow):
         self.ax.plot(x0, y0, label=self.tr("prior: 0.5"), color="blue")
         self.ax.legend(loc="lower right")
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
 
@@ -411,6 +415,7 @@ class PlotViewer(QMainWindow):
         self.ax.set_xticklabels(labels)
         self.ax.bar(x, y, align='center')
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
     def plot2(self, labels):
@@ -444,6 +449,7 @@ class PlotViewer(QMainWindow):
             self.ax.set_xticks(range(1, len(self.resultTable) + 1))
             self.ax2.set_xticklabels(labels)
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
     def plot3(self, labels):
@@ -502,6 +508,7 @@ class PlotViewer(QMainWindow):
             self.ax3.set_xticks(range(1, len(self.resultTable) + 1))
             self.ax3.set_xticklabels(labels)
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
 
     def plot4(self):
@@ -573,4 +580,5 @@ class PlotViewer(QMainWindow):
         self.ax4.plot(x0, y0, label=self.tr("prior: 0.5"), color="blue")
         self.ax4.legend(loc="lower right")
         self.canvas.draw()
+        self.canvas.flush_events()
         self.fig.tight_layout()
