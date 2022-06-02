@@ -128,10 +128,7 @@ class WofE:
         area_total = self.table['Class'].sum()
 
         stable_area = area_total - landsl_total
-        try:
-            prior = (float(landsl_total) / float(area_total)) / (float(stable_area) / float(area_total))
-        except ZeroDivisionError: # stable_area == 0
-            return self.table
+        prior = (float(landsl_total) / float(area_total)) / (float(stable_area) / float(area_total))
         variance_prior = 1 / float(landsl_total)
 
         # Compute self.table values
