@@ -17,50 +17,6 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <layout class="QGridLayout" name="mainGridLayout" columnstretch="5,0,0">
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="splitInventoryCheckBox">
-        <property name="text">
-         <string>Split inventory</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QLineEdit" name="featureLineEdit"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="importFeatureLabel">
-        <property name="text">
-         <string>Import feature</string>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0" colspan="2">
-       <widget class="QLineEdit" name="testDatasetLineEdit"/>
-      </item>
-      <item row="7" column="2">
-       <widget class="QToolButton" name="trainingDatasetToolButton">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="trainingDatasetLabel">
-        <property name="text">
-         <string>Training dataset</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="testDatasetLabel">
-        <property name="text">
-         <string>Test dataset</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="2">
        <spacer name="horizontalSpacer">
         <property name="orientation">
@@ -74,10 +30,48 @@
         </property>
        </spacer>
       </item>
-      <item row="9" column="2">
-       <widget class="QToolButton" name="testDatasetToolButton">
+      <item row="10" column="0">
+       <widget class="QLabel" name="testDatasetLabel">
         <property name="text">
-         <string>...</string>
+         <string>Test dataset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="sizeOfTrainingDatatsetLabel">
+        <property name="text">
+         <string>Size of the training dataset in %:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="randomseedlabel">
+        <property name="text">
+         <string>Seed to initialize random</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="trainingDatasetLabel">
+        <property name="text">
+         <string>Training dataset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="ignoreOutsideMaskCheckBox">
+        <property name="text">
+         <string>Ignore feature outside mask raster</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="importFeatureLabel">
+        <property name="text">
+         <string>Import feature</string>
         </property>
        </widget>
       </item>
@@ -88,24 +82,47 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0" colspan="2">
-       <widget class="QLineEdit" name="trainingDatasetLineEdit"/>
+      <item row="11" column="0" colspan="2">
+       <widget class="QLineEdit" name="testDatasetLineEdit"/>
       </item>
-      <item row="10" column="1">
+      <item row="1" column="0" colspan="2">
+       <widget class="QLineEdit" name="featureLineEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="splitInventoryCheckBox">
+        <property name="text">
+         <string>Split inventory</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
        <widget class="QPushButton" name="applyPushButton">
         <property name="text">
          <string>Apply</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLineEdit" name="sizeValueLineEdit">
-        <property name="maxLength">
-         <number>3</number>
+      <item row="11" column="2">
+       <widget class="QToolButton" name="testDatasetToolButton">
+        <property name="text">
+         <string>...</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="9" column="0" colspan="2">
+       <widget class="QLineEdit" name="trainingDatasetLineEdit"/>
+      </item>
+      <item row="9" column="2">
+       <widget class="QToolButton" name="trainingDatasetToolButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
        <widget class="QSlider" name="sizeValueHorizontalSlider">
         <property name="maximum">
          <number>100</number>
@@ -127,34 +144,17 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="sizeOfTrainingDatatsetLabel">
-        <property name="text">
-         <string>Size of the training dataset in %:</string>
+      <item row="4" column="0" colspan="2">
+       <widget class="QLineEdit" name="sizeValueLineEdit">
+        <property name="maxLength">
+         <number>3</number>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="7" column="0" colspan="2">
        <widget class="QLineEdit" name="RandomSeedlineEdit">
         <property name="toolTip">
          <string>Leave empty to use random seed</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="randomseedlabel">
-        <property name="text">
-         <string>Seed to initialize random</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="ignoreOutsideMaskCheckBox">
-        <property name="text">
-         <string>Ignore feature outside mask raster</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -178,9 +178,10 @@
   <tabstop>featureLineEdit</tabstop>
   <tabstop>featureToolButton</tabstop>
   <tabstop>splitInventoryCheckBox</tabstop>
+  <tabstop>ignoreOutsideMaskCheckBox</tabstop>
   <tabstop>sizeValueLineEdit</tabstop>
-  <tabstop>RandomSeedlineEdit</tabstop>
   <tabstop>sizeValueHorizontalSlider</tabstop>
+  <tabstop>RandomSeedlineEdit</tabstop>
   <tabstop>trainingDatasetLineEdit</tabstop>
   <tabstop>trainingDatasetToolButton</tabstop>
   <tabstop>testDatasetLineEdit</tabstop>
