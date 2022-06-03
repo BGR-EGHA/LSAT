@@ -138,6 +138,19 @@
           </font>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Seed used to Initialize random</string>
+         </property>
+         <property name="font">
+          <font>
+           <family>MS Shell Dlg 2</family>
+           <pointsize>8</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

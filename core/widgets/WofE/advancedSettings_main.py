@@ -69,6 +69,7 @@ class AdvancedSettings(QMainWindow):
         if self.ui.onTheFlySubsamplingCheckBox.checkState() == 2:
             self.ui.sampleSizeSlider.setValue(80)
             self.ui.sampleSizeLineEdit.setText("80")
+            self.ui.randomSeedLineEdit.setEnabled(True)
             self.ui.subsamplesLocationLineEdit.setEnabled(False)
             self.ui.subsamplesLocationToolButton.setEnabled(False)
             self.ui.predefinedSubsamplingCheckBox.setChecked(False)
@@ -83,6 +84,7 @@ class AdvancedSettings(QMainWindow):
                 self.ui.sampleSizeSlider.setValue(100)
                 self.ui.sampleSizeSlider.setEnabled(False)
                 self.ui.sampleSizeLineEdit.setEnabled(False)
+                self.ui.randomSeedLineEdit.setEnabled(False)
                 self.ui.numberResamplesSpinBox.setEnabled(False)
                 self.ui.subsamplesLocationLineEdit.setEnabled(False)
                 self.ui.subsamplesLocationToolButton.setEnabled(False)
@@ -101,6 +103,7 @@ class AdvancedSettings(QMainWindow):
             self.ui.sampleSizeSlider.setEnabled(False)
             self.ui.sampleSizeLineEdit.setEnabled(False)
             self.ui.numberResamplesSpinBox.setEnabled(False)
+            self.ui.randomSeedLineEdit.setEnabled(False)
         else:
             if self.ui.onTheFlySubsamplingCheckBox.checkState(
             ) == 0 and self.ui.predefinedSubsamplingCheckBox.checkState() == 0:
