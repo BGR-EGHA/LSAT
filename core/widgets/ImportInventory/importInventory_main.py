@@ -16,11 +16,10 @@ from PyQt5.QtNetwork import *
 
 from core.libs.CustomFileDialog.CustomFileDialog import CustomFileDialog
 from core.uis.ImportInventory_ui.ImportInventory_ui import Ui_ImportInventory
-from core.libs.GDAL_Libs.Layers import Raster
+from core.libs.GDAL_Libs.Layers import Raster, Feature
 from core.libs.LSAT_Messages.messages_main import Messenger
 from core.libs.Analysis.Random_Sampling import RandomSampling
 from core.widgets.GeoprocessingTools.geoprocessingTools_calc import GeoprocessingToolsWorker
-import numpy as np
 
 
 class ImportInventory(QMainWindow):
@@ -124,11 +123,37 @@ class ImportInventory(QMainWindow):
         else:
             featPath = self.ui.featureLineEdit.text()
         params = (outTraining, outTest, percent, randomseed)
+        if not self.validateInventory(featPath):
+            logging.warning(self.tr("Problems with {}. Proceed with caution.").format(featPath))
         if self.ui.ignoreOutsideMaskCheckBox.isChecked():
             logging.info(self.tr("Clipping feature to region.shp"))
             featPath = self._clipBeforeImport(params)
         else:
             self.startImport(featPath, *params)
+
+    def validateInventory(self, featPath) -> bool:
+        """Returns True if the inventory is valid, else False. Check includes:
+        1. Each feature in feathPath must be smaller than the projects region.
+        """
+        validation = True
+        regionHandle = Feature(os.path.join(self.projectLocation, "region.shp"))
+        for feature in regionHandle.feat:
+            for feat in feature:
+                geom = feat.GetGeometryRef()
+                regionArea = geom.GetArea()
+        layer = Feature(featPath)
+        for feature in layer.feat:
+            for feat in feature:
+                geom = feat.GetGeometryRef()
+                if geom.GetGeometryName() != "POLYGON":
+                    return validation
+                geomArea = geom.GetArea()
+                if regionArea <= geomArea:
+                    logging.warning(
+                        self.tr("Area of Polygon in {} ({}) >= Area of region.shp ({}).")
+                        .format(featPath, geomArea, regionArea))
+                    validation = False
+        return validation
 
     def _clipBeforeImport(self, params: tuple) -> str:
         """
