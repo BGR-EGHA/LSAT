@@ -79,7 +79,7 @@ class ModelBuilder_calc(QObject):
         Returns an array.
         """
         for rasterpath in rasterpathlist:
-            layerName = os.path.splitext(os.path.basename(rasterpath))[0].replace(" ", "")
+            layerName = os.path.splitext(os.path.basename(rasterpath))[0].replace(".", "").replace(" ","")
             raster = Raster(rasterpath)
             locals()[layerName] = raster.getArrayFromBand().astype(np.float32)
             locals()[layerName][locals()[layerName] == -9999] = np.nan
