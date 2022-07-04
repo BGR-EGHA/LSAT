@@ -14,7 +14,7 @@ The easiest way to run LSAT on Windows is to download the most recent installer 
 
 ### Running LSAT from source on Windows
 
-1. Make sure you have Python 3 installed (3.7 tested), if not you can get it from [python.org/downloads](https://www.python.org/downloads/).
+1. Make sure you have Python 3 installed (3.10 tested), if not you can get it from [python.org/downloads](https://www.python.org/downloads/).
 2. Download LSAT
 3. Navigate to the LSAT directory and open a PowerShell window (if you downloaded a zipped version you will need to unzip LSAT first).
 4. Create a virtual environment
@@ -30,7 +30,7 @@ python -m venv venv
 python -m pip install -r requirements.txt
 ```
 
-Additionally to the packages listed in the requirements.txt you will need GDAL (3.3.1 tested).
+Additionally to the packages listed in the requirements.txt you will need GDAL (3.4.3 tested).
 Unfortunately, GDAL can usually not simply be installed with a pip command.
 You can either download a .whl file from [Christoph Gohlkes fantastic website](https://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) or
 build it yourself.
@@ -94,7 +94,9 @@ LSAT PM to run it.
 ## Documentation
 
 All windows installers come with documentation.
-Alternatively you can find the current documentation and documentation for older releases (see releases) [here](https://github.com/BGR-EGHA/LSAT-Documentation).
+Alternatively you can find the current documentation and documentation for older releases
+(see releases) [here](https://github.com/BGR-EGHA/LSAT-Documentation).
+An online version of the documentation is available on [readthedocs.io](https://lsat-documentation.readthedocs.io/en/latest/).
 
 ## Test dataset
 
