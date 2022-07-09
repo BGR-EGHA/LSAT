@@ -4,6 +4,7 @@ import os
 
 from core.uis.PointBiserial_ui.PointBiserial_ui import Ui_PointBiserial
 from core.libs.CustomFileDialog.CustomFileDialog import CustomFileDialog
+from core.libs.GDAL_Libs.Layers import Raster, Feature
 
 class PointBiserial(QMainWindow):
     def __init__(self, projectLocation="", parent=None):
@@ -38,10 +39,23 @@ class PointBiserial(QMainWindow):
         inventory = self.ui.inventoryComboBox.currentText()
         raster = self.ui.parameterComboBox.currentText()
         if self._validate(inventory, raster):
-            pass
+            inventoryArray, rasterArray = self.getArrays(inventory, raster)
 
     def _validate(self, inventory: str, raster: str) -> bool:
         if os.path.isfile(inventory) and os.path.isfile(raster):
             return True
         else:
             return False
+
+    def getArrays(self, inventory: str, raster: str) -> tuple:
+        """
+        Converts the feature file inventory into a raster file with raster as a mask to get
+        its array and gets rasters array.
+        Returns a tuple of numpy arrays: [0] = inventoryArray [1] = rasterArray
+        """
+        inventoryHandle = Feature(inventory)
+        rasterHandle = Raster(raster)
+        tmpRaster = os.path.join(self.projectLocation, "workspace", "tmp_raster.tif")
+        inventoryHandle.rasterizeLayer(raster, tmpRaster)
+        tmpInventoryRaster = Raster(tmpRaster)
+        return (tmpInventoryRaster.getArrayFromBand(), rasterHandle.getArrayFromBand())
