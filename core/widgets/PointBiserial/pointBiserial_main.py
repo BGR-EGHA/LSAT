@@ -3,6 +3,7 @@ import numpy as np
 import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+import matplotlib.pyplot as plt
 
 from core.uis.PointBiserial_ui.PointBiserial_ui import Ui_PointBiserial
 from core.libs.CustomFileDialog.CustomFileDialog import CustomFileDialog
@@ -62,7 +63,11 @@ class PointBiserial(QMainWindow):
         raster = self.ui.parameterComboBox.currentText()
         if self._validate(inventory, raster):
             inventoryArray, rasterArray = self.getArrays(inventory, raster)
-            pointBiserial = self.calculatePointBiserial(inventoryArray, rasterArray)
+            rasterValuesWithLs, rasterValuesWithoutLs = self.getRasterValuesWithAndWithoutLs(
+                                                            inventoryArray, rasterArray)
+            pointBiserialCorrelationCoefficient = self.calculatePointBiserial(
+                                rasterValuesWithLs, rasterValuesWithoutLs, rasterArray)
+            self.plot(rasterValuesWithLs, rasterValuesWithoutLs)
 
     def _validate(self, inventory: str, raster: str) -> bool:
         if os.path.isfile(inventory) and os.path.isfile(raster):
@@ -83,7 +88,18 @@ class PointBiserial(QMainWindow):
         tmpInventoryRaster = Raster(tmpRaster)
         return (tmpInventoryRaster.getArrayFromBand(), rasterHandle.getArrayFromBand())
 
-    def calculatePointBiserial(self, inventoryArray, rasterArray):
+    def getRasterValuesWithAndWithoutLs(self, inventoryArray, rasterArray) -> tuple:
+        """
+        Returns a tuple of two arrays: [0] = values in rasterArray with a Landslide
+                                       [1] = values in rasterArrray without a Landslide
+        """
+        elementIndicesWithLs = np.where(inventoryArray == 1)
+        elementIndicesWithoutLs = np.where(inventoryArray == 0)
+        rasterValuesWithLs = rasterArray[elementIndicesWithLs]
+        rasterValuesWithoutLs = rasterArray[elementIndicesWithoutLs]
+        return (rasterValuesWithLs, rasterValuesWithoutLs)
+
+    def calculatePointBiserial(self, rasterValuesWithLs, rasterValuesWithoutLs, rasterArray):
         """
         Returns the point biserial correlation coefficient r_pb.
                M_1 - M_0     n_1 * n_0
@@ -96,14 +112,19 @@ class PointBiserial(QMainWindow):
         n_0: Amount of rasterArray elements without landslide
         n:   Total amount of elements in rasterArray
         """
-        elementIndicesWithLs = np.where(inventoryArray == 1)
-        elementIndicesWithoutLs = np.where(inventoryArray == 0)
-        rasterWithLs = rasterArray[elementIndicesWithLs]
-        rasterWithoutLs = rasterArray[elementIndicesWithoutLs]
-        M_1 = np.mean(rasterWithLs)
-        M_0 = np.mean(rasterWithoutLs)
+        M_1 = np.mean(rasterValuesWithLs)
+        M_0 = np.mean(rasterValuesWithoutLs)
         s_n = np.std(rasterArray)
-        n_1 = rasterWithLs.size
-        n_0 = rasterWithoutLs.size
+        n_1 = rasterValuesWithLs.size
+        n_0 = rasterValuesWithoutLs.size
         n = rasterArray.size
+        print(((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n**2))))
         return (((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n**2))))
+
+    def plot(self, rasterValuesWithLs, rasterValuesWithoutLs) -> None:
+        """Plots the both Arrays values on the y axis.
+        """
+        plt.figure()
+        plt.scatter(np.zeros_like(rasterValuesWithoutLs), rasterValuesWithoutLs, s=1)
+        plt.scatter(np.ones_like(rasterValuesWithLs), rasterValuesWithLs, s=1)
+        plt.show()
