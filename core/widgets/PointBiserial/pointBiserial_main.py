@@ -21,7 +21,7 @@ class PointBiserial(QMainWindow):
     def autofillInventory(self) -> None:
         """
         Gets called when widget starts. Autofills the inventoryComboBox with .shp, .geojson and .kml
-        files in the *projectLocation*/data/inventory folder and its subfolders
+        files in the *projectLocation*/data/inventory folder and its subfolders.
         """
         extensions = (".shp", ".kml", ".geojson")
         for file in glob.glob(f"{self.projectLocation}/data/inventory/**/*.*", recursive=True):
@@ -30,8 +30,8 @@ class PointBiserial(QMainWindow):
 
     def autofillParameter(self) -> None:
         """
-        Gets called when widget starts. Autofills the combobox with .tif files
-        in the *projectLocation*/data/params folder and its subfolders
+        Gets called when widget starts. Autofills the parameterComboBox with .tif files
+        in the *projectLocation*/data/params folder and its subfolders.
         """
         for file in glob.glob(f"{self.projectLocation}/data/params/**/*.tif", recursive=True):
                 self.ui.parameterComboBox.addItem(str(os.path.normpath(file)))
@@ -39,7 +39,7 @@ class PointBiserial(QMainWindow):
     @pyqtSlot()
     def on_inventoryToolButton_clicked(self):
         """
-        Opens a dialog to select a feature to add its path to inventoryComboBox
+        Opens a dialog to select a feature to add its path to inventoryComboBox.
         """
         self.fileDialog.openFeatureFile(self.projectLocation)
         if self.fileDialog.exec_() == 1:
@@ -49,7 +49,7 @@ class PointBiserial(QMainWindow):
     @pyqtSlot()
     def on_parameterToolButton_clicked(self):
         """
-        Opens a dialog to select a raster to add its path to parameterComboBox
+        Opens a dialog to select a raster to add its path to parameterComboBox.
         """
         self.fileDialog.openRasterFile(self.projectLocation)
         if self.fileDialog.exec_() == 1:
@@ -98,6 +98,12 @@ class PointBiserial(QMainWindow):
         """
         elementIndicesWithLs = np.where(inventoryArray == 1)
         elementIndicesWithoutLs = np.where(inventoryArray == 0)
-        # rasterWithLs = 
+        rasterWithLs = rasterArray[elementIndicesWithLs]
+        rasterWithoutLs = rasterArray[elementIndicesWithoutLs]
+        M_1 = np.mean(rasterWithLs)
+        M_0 = np.mean(rasterWithoutLs)
+        s_n = np.std(rasterArray)
+        n_1 = rasterWithLs.size
+        n_0 = rasterWithoutLs.size
         n = rasterArray.size
-        print(n)
+        return (((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n**2))))
