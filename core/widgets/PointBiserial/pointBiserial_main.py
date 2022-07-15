@@ -3,7 +3,10 @@ import numpy as np
 import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+import logging
 
 from core.uis.PointBiserial_ui.PointBiserial_ui import Ui_PointBiserial
 from core.libs.CustomFileDialog.CustomFileDialog import CustomFileDialog
@@ -18,6 +21,14 @@ class PointBiserial(QMainWindow):
         self.fileDialog = CustomFileDialog()
         self.autofillInventory()
         self.autofillParameter()
+        # matplotlib figure
+        self.fig = Figure(facecolor='white')
+        self.canvas = FigureCanvas(self.fig)
+        self.canvas.setParent(self.ui.plotFrame)
+        self.ax = self.fig.add_subplot(111)
+        self.mpl_toolbar = NavigationToolbar(self.canvas, self.ui.plotFrame)
+        self.ui.plotVerticalLayout.addWidget(self.canvas)
+        self.ui.plotVerticalLayout.addWidget(self.mpl_toolbar)
 
     def autofillInventory(self) -> None:
         """
@@ -65,9 +76,18 @@ class PointBiserial(QMainWindow):
             inventoryArray, rasterArray = self.getArrays(inventory, raster)
             rasterValuesWithLs, rasterValuesWithoutLs = self.getRasterValuesWithAndWithoutLs(
                                                             inventoryArray, rasterArray)
-            pointBiserialCorrelationCoefficient = self.calculatePointBiserial(
+            pointBiserial, M_1, M_0, s_n, n_1, n_0 = self.calculatePointBiserial(
                                 rasterValuesWithLs, rasterValuesWithoutLs, rasterArray)
-            self.plot(rasterValuesWithLs, rasterValuesWithoutLs)
+            logging.info(self.tr("Point biserial correlation coefficient = {}").format(
+                pointBiserial))
+            self.plot(rasterValuesWithLs,
+                rasterValuesWithoutLs,
+                M_1, # Mean of rasterArray values with landslide
+                M_0, # Mean of rasterArray values without landslide
+                n_1, # Count of rasterArray elements with landslide 
+                n_0, # Count of rasterArray elements without landslide
+                os.path.basename(raster),
+                os.path.basename(inventory))
 
     def _validate(self, inventory: str, raster: str) -> bool:
         if os.path.isfile(inventory) and os.path.isfile(raster):
@@ -99,18 +119,18 @@ class PointBiserial(QMainWindow):
         rasterValuesWithoutLs = rasterArray[elementIndicesWithoutLs]
         return (rasterValuesWithLs, rasterValuesWithoutLs)
 
-    def calculatePointBiserial(self, rasterValuesWithLs, rasterValuesWithoutLs, rasterArray):
+    def calculatePointBiserial(self, rasterValuesWithLs, rasterValuesWithoutLs, rasterArray) -> tuple:
         """
-        Returns the point biserial correlation coefficient r_pb.
+        Returns the point biserial correlation coefficient r_pb and all values used to calculate it.
                M_1 - M_0     n_1 * n_0
         r_pb = --------- * √(---------)
                   s_n           n^2
         M_1: Mean of rasterArray values with landslide
         M_0: Mean of rasterArray values without landslide
         s_n: Standard Deviation of rasterArray values
-        n_1: Amount of rasterArray elements with landslide 
-        n_0: Amount of rasterArray elements without landslide
-        n:   Total amount of elements in rasterArray
+        n_1: Count of rasterArray elements with landslide 
+        n_0: Count of rasterArray elements without landslide
+        n:   Total count of elements in rasterArray
         """
         M_1 = np.mean(rasterValuesWithLs)
         M_0 = np.mean(rasterValuesWithoutLs)
@@ -118,13 +138,22 @@ class PointBiserial(QMainWindow):
         n_1 = rasterValuesWithLs.size
         n_0 = rasterValuesWithoutLs.size
         n = rasterArray.size
-        print(((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n**2))))
-        return (((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n**2))))
+        return (((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n**2))), M_1, M_0, s_n, n_1, n_0)
 
-    def plot(self, rasterValuesWithLs, rasterValuesWithoutLs) -> None:
-        """Plots the both Arrays values on the y axis.
+    def plot(self, rasterValuesWithLs, rasterValuesWithoutLs, meanWithLs, meanWithoutLs, withLsCount, withoutLsCount, rasterName, inventoryName) -> None:
+        """Scatters all rasterValues [y-axis] with a landslide at 1 [x-axis] and all without a
+        landslide at 0. For both cases we draw a hline indicating the mean of the values.
         """
-        plt.figure()
-        plt.scatter(np.zeros_like(rasterValuesWithoutLs), rasterValuesWithoutLs, s=1)
-        plt.scatter(np.ones_like(rasterValuesWithLs), rasterValuesWithLs, s=1)
-        plt.show()
+        self.ax.clear()
+        self.ax.scatter(np.zeros_like(rasterValuesWithoutLs), rasterValuesWithoutLs, s=1, color="b")
+        self.ax.hlines(y=meanWithoutLs, xmin=-0.25, xmax=0.25)
+        self.ax.scatter(np.ones_like(rasterValuesWithLs), rasterValuesWithLs, s=1, color="r")
+        self.ax.hlines(y=meanWithLs, xmin=0.75, xmax=1.25)
+        self.ax.set_xticks([0, 1])
+        self.ax.set_xticklabels([f"no Landslide\nRaster cell count: {withoutLsCount}\nMean Raster value: {meanWithoutLs}",
+            f"Landslide\nRaster cell count: {withLsCount}\nMean Raster value: {meanWithLs}"])
+        self.ax.set_xlabel(f"{inventoryName}")
+        self.ax.set_ylabel(f"{rasterName} values")
+        self.canvas.draw()
+        self.canvas.flush_events()
+        self.fig.tight_layout()
