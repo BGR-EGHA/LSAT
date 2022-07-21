@@ -74,32 +74,97 @@ class PointBiserial(QMainWindow):
         inventory = self.ui.inventoryComboBox.currentText()
         raster = self.ui.parameterComboBox.currentText()
         if self._validate(inventory, raster):
-            inventoryArray, rasterArray = self.getArrays(inventory, raster)
-            rasterValuesWithLs, rasterValuesWithoutLs = self.getRasterValuesWithAndWithoutLs(
-                inventoryArray, rasterArray
-            )
-            pointBiserial, M_1, M_0, s_n, n_1, n_0 = self.calculatePointBiserial(
-                rasterValuesWithLs, rasterValuesWithoutLs, rasterArray
-            )
-            logging.info(
-                self.tr("Point biserial correlation coefficient = {}").format(pointBiserial)
-            )
-            self.plot(
-                rasterValuesWithLs,
-                rasterValuesWithoutLs,
-                M_1,  # Mean of rasterArray values with landslide
-                M_0,  # Mean of rasterArray values without landslide
-                n_1,  # Count of rasterArray elements with landslide
-                n_0,  # Count of rasterArray elements without landslide
-                os.path.basename(raster),
-                os.path.basename(inventory),
-            )
+            self.ax.clear()
+            self.thread = QThread()
+            self.calc = PointBiserialCalc(inventory, raster, self.projectLocation)
+            self.calc.moveToThread(self.thread)
+            self.thread.started.connect(self.calc.run)
+            self.calc.finishSignal.connect(self.done)
+                # pointBiserial, M_1, M_0, s_n, n_1, n_0, rasterValuesWithLs, rasterValuesWithoutLs,
+                # inventory, raster))
+            self.thread.start()
+            
 
     def _validate(self, inventory: str, raster: str) -> bool:
         if os.path.isfile(inventory) and os.path.isfile(raster):
             return True
         else:
             return False
+
+    def done(self, pointBiserial, M_1, M_0, s_n, n_1, n_0, rasterValuesWithLs,
+        rasterValuesWithoutLs, inventory, raster):
+        """
+        Exit PointBiserialCalc Thread and Update Log and Ui to tell user calculation is done.
+        Gets called with finishSignal from PointBiserialCalc Thread.
+        """
+        self.thread.exit()
+        logging.info(
+            self.tr("Point biserial correlation coefficient = {}").format(pointBiserial)
+        )
+        self.plot(
+            rasterValuesWithLs,
+            rasterValuesWithoutLs,
+            M_1,  # Mean of rasterArray values with landslide
+            M_0,  # Mean of rasterArray values without landslide
+            n_1,  # Count of rasterArray elements with landslide
+            n_0,  # Count of rasterArray elements without landslide
+            os.path.basename(raster),
+            os.path.basename(inventory),
+        )
+
+    def plot(
+        self,
+        rasterValuesWithLs,
+        rasterValuesWithoutLs,
+        meanWithLs,
+        meanWithoutLs,
+        withLsCount,
+        withoutLsCount,
+        rasterName,
+        inventoryName,
+    ) -> None:
+        """Scatters all rasterValues [y-axis] with a landslide at 1 [x-axis] and all without a
+        landslide at 0. For both cases we draw a hline indicating the mean of the values.
+        """
+        self.ax.scatter(np.zeros_like(rasterValuesWithoutLs), rasterValuesWithoutLs, s=1, color="b")
+        self.ax.hlines(y=meanWithoutLs, xmin=-0.25, xmax=0.25)
+        self.ax.scatter(np.ones_like(rasterValuesWithLs), rasterValuesWithLs, s=1, color="r")
+        self.ax.hlines(y=meanWithLs, xmin=0.75, xmax=1.25)
+        self.ax.set_xticks([0, 1])
+        self.ax.set_xticklabels(
+            [
+                f"no Landslide\nRaster cell count: {withoutLsCount}\nMean Raster value: {meanWithoutLs}",
+                f"Landslide\nRaster cell count: {withLsCount}\nMean Raster value: {meanWithLs}",
+            ]
+        )
+        self.ax.set_xlabel(f"{inventoryName}")
+        self.ax.set_ylabel(f"{rasterName} values")
+        self.canvas.draw()
+        self.canvas.flush_events()
+        self.fig.tight_layout()
+
+class PointBiserialCalc(QObject):
+    """
+    Point Biserial Calculation in extra Thread.
+    """
+    finishSignal = pyqtSignal(float, float, float, float, int, int, np.ndarray, np.ndarray, str, str)
+
+    def __init__(self, inventory, raster, projectLocation):
+        super().__init__()
+        self.inventory = inventory
+        self.raster = raster
+        self.projectLocation = projectLocation
+    
+    def run(self):
+        inventoryArray, rasterArray = self.getArrays(self.inventory, self.raster)
+        rasterValuesWithLs, rasterValuesWithoutLs = self.getRasterValuesWithAndWithoutLs(
+            inventoryArray, rasterArray
+        )
+        pointBiserial, M_1, M_0, s_n, n_1, n_0 = self.calculatePointBiserial(
+            rasterValuesWithLs, rasterValuesWithoutLs, rasterArray
+        )
+        self.finishSignal.emit(pointBiserial, M_1, M_0, s_n, n_1, n_0, rasterValuesWithLs,
+        rasterValuesWithoutLs, self.inventory, self.raster)
 
     def getArrays(self, inventory: str, raster: str) -> tuple:
         """
@@ -147,35 +212,3 @@ class PointBiserial(QMainWindow):
         n_0 = rasterValuesWithoutLs.size
         n = rasterArray.size
         return (((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n**2))), M_1, M_0, s_n, n_1, n_0)
-
-    def plot(
-        self,
-        rasterValuesWithLs,
-        rasterValuesWithoutLs,
-        meanWithLs,
-        meanWithoutLs,
-        withLsCount,
-        withoutLsCount,
-        rasterName,
-        inventoryName,
-    ) -> None:
-        """Scatters all rasterValues [y-axis] with a landslide at 1 [x-axis] and all without a
-        landslide at 0. For both cases we draw a hline indicating the mean of the values.
-        """
-        self.ax.clear()
-        self.ax.scatter(np.zeros_like(rasterValuesWithoutLs), rasterValuesWithoutLs, s=1, color="b")
-        self.ax.hlines(y=meanWithoutLs, xmin=-0.25, xmax=0.25)
-        self.ax.scatter(np.ones_like(rasterValuesWithLs), rasterValuesWithLs, s=1, color="r")
-        self.ax.hlines(y=meanWithLs, xmin=0.75, xmax=1.25)
-        self.ax.set_xticks([0, 1])
-        self.ax.set_xticklabels(
-            [
-                f"no Landslide\nRaster cell count: {withoutLsCount}\nMean Raster value: {meanWithoutLs}",
-                f"Landslide\nRaster cell count: {withLsCount}\nMean Raster value: {meanWithLs}",
-            ]
-        )
-        self.ax.set_xlabel(f"{inventoryName}")
-        self.ax.set_ylabel(f"{rasterName} values")
-        self.canvas.draw()
-        self.canvas.flush_events()
-        self.fig.tight_layout()
