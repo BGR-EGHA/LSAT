@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Torizin"
+  given-names: "Jewgenij"
+  orcid: "https://orcid.org/0000-0001-9990-3872"
+- family-names: "Schüßler"
+  given-names: "Nick"
+  orcid: "https://orcid.org/0000-0002-2271-3007"
+- family-names: "Fuchs"
+  given-names: "Michael"
+  orcid: "https://orcid.org/0000-0003-2269-9724"
+title: "Landslide Susceptibility Assessment Tools Project Manager Suite"
+version: 1.0.1
+doi: 10.5281/zenodo.6482940
+date-released: 2022-04-25
+url: "https://github.com/BGR-EGHA/LSAT"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Torizin"
+    given-names: "Jewgenij"
+    orcid: "https://orcid.org/0000-0001-9990-3872"
+  - family-names: "Schüßler"
+    given-names: "Nick"
+    orcid: "https://orcid.org/0000-0002-2271-3007"
+  - family-names: "Fuchs"
+    given-names: "Michael"
+    orcid: "https://orcid.org/0000-0003-2269-9724"
+  doi: "10.5194/gmd-15-2791-2022"
+  journal: "Geoscientific Model Development"
+  start: 2791
+  end: 2812
+  title: "Landslide Susceptibility Assessment Tools v1.0.0b – Project Manager Suite: a new modular toolkit for landslide susceptibility assessment"
+  issue: 7
+  volume: 15
+  year: 2022
