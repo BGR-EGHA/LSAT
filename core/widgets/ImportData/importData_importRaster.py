@@ -96,11 +96,14 @@ class ImportRaster(QObject):
         """
         rasterarray = raster.getArrayFromBand()
         # "nan" breaks the comparison so we temporarily convert it to -9999
-        if np.isnan(raster.nodata):
-            np.nan_to_num(rasterarray, copy=False, nan=-9999)
-            rasterNoData = np.where(rasterarray == -9999)
+        if raster.nodata:
+            if np.isnan(raster.nodata):
+                np.nan_to_num(rasterarray, copy=False, nan=-9999)
+                rasterNoData = np.where(rasterarray == -9999)
+            else:
+                rasterNoData = np.where(rasterarray == raster.nodata)
         else:
-            rasterNoData = np.where(rasterarray == raster.nodata)
+            rasterNoData = ((),()) # tuple of two empty tuples to indicate absence of NoData
         maskarray = mask.getArrayFromBand()
         maskNoData = np.where(maskarray == mask.nodata)
         if len(rasterNoData[0]) == len(maskNoData[0]):
