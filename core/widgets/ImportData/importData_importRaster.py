@@ -111,10 +111,10 @@ class ImportRaster(QObject):
         else:
             self.infoSignal.emit(self.tr(
                 "Location of NoData differs."))
-            if maskNoDataLocation.size != rasterNoDataLocation.size:
+            if maskNoDataLocation.shape[0] != rasterNoDataLocation.shape[0]:
                 self.infoSignal.emit(self.tr(
                     "Amount of NoData differs. Mask: {} - Raster: {}").format(
-                    maskNoDataLocation.size, rasterNoDataLocation.size))
+                    maskNoDataLocation.shape[0], rasterNoDataLocation.shape[0]))
             return False
 
     def _checkNoDataValue(self, raster, mask) -> bool:
