@@ -7,7 +7,7 @@ folium==0.12.1.post1
 fonttools==4.33.3
 idna==3.3
 Jinja2==3.1.2
-joblib==1.1.0
+joblib==1.2.0
 kiwisolver==1.4.3
 lxml==4.9.1
 MarkupSafe==2.1.1
