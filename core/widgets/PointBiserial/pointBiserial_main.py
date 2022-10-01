@@ -21,15 +21,7 @@ class PointBiserial(QMainWindow):
         self.projectLocation = projectLocation
         self.fileDialog = CustomFileDialog()
         self.autofillInventory()
-        self.autofillParameter()
-        # matplotlib figure
-        self.fig = Figure(facecolor="white")
-        self.canvas = FigureCanvas(self.fig)
-        self.canvas.setParent(self.ui.plotFrame)
-        self.ax = self.fig.add_subplot(111)
-        self.mpl_toolbar = NavigationToolbar(self.canvas, self.ui.plotFrame)
-        self.ui.plotVerticalLayout.addWidget(self.canvas)
-        self.ui.plotVerticalLayout.addWidget(self.mpl_toolbar)
+        self.autofillRasters()
 
     def autofillInventory(self) -> None:
         """
@@ -38,16 +30,17 @@ class PointBiserial(QMainWindow):
         """
         extensions = (".shp", ".kml", ".geojson")
         for file in glob.glob(f"{self.projectLocation}/data/inventory/**/*.*", recursive=True):
-            if file.endswith(extensions):
+            if file.lower().endswith(extensions):
                 self.ui.inventoryComboBox.addItem(str(os.path.normpath(file)))
 
-    def autofillParameter(self) -> None:
+    def autofillRasters(self) -> None:
         """
-        Gets called when widget starts. Autofills the parameterComboBox with .tif files
-        in the *projectLocation*/data/params folder and its subfolders.
+        Gets called when widget starts. Autofills the discreete and continuousComboBox with .tif
+        files in the *projectLocation*/data/params folder and its subfolders.
         """
         for file in glob.glob(f"{self.projectLocation}/data/params/**/*.tif", recursive=True):
-            self.ui.parameterComboBox.addItem(str(os.path.normpath(file)))
+            self.ui.discreteComboBox.addItem(str(os.path.normpath(file)))
+            self.ui.continuousComboBox.addItem(str(os.path.normpath(file)))
 
     @pyqtSlot()
     def on_inventoryToolButton_clicked(self):
