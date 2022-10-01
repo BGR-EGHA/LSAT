@@ -1,40 +1,49 @@
 from core.libs.GDAL_Libs.Layers import Raster, Feature
+import numpy as np
+from PyQt5.QtCore import *
+import os
+
 
 class PointBiserialCalc(QObject):
     """
     Point Biserial Calculation in extra Thread.
     """
-    finishSignal = pyqtSignal(float, float, float, float, int, int, np.ndarray, np.ndarray, str, str)
+    finishSignal = pyqtSignal(str, str)
 
-    def __init__(self, discrete, continuous, inventory, projectLocation):
+    def __init__(self, discrete, continuous, inventory, outputName, projectLocation):
         super().__init__()
         self.discrete = discrete
         self.continuous = continuous
         self.inventory = inventory
+        self.outputName = outputName
         self.projectLocation = projectLocation
 
     def run(self):
-        inventoryArray, rasterArray = self.getArrays(self.inventory, self.raster)
-        rasterValuesWithLs, rasterValuesWithoutLs = self.getRasterValuesWithAndWithoutLs(
-            inventoryArray, rasterArray
-        )
+        discreteArray, continuousArray, inventoryArray = self.getArrays(self.discrete, self.continuous, self.inventory)
+        if inventoryArray:
+            discreteArrays = self.getOneHotArraysWithLs(discreteArray, inventoryArray)
+        else:
+            discreteArrays = self.getOneHotArrays(discreteArray)
         pointBiserial = self.calculatePointBiserial(
             rasterValuesWithLs, rasterValuesWithoutLs, rasterArray
         )
         self.finishSignal.emit(pointBiserial)
 
-    def getArrays(self, inventory: str, raster: str) -> tuple:
+    def getArrays(self, discrete: str, continuous: str, inventory: str) -> tuple:
         """
-        Converts the feature file inventory into a raster file with raster as a mask to get
-        its array and gets rasters array.
-        Returns a tuple of numpy arrays: [0] = inventoryArray [1] = rasterArray
+        Returns a tuple of numpy arrays: [0] = discreteArray [1] = rasterArray [2] = inventoryArray(=OPTIONAL)
+        inventoryArray only gets returned if the user provided one, else tuple only contains two arrays.
         """
-        inventoryHandle = Feature(inventory)
-        rasterHandle = Raster(raster)
-        tmpRaster = os.path.join(self.projectLocation, "workspace", "tmp_raster.tif")
-        inventoryHandle.rasterizeLayer(raster, tmpRaster)
-        tmpInventoryRaster = Raster(tmpRaster)
-        return (tmpInventoryRaster.getArrayFromBand(), rasterHandle.getArrayFromBand())
+        continuousHandle = Raster(continuous)
+        discreteHandle = Raster(discrete)
+        if inventory: # if not the user did not specify an inventory
+            inventoryHandle = Feature(inventory)
+            tmpRaster = os.path.join(self.projectLocation, "workspace", "tmp_raster.tif")
+            inventoryHandle.rasterizeLayer(discrete, tmpRaster)
+            tmpInventoryRaster = Raster(tmpRaster)
+            return (discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand(),
+                    tmpInventoryRaster.getArrayFromBand())
+        return (discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand())
 
     def getRasterValuesWithAndWithoutLs(self, inventoryArray, rasterArray) -> tuple:
         """
@@ -48,7 +57,7 @@ class PointBiserialCalc(QObject):
         return (rasterValuesWithLs, rasterValuesWithoutLs)
 
     def calculatePointBiserial(
-            self, rasterValuesWithLs, rasterValuesWithoutLs, rasterArray
+            self, continuousValuesWithDiscrete, continuousValuesWithoutDiscrete, continuousArray
     ) -> tuple:
         """
         Returns the point biserial correlation coefficient r_pb and all values used to calculate it.
@@ -62,10 +71,10 @@ class PointBiserialCalc(QObject):
         n_0: Count of rasterArray elements without landslide
         n:   Total count of elements in rasterArray
         """
-        M_1 = np.mean(rasterValuesWithLs)
-        M_0 = np.mean(rasterValuesWithoutLs)
-        s_n = np.std(rasterArray)
-        n_1 = rasterValuesWithLs.size
-        n_0 = rasterValuesWithoutLs.size
-        n = rasterArray.size
+        M_1 = np.mean(continuousValuesWithDiscrete)
+        M_0 = np.mean(continuousValuesWithoutDiscrete)
+        s_n = np.std(continuousArray)
+        n_1 = continuousValuesWithDiscrete.size
+        n_0 = continuousValuesWithoutDiscrete.size
+        n = continuousArray.size
         return (((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n ** 2))), M_1, M_0, s_n, n_1, n_0)
