@@ -1,5 +1,4 @@
 import glob
-import numpy as np
 import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -32,7 +31,7 @@ class PointBiserial(QMainWindow):
 
     def autofillRasters(self) -> None:
         """
-        Gets called when widget starts. Autofills the discreete and continuousComboBox with .tif
+        Gets called when widget starts. Autofills the discrete and continuousComboBox with .tif
         files in the *projectLocation*/data/params folder and its subfolders.
         """
         for file in glob.glob(f"{self.projectLocation}/data/params/**/*.tif", recursive=True):
@@ -77,25 +76,22 @@ class PointBiserial(QMainWindow):
             inventory = self.ui.inventoryComboBox.currentText()
         else:
             inventory = ""
+        outputName = self.ui.outputLineEdit.text()
         if self._validate(discrete, continuous, inventory):
-            self.ax.clear()
             self.thread = QThread()
-            self.calc = PointBiserialCalc(discrete, continuous, inventory, self.projectLocation)
+            self.calc = PointBiserialCalc(discrete, continuous, inventory, outputName, self.projectLocation)
             self.calc.moveToThread(self.thread)
             self.thread.started.connect(self.calc.run)
             self.calc.finishSignal.connect(self.done)
-                # pointBiserial, M_1, M_0, s_n, n_1, n_0, rasterValuesWithLs, rasterValuesWithoutLs,
-                # inventory, raster))
             self.thread.start()
 
     def _validate(self, discrete: str, continuous: str, inventory: str) -> bool:
         if os.path.isfile(discrete) and os.path.isfile(continuous):
             if inventory == "" or os.path.isfile(inventory):
                 return True
-        else:
-            return False
+        return False
 
-    def done(self, pointBiserial):
+    def done(self, pointBiserial, outputPath):
         """
         Exit PointBiserialCalc Thread and Update Log and Ui to tell user calculation is done.
         Gets called with finishSignal from PointBiserialCalc Thread.
@@ -104,3 +100,4 @@ class PointBiserial(QMainWindow):
         logging.info(
             self.tr("Point biserial correlation coefficient = {}").format(pointBiserial)
         )
+        logging.info(self.tr("Results saved in {}").format(outputPath))
