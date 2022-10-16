@@ -325,17 +325,16 @@ class MainFrame(QMainWindow):
         spatialToolsPane.addRibbonWidget(QRibbonButton(
             self, self.sensreclass_action, "SmallButton"), (2, 1, 1, 1))
 
+        # Point Biserial
+        self.pointbiserial_action = self.add_action(self.tr("Point-biserial Correlation"), QIcon(
+            ':/icons/Icons/geoviewer.png'), self.tr("Point-biserial Correlation"), True, self.on_pointBiserialCorrelation, None)
+        spatialToolsPane.addRibbonWidget(QRibbonButton(self, self.pointbiserial_action, "SmallButton"), (0, 2, 1, 1))
+
         # GEO VIEWER
         viewPane = dataTab.addRibbonPane(self.tr("Viewer"), "Horizontal")
         self.geoViewer_action = self.add_action(self.tr("Geodata Viewer"), QIcon(
             ':/icons/Icons/geoviewer.png'), self.tr("Viewer"), True, self.dataViewer, None)
         viewPane.addRibbonWidget(QRibbonButton(self, self.geoViewer_action))
-
-        # Point Biserial
-        correlationPane = dataTab.addRibbonPane(self.tr("Correlation"), "Horizontal")
-        self.pointbiserial_action = self.add_action(self.tr("Point-biserial Correlation"), QIcon(
-            ':/icons/Icons/geoviewer.png'), self.tr("Point-biserial Correlation"), True, self.on_pointBiserialCorrelation, None)
-        correlationPane.addRibbonWidget(QRibbonButton(self, self.pointbiserial_action))
 
         # ribbon Analysis tab
         analysisTab = self.ribbon.addRibbonTab(self.tr("ANALYSIS"))
