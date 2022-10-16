@@ -25,14 +25,46 @@ class PointBiserialCalc(QObject):
         else:
             discreteArrays = self.getOneHotArrays(discreteArray)
         pointBiserial = self.calculatePointBiserial(
-            rasterValuesWithLs, rasterValuesWithoutLs, rasterArray
+            discreteArrays, continuousArray
         )
         self.finishSignal.emit(pointBiserial)
 
+    def getOneHotArraysWithLs(self, discrete: np.ndarray, inventory: np.ndarray) -> list:
+        """
+        Returns a list of numpy arrays, each with one-hot encoded discrete values, except noData (-9999 expected), with
+        and without a landslide.
+        """
+        discreteArrays = []
+        uniques = np.unique(discrete)
+        for unique in uniques:
+            if unique == -9999:
+                continue
+            oneHotLs = np.logical_and(discrete == unique, inventory == 1).astype(int)
+            oneHotLs[discrete == -9999] = -9999
+            oneHotNonLs = np.logical_and(discrete == unique, inventory == 0).astype(int)
+            oneHotNonLs[discrete == -9999] = -9999
+            discreteArrays.extend((oneHotLs, oneHotNonLs))
+        return discreteArrays
+
+    def getOneHotArrays(self, discrete: np.ndarray) -> list:
+        """
+        Returns a list of numpy arrays, each with one-hot encoded discrete values, except noData (-9999 expected).
+        """
+        discreteArrays = []
+        uniques = np.unique(discrete)
+        for unique in uniques:
+            if unique == -9999:
+                continue
+            oneHot = np.zeros_like(discrete)
+            oneHot[discrete == unique] = 1
+            oneHot[discrete == -9999] = -9999
+            discreteArrays.append(oneHot)
+        return discreteArrays
+
     def getArrays(self, discrete: str, continuous: str, inventory: str) -> tuple:
         """
-        Returns a tuple of numpy arrays: [0] = discreteArray [1] = rasterArray [2] = inventoryArray(=OPTIONAL)
-        inventoryArray only gets returned if the user provided one, else tuple only contains two arrays.
+        Returns a tuple of numpy arrays: [0] = discreteArray [1] = rasterArray [2] = inventoryArray (=OPTIONAL)
+        inventoryArray is None if user did not provide one.
         """
         continuousHandle = Raster(continuous)
         discreteHandle = Raster(discrete)
@@ -43,18 +75,7 @@ class PointBiserialCalc(QObject):
             tmpInventoryRaster = Raster(tmpRaster)
             return (discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand(),
                     tmpInventoryRaster.getArrayFromBand())
-        return (discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand())
-
-    def getRasterValuesWithAndWithoutLs(self, inventoryArray, rasterArray) -> tuple:
-        """
-        Returns a tuple of two arrays: [0] = values in rasterArray with a Landslide
-                                       [1] = values in rasterArrray without a Landslide
-        """
-        elementIndicesWithLs = np.where(inventoryArray == 1)
-        elementIndicesWithoutLs = np.where(inventoryArray == 0)
-        rasterValuesWithLs = rasterArray[elementIndicesWithLs]
-        rasterValuesWithoutLs = rasterArray[elementIndicesWithoutLs]
-        return (rasterValuesWithLs, rasterValuesWithoutLs)
+        return discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand(), None
 
     def calculatePointBiserial(
             self, continuousValuesWithDiscrete, continuousValuesWithoutDiscrete, continuousArray
@@ -77,4 +98,5 @@ class PointBiserialCalc(QObject):
         n_1 = continuousValuesWithDiscrete.size
         n_0 = continuousValuesWithoutDiscrete.size
         n = continuousArray.size
-        return (((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n ** 2))), M_1, M_0, s_n, n_1, n_0)
+        return ((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n ** 2))), M_1, M_0, s_n, n_1, n_0
+
