@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PointBiserial(object):
     def setupUi(self, PointBiserial):
         PointBiserial.setObjectName("PointBiserial")
-        PointBiserial.resize(675, 341)
+        PointBiserial.resize(675, 294)
         self.centralwidget = QtWidgets.QWidget(PointBiserial)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
