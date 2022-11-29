@@ -91,13 +91,10 @@ class PointBiserial(QMainWindow):
                 return True
         return False
 
-    def done(self, pointBiserial, outputPath):
+    def done(self, outputPath):
         """
         Exit PointBiserialCalc Thread and Update Log and Ui to tell user calculation is done.
         Gets called with finishSignal from PointBiserialCalc Thread.
         """
         self.thread.exit()
-        logging.info(
-            self.tr("Point biserial correlation coefficient = {}").format(pointBiserial)
-        )
         logging.info(self.tr("Results saved in {}").format(outputPath))

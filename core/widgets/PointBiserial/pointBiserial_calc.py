@@ -8,7 +8,7 @@ class PointBiserialCalc(QObject):
     """
     Point Biserial Calculation in extra Thread.
     """
-    finishSignal = pyqtSignal(str, str)
+    finishSignal = pyqtSignal(str)
 
     def __init__(self, discrete, continuous, inventory, outputName, projectLocation):
         super().__init__()
@@ -20,45 +20,52 @@ class PointBiserialCalc(QObject):
 
     def run(self):
         discreteArray, continuousArray, inventoryArray = self.getArrays(self.discrete, self.continuous, self.inventory)
-        if inventoryArray:
-            discreteArrays = self.getOneHotArraysWithLs(discreteArray, inventoryArray)
+        if inventoryArray is not None:
+            discreteArrays = self.getDiscreteArraysWithLs(discreteArray, inventoryArray)
         else:
-            discreteArrays = self.getOneHotArrays(discreteArray)
-        pointBiserial = self.calculatePointBiserial(
-            discreteArrays, continuousArray
-        )
-        self.finishSignal.emit(pointBiserial)
+            discreteArrays = self.getDiscreteArrays(discreteArray)
+        # pointBiserial = self.calculatePointBiserial(
+            # discreteArrays, continuousArray
+        # )
+        for discreteValue, discreteArray in discreteArrays.items():
+            continuousWithDiscrete = np.where(discreteArray == 1, continuousArray, np.nan)
+            continuousWithoutDiscrete = np.where(discreteArray == 0, continuousArray, np.nan)
+            pb = self.calculatePointBiserial(continuousWithDiscrete, continuousWithoutDiscrete,
+                continuousArray)
+            print(pb)
 
-    def getOneHotArraysWithLs(self, discrete: np.ndarray, inventory: np.ndarray) -> list:
+    def getDiscreteArraysWithLs(self, discrete: np.ndarray, inventory: np.ndarray) -> dict:
         """
-        Returns a list of numpy arrays, each with one-hot encoded discrete values, except noData (-9999 expected), with
-        and without a landslide.
+        Returns a dict with discrete values, except noData (-9999 expected) as keys and their
+        one-hot-encoded values as values with and without landslides.
         """
-        discreteArrays = []
+        discreteArrays = {}
         uniques = np.unique(discrete)
         for unique in uniques:
             if unique == -9999:
                 continue
-            oneHotLs = np.logical_and(discrete == unique, inventory == 1).astype(int)
-            oneHotLs[discrete == -9999] = -9999
-            oneHotNonLs = np.logical_and(discrete == unique, inventory == 0).astype(int)
-            oneHotNonLs[discrete == -9999] = -9999
-            discreteArrays.extend((oneHotLs, oneHotNonLs))
+            oneHotLs = np.logical_and(discrete == unique, inventory == 1).astype(float)
+            oneHotLs[discrete == -9999] = np.nan
+            oneHotNonLs = np.logical_and(discrete == unique, inventory == 0).astype(float)
+            oneHotNonLs[discrete == -9999] = np.nan
+            discreteArrays[f"{unique}_LS"] = oneHotLs
+            discreteArrays[f"{unique}_NOLS"] = oneHotNonLs
         return discreteArrays
 
-    def getOneHotArrays(self, discrete: np.ndarray) -> list:
+    def getDiscreteArrays(self, discrete: np.ndarray) -> dict:
         """
-        Returns a list of numpy arrays, each with one-hot encoded discrete values, except noData (-9999 expected).
+        Returns a dict with discrete values, except noData (-9999 expected) as keys and their
+        one-hot-encoded values as values.
         """
-        discreteArrays = []
+        discreteArrays = {}
         uniques = np.unique(discrete)
         for unique in uniques:
             if unique == -9999:
                 continue
-            oneHot = np.zeros_like(discrete)
+            oneHot = np.zeros_like(discrete, dtype=float)
             oneHot[discrete == unique] = 1
-            oneHot[discrete == -9999] = -9999
-            discreteArrays.append(oneHot)
+            oneHot[discrete == -9999] = np.nan
+            discreteArrays[unique] = oneHot
         return discreteArrays
 
     def getArrays(self, discrete: str, continuous: str, inventory: str) -> tuple:
@@ -75,7 +82,7 @@ class PointBiserialCalc(QObject):
             tmpInventoryRaster = Raster(tmpRaster)
             return (discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand(),
                     tmpInventoryRaster.getArrayFromBand())
-        return discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand(), None
+        return (discreteHandle.getArrayFromBand(), continuousHandle.getArrayFromBand(), None)
 
     def calculatePointBiserial(
             self, continuousValuesWithDiscrete, continuousValuesWithoutDiscrete, continuousArray
@@ -92,11 +99,10 @@ class PointBiserialCalc(QObject):
         n_0: Count of rasterArray elements without landslide
         n:   Total count of elements in rasterArray
         """
-        M_1 = np.mean(continuousValuesWithDiscrete)
-        M_0 = np.mean(continuousValuesWithoutDiscrete)
-        s_n = np.std(continuousArray)
+        M_1 = np.nanmean(continuousValuesWithDiscrete)
+        M_0 = np.nanmean(continuousValuesWithoutDiscrete)
+        s_n = np.nanstd(continuousArray)
         n_1 = continuousValuesWithDiscrete.size
         n_0 = continuousValuesWithoutDiscrete.size
         n = continuousArray.size
         return ((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n ** 2))), M_1, M_0, s_n, n_1, n_0
-
