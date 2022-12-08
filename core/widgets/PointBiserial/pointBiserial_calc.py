@@ -24,15 +24,33 @@ class PointBiserialCalc(QObject):
             discreteArrays = self.getDiscreteArraysWithLs(discreteArray, inventoryArray)
         else:
             discreteArrays = self.getDiscreteArrays(discreteArray)
-        # pointBiserial = self.calculatePointBiserial(
-            # discreteArrays, continuousArray
-        # )
+        resultsDict = self.addBasicInfoToResultsDict(len(discreteArrays))
+        resultsDict["pointBiserialResults"] = {}
         for discreteValue, discreteArray in discreteArrays.items():
+            resultsDict["pointBiserialResults"][str(discreteValue)] = {}
             continuousWithDiscrete = np.where(discreteArray == 1, continuousArray, np.nan)
             continuousWithoutDiscrete = np.where(discreteArray == 0, continuousArray, np.nan)
-            pb = self.calculatePointBiserial(continuousWithDiscrete, continuousWithoutDiscrete,
-                continuousArray)
-            print(pb)
+            pb, M_1, M_0, s_n, n_1, n_0 = self.calculatePointBiserial(continuousWithDiscrete,
+                continuousWithoutDiscrete, continuousArray)
+            resultsDict["pointBiserialResults"][str(discreteValue)]["pb"] = pb
+            resultsDict["pointBiserialResults"][str(discreteValue)]["M_1"] = M_1
+            resultsDict["pointBiserialResults"][str(discreteValue)]["M_0"] = M_0
+            resultsDict["pointBiserialResults"][str(discreteValue)]["s_n"] = s_n
+            resultsDict["pointBiserialResults"][str(discreteValue)]["n_1"] = n_1
+            resultsDict["pointBiserialResults"][str(discreteValue)]["n_0"] = n_0
+        outputLocation = self.saveResults(resultsDict)
+        self.finishSignal.emit(outputLocation)
+
+    def addBasicInfoToResultsDict(self, discreteArrayCount: int) -> dict:
+        """
+        Returns a dict with basic input information (Which files where used, with/without inventory)
+        """
+        resultsDict = {}
+        resultsDict["discreteInputPath"] = self.discrete
+        resultsDict["discreteInputs"] = discreteArrayCount
+        resultsDict["continuousInputPath"] = self.continuous
+        resultsDict["inventoryInputPath"] = self.inventory
+        return resultsDict
 
     def getDiscreteArraysWithLs(self, discrete: np.ndarray, inventory: np.ndarray) -> dict:
         """
@@ -52,7 +70,7 @@ class PointBiserialCalc(QObject):
             discreteArrays[f"{unique}_NOLS"] = oneHotNonLs
         return discreteArrays
 
-    def getDiscreteArrays(self, discrete: np.ndarray) -> dict:
+    def getDiscreteArrays(self, discrete: np.ndarray, noData=-9999) -> dict:
         """
         Returns a dict with discrete values, except noData (-9999 expected) as keys and their
         one-hot-encoded values as values.
@@ -60,11 +78,11 @@ class PointBiserialCalc(QObject):
         discreteArrays = {}
         uniques = np.unique(discrete)
         for unique in uniques:
-            if unique == -9999:
+            if unique == noData:
                 continue
-            oneHot = np.zeros_like(discrete, dtype=float)
-            oneHot[discrete == unique] = 1
-            oneHot[discrete == -9999] = np.nan
+            oneHot = discrete == unique
+            oneHot = oneHot.astype(float)
+            oneHot[discrete == noData] = np.nan
             discreteArrays[unique] = oneHot
         return discreteArrays
 
@@ -92,17 +110,26 @@ class PointBiserialCalc(QObject):
                M_1 - M_0     n_1 * n_0
         r_pb = --------- * √(---------)
                   s_n           n^2
-        M_1: Mean of rasterArray values with landslide
-        M_0: Mean of rasterArray values without landslide
-        s_n: Standard Deviation of rasterArray values
-        n_1: Count of rasterArray elements with landslide
-        n_0: Count of rasterArray elements without landslide
-        n:   Total count of elements in rasterArray
+        M_1: Mean of continuous values with discrete value
+        M_0: Mean of continuous values without discrete value
+        s_n: Standard Deviation of continuous values
+        n_1: Count of continuous values with discrete value
+        n_0: Count of continuous values without discrete value
+        n:   Total count of continuous values in rasterArray
         """
         M_1 = np.nanmean(continuousValuesWithDiscrete)
         M_0 = np.nanmean(continuousValuesWithoutDiscrete)
         s_n = np.nanstd(continuousArray)
-        n_1 = continuousValuesWithDiscrete.size
-        n_0 = continuousValuesWithoutDiscrete.size
-        n = continuousArray.size
+        n_1 = np.count_nonzero(~np.isnan(continuousValuesWithDiscrete))
+        n_0 = np.count_nonzero(~np.isnan(continuousValuesWithoutDiscrete))
+        n = np.count_nonzero(~np.isnan(continuousArray))
         return ((M_1 - M_0) / s_n) * (np.sqrt(((n_1 * n_0) / n ** 2))), M_1, M_0, s_n, n_1, n_0
+
+    def saveResults(self, resultsDict: dict) -> str:
+        """
+        Returns the full path to the .npz file with the saved results.
+        """
+        outputPath = os.path.join(self.projectLocation, "results", "statistics",
+            self.outputName+".npz")
+        np.savez(outputPath, **resultsDict)
+        return outputPath
