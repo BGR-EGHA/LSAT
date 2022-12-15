@@ -115,7 +115,7 @@ class ProjectInfo(QMainWindow):
         """
         Replaces the descriptions in the ui with the contents of file
         """
-        ext = os.path.splitext(file)[1]
+        ext = os.path.splitext(file)[1].lower()
         if ext == ".txt":
             with open(file, encoding='utf-8') as doc:
                 text = doc.read()

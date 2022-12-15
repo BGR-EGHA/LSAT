@@ -485,7 +485,7 @@ class Feature:
 
     def __init__(self, path):
         self.path = path
-        driverstr = self.getDriverFromExtension(os.path.splitext(path)[1])
+        driverstr = self.getDriverFromExtension(os.path.splitext(path)[1].lower())
         self.driver = ogr.GetDriverByName(driverstr)
         self.feat = self.driver.Open(self.path)
         self.layer = self.getLayer()

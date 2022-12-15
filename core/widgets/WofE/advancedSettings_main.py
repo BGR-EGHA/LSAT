@@ -59,7 +59,7 @@ class AdvancedSettings(QMainWindow):
                 if os.path.exists(filename):
                     count = 0
                     for datafile in os.listdir(str(filename)):
-                        if datafile.endswith(".shp"):
+                        if datafile.lower().endswith(".shp"):
                             count += 1
                     self.numberSubsamples = count
                     self.ui.numberResamplesSpinBox.setValue(count)

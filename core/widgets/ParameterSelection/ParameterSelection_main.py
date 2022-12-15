@@ -58,7 +58,7 @@ class ParameterSelection(QMainWindow):
         """
         for file_name in os.listdir(self.paramsPath):
             baseName = os.path.splitext(file_name)[0]
-            file_type = os.path.splitext(file_name)[1]
+            file_type = os.path.splitext(file_name)[1].lower()
             if file_type == ".tif":
                 self.layer = RasterLayer(os.path.join(self.paramsPath, file_name))
                 item = QTreeWidgetItem()

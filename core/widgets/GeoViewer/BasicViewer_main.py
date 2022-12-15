@@ -153,7 +153,7 @@ class Viewer(QMainWindow):
         self.fileDialog.saveImageFile(self.projectLocation)
         if self.fileDialog.exec_() == 1 and self.fileDialog.selectedFiles():
             self._updateProgress(True)
-            if os.path.splitext(self.fileDialog.selectedFiles()[0])[1] == ".png":
+            if os.path.splitext(self.fileDialog.selectedFiles()[0])[1].lower() == ".png":
                 path = self.fileDialog.selectedFiles()[0]
             else:
                 path = self.fileDialog.selectedFiles()[0] + ".png"

@@ -319,7 +319,7 @@ class ModelBuilder(QMainWindow):
         for folder in ["AHP", "ANN", "LR", "WoE"]:
             path = os.path.join(projectpath, "results", folder, "rasters")
             for file in os.listdir(path):
-                if file.endswith(".tif") and os.path.splitext(file)[0].endswith(extension_list):
+                if file.lower().endswith(".tif") and os.path.splitext(file)[0].endswith(extension_list):
                     npz = self._checkfornpz(projectpath, folder, file)
                     self._loadweighted_layer(file, path, npz)
 

@@ -251,7 +251,7 @@ class TableViewer(QMainWindow):
         """
         self.fileDialog.saveExcelFile(self.projectLocation)
         if self.fileDialog.exec_() == 1 and self.fileDialog.selectedFiles():
-            if os.path.splitext(self.fileDialog.selectedFiles()[0])[1] != ".xlsx":
+            if os.path.splitext(self.fileDialog.selectedFiles()[0])[1].lower() != ".xlsx":
                 fullFileName = self.fileDialog.selectedFiles()[0] + '.xlsx'
             else:
                 fullFileName = self.fileDialog.selectedFiles()[0]
