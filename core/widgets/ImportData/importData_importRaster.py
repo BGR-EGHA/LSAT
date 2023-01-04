@@ -103,7 +103,7 @@ class ImportRaster(QObject):
             else:
                 rasterNoDataLocation = np.argwhere(rasterarray == raster.nodata)
         else:
-            rasterNoData = ((),()) # tuple of two empty tuples to indicate absence of NoData
+            rasterNoDataLocation = np.array(((), ()))  # tuple of two empty tuples to indicate absence of NoData
         maskarray = mask.getArrayFromBand()
         maskNoDataLocation = np.argwhere(maskarray == mask.nodata)
         if np.array_equal(rasterNoDataLocation, maskNoDataLocation):
