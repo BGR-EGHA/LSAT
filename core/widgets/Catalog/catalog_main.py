@@ -232,9 +232,9 @@ class Catalog(QDockWidget):
         fileName = os.path.basename(filePath)
         dirName = os.path.dirname(filePath)
         plainName = os.path.splitext(fileName)[0]
-        fixedFileName = 'region'
+        fixedFilePath = os.path.join(self.projectLocation, 'region')
         # I'm sorry Dave, I'm afraid I can't do that.
-        if fileName == f"{fixedFileName}.shp" or fileName == f"{fixedFileName}.tif":
+        if filePath in (f"{fixedFilePath}.shp", f"{fixedFilePath}.tif"):
             self.message.WarningOnDeleteBasicFile()
             return
         try:
