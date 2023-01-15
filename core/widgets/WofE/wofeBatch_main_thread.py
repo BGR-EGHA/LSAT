@@ -266,7 +266,7 @@ class WofETool(QMainWindow):
         # with extention ".shp". Add these files to the combobox.
 
         for file_name in os.listdir(str(self.training_path)):
-            file_type = os.path.splitext(file_name)[1]
+            file_type = os.path.splitext(file_name)[1].lower()
             if file_type in [".shp", ".kml", ".geojson"]:
                 self.ui.trainingFeatureComboBox.insertItem(
                     0, str(os.path.join(str(self.training_path), file_name)))
@@ -274,7 +274,7 @@ class WofETool(QMainWindow):
         # iterate for all files in directory params and select all files with extention ".tif". Add these files to the tree widget.
         # for param in os.listdir(str(self.params_path)):
         for param in self.selectedLayers:
-            param_type = os.path.splitext(param)[1]
+            param_type = os.path.splitext(param)[1].lower()
             if param_type == ".tif":
                 paramPath = os.path.join(str(self.params_path), param)
                 self.layer = RasterLayer(paramPath)

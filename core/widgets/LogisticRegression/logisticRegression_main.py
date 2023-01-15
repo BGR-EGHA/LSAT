@@ -158,7 +158,7 @@ class LogRegression(QMainWindow):
         # iterate for all files in directory training_path and select all files
         # with supported extensions. Add these files to the combobox.
         for file_name in os.listdir(training_path):
-            file_type = os.path.splitext(file_name)[1]
+            file_type = os.path.splitext(file_name)[1].lower()
             if file_type in [".shp", ".kml", ".geojson"]:
                 self.ui.landslideInventoryComboBox.insertItem(
                     0, str(os.path.join(str(training_path), file_name)))

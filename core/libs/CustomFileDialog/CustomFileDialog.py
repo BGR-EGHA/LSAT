@@ -45,7 +45,7 @@ class CustomIconProvider(QFileIconProvider):
                     super(CustomIconProvider, self).icon(fileInfo)
         try:
             if os.path.isfile(fname):
-                ext = os.path.splitext(fname)[1]
+                ext = os.path.splitext(fname)[1].lower()
 
             if ext == ".tif":
                 return QIcon(':/icons/Icons/raster_icon.png')

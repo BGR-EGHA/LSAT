@@ -89,7 +89,7 @@ class Zoning(QMainWindow):
         modelpath = os.path.join(projectLocation, "results", "susceptibility_maps")
         count = 0
         for file in os.listdir(modelpath):
-            if os.path.splitext(file)[1] == ".npz":
+            if os.path.splitext(file)[1].lower() == ".npz":
                 self.ui.modelComboBox.addItem(os.path.join(modelpath, file))
                 count += 1
         return count

@@ -446,7 +446,7 @@ class PlotViewer(QMainWindow):
                 box = self.ax2.boxplot(data, notch=False, patch_artist=True)
             elif self.plotCombo.currentText() == self.tr("Violinplot"):
                 violin = self.ax2.violinplot(data, showmedians=True)
-            self.ax.set_xticks(range(1, len(self.resultTable) + 1))
+            self.ax2.set_xticks(range(1, len(self.resultTable) + 1))
             self.ax2.set_xticklabels(labels)
         self.canvas.draw()
         self.canvas.flush_events()

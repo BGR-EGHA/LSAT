@@ -65,7 +65,7 @@ class FeatureAttributeTable(QMainWindow):
         """
         self.dialog.saveExcelFile(os.path.dirname(self.featPath))
         if self.dialog.exec_() == 1 and self.dialog.selectedFiles():
-            if os.path.splitext(self.dialog.selectedFiles()[0])[1] != ".xlsx":
+            if os.path.splitext(self.dialog.selectedFiles()[0])[1].lower() != ".xlsx":
                 fullFileName = self.dialog.selectedFiles()[0] + '.xlsx'
             else:
                 fullFileName = self.dialog.selectedFiles()[0]

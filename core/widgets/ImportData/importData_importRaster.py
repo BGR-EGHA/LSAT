@@ -53,9 +53,9 @@ class ImportRaster(QObject):
         epsg = self._checkEPSG(raster, mask)
         dimension = self._checkDimension(raster, mask)
         origin = self._checkOrigin(raster, mask)
-        nodatacount = self._checkNoDataCount(raster, mask)
+        nodatalocation = self._checkNoDataLocation(raster, mask)
         nodatavalue = self._checkNoDataValue(raster, mask)
-        return all((epsg, dimension, origin, nodatacount, nodatavalue))
+        return all((epsg, dimension, origin, nodatalocation, nodatavalue))
 
     def _checkEPSG(self, raster, mask) -> bool:
         """
@@ -90,24 +90,31 @@ class ImportRaster(QObject):
                 self.tr("Origin differs. Mask: {} - Raster: {}").format(mask.geoTrans[0], raster.geoTrans[0]))
             return False
 
-    def _checkNoDataCount(self, raster, mask) -> bool:
+    def _checkNoDataLocation(self, raster, mask) -> bool:
         """
-        Gets called by validate
+        Gets called by validate.
         """
         rasterarray = raster.getArrayFromBand()
         # "nan" breaks the comparison so we temporarily convert it to -9999
-        if np.isnan(raster.nodata):
-            np.nan_to_num(rasterarray, copy=False, nan=-9999)
-            rasterNoData = np.where(rasterarray == -9999)
+        if raster.nodata:
+            if np.isnan(raster.nodata):
+                np.nan_to_num(rasterarray, copy=False, nan=-9999)
+                rasterNoDataLocation = np.argwhere(rasterarray == -9999)
+            else:
+                rasterNoDataLocation = np.argwhere(rasterarray == raster.nodata)
         else:
-            rasterNoData = np.where(rasterarray == raster.nodata)
+            rasterNoDataLocation = np.array(((), ()))  # tuple of two empty tuples to indicate absence of NoData
         maskarray = mask.getArrayFromBand()
-        maskNoData = np.where(maskarray == mask.nodata)
-        if len(rasterNoData[0]) == len(maskNoData[0]):
+        maskNoDataLocation = np.argwhere(maskarray == mask.nodata)
+        if np.array_equal(rasterNoDataLocation, maskNoDataLocation):
             return True
         else:
             self.infoSignal.emit(self.tr(
-                "Amount of NoData differs. Mask: {} - Raster: {}").format(len(maskNoData[0]), len(rasterNoData[0])))
+                "Location of NoData differs."))
+            if maskNoDataLocation.shape[0] != rasterNoDataLocation.shape[0]:
+                self.infoSignal.emit(self.tr(
+                    "Amount of NoData differs. Mask: {} - Raster: {}").format(
+                    maskNoDataLocation.shape[0], rasterNoDataLocation.shape[0]))
             return False
 
     def _checkNoDataValue(self, raster, mask) -> bool:
