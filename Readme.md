@@ -29,13 +29,11 @@ python -m venv venv
 ```
 python -m pip install -r requirements.txt
 ```
-
-Additionally to the packages listed in the requirements.txt you will need GDAL (3.4.3 tested).
+Additionally to the packages listed in the requirements.txt you will need GDAL (3.6.1 tested).
 Unfortunately, GDAL can usually not simply be installed with a pip command.
-You can either download a .whl file from [Christoph Gohlkes fantastic website](https://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal) or
+You can either download a .whl file from [Christoph Gohlkes fantastic repository](https://github.com/cgohlke/geospatial.whl/releases) or
 build it yourself.
 Installing a .whl file:
-
 ```
 python -m pip install *path to .whl file*
 ```
