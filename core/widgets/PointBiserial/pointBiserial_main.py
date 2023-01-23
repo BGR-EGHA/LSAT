@@ -77,7 +77,7 @@ class PointBiserial(QMainWindow):
         else:
             inventory = ""
         outputName = self.ui.outputLineEdit.text()
-        if self._validate(discrete, continuous, inventory):
+        if self._validate(discrete, continuous, inventory, outputName):
             self.thread = QThread()
             self.calc = PointBiserialCalc(discrete, continuous, inventory, outputName, self.projectLocation)
             self.calc.moveToThread(self.thread)
@@ -85,11 +85,25 @@ class PointBiserial(QMainWindow):
             self.calc.finishSignal.connect(self.done)
             self.thread.start()
 
-    def _validate(self, discrete: str, continuous: str, inventory: str) -> bool:
-        if os.path.isfile(discrete) and os.path.isfile(continuous):
-            if inventory == "" or os.path.isfile(inventory):
-                return True
-        return False
+    def _validate(self, discrete: str, continuous: str, inventory: str, outputName: str) -> bool:
+        validation = True
+        if not os.path.isfile(discrete):
+            validation = False
+            self.ui.discreteComboBox.setStyleSheet("background-color: rgb(255, 0, 0)")
+            QTimer.singleShot(500, lambda: self.ui.discreteComboBox.setStyleSheet(""))
+        if not os.path.isfile(continuous):
+            validation = False
+            self.ui.continuousComboBox.setStyleSheet("background-color: rgb(255, 0, 0)")
+            QTimer.singleShot(500, lambda: self.ui.continuousComboBox.setStyleSheet(""))
+        if not (inventory == "" or os.path.isfile(inventory)):
+            validation = False
+            self.ui.inventoryComboBox.setStyleSheet("background-color: rgb(255, 0, 0)")
+            QTimer.singleShot(500, lambda: self.ui.inventoryComboBox.setStyleSheet(""))
+        if not outputName:
+            validation = False
+            self.ui.outputLineEdit.setStyleSheet("background-color: rgb(255, 0, 0)")
+            QTimer.singleShot(500, lambda: self.ui.outputLineEdit.setStyleSheet(""))
+        return validation
 
     def done(self, outputPath):
         """

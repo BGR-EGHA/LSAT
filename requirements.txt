@@ -9,7 +9,9 @@ idna==3.3
 Jinja2==3.1.2
 joblib==1.2.0
 kiwisolver==1.4.3
+lxml==4.9.1
 MarkupSafe==2.1.1
+matplotlib==3.5.2
 numpy==1.23.0
 openpyxl==3.0.10
 packaging==21.3
@@ -22,7 +24,7 @@ python-dateutil==2.8.2
 python-docx==0.8.11
 requests==2.28.1
 scikit-learn==1.1.1
-scipy
+scipy==1.8.1
 six==1.16.0
 threadpoolctl==3.1.0
 urllib3==1.26.9

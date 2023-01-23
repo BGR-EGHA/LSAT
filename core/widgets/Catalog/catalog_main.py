@@ -381,9 +381,11 @@ class Catalog(QDockWidget):
         elif pathparts[-3] == "AHP":
             self.ahpr = ahp_resultviewer(self.projectLocation, fname, result)
             self.ahpr.show()
-        elif pathparts[-2] == "statistics":
+        elif pathparts[-2] == "contingency":
             self.contr = ContingencyMatrix(self.projectLocation, fname, result)
             self.contr.show()
+        elif pathparts[-2] == "pbis":
+            logging.info(self.tr("Support for {} is coming soon.").format(pathparts[-3]))
         else:
             logging.info(self.tr("Support for {} is coming soon.").format(pathparts[-3]))
 

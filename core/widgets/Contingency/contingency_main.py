@@ -148,6 +148,7 @@ class ContingencyGUI(QMainWindow):
             self.projectLocation,
             "results",
             "statistics",
+            "contingency",
             self.ui.outputFileNameLineEdit.text() +
             "_ctg.npz")
         np.savez_compressed(outputPath,
