@@ -47,7 +47,7 @@ class PointBiserialCalc(QObject):
         """
         resultsDict = {}
         resultsDict["discreteInputPath"] = self.discrete
-        resultsDict["discreteInputs"] = discreteArrayCount
+        resultsDict["discreteInputsCount"] = discreteArrayCount
         resultsDict["continuousInputPath"] = self.continuous
         resultsDict["inventoryInputPath"] = self.inventory
         return resultsDict
@@ -129,7 +129,7 @@ class PointBiserialCalc(QObject):
         """
         Returns the full path to the .npz file with the saved results.
         """
-        outputPath = os.path.join(self.projectLocation, "results", "statistics",
+        outputPath = os.path.join(self.projectLocation, "results", "statistics", "pb",
             self.outputName+".npz")
         np.savez(outputPath, **resultsDict)
         return outputPath

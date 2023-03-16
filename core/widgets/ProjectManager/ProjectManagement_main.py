@@ -443,7 +443,7 @@ class NewProject(QDialog):
         for resultfolder in resultfolders:
             os.makedirs(os.path.join(pathProject, "results", resultfolder))
         os.makedirs(os.path.join(pathProject, "results", "statistics", "contingency"))
-        os.makedirs(os.path.join(pathProject, "results", "statistics", "pbis"))
+        os.makedirs(os.path.join(pathProject, "results", "statistics", "pb"))
         analysistypes = ("ANN", "AHP", "LR", "WoE")
         for analysis in analysistypes:
             os.makedirs(os.path.join(pathProject, "results", analysis, "tables"))

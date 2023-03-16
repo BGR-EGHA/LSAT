@@ -17,6 +17,7 @@ from core.widgets.RasterAttributeTable.rat_main import RasterAttributeTable
 from core.widgets.RasterInfo.rasterInfo_main import RasterInfo
 from core.widgets.ResultViewer.ann_resultviewer import ann_resultviewer
 from core.widgets.ResultViewer.ahp_resultviewer import ahp_resultviewer
+from core.widgets.ResultViewer.pb_resultviewer import pb_resultviewer
 from core.widgets.ResultViewer.resultViewerWofE_main import ResultViewerWofE
 from core.widgets.ResultViewer.resultViewerLogReg_main import ResultsForm as LogResultForm
 from core.libs.Reporting.woe_report import woe_report
@@ -384,10 +385,11 @@ class Catalog(QDockWidget):
         elif pathparts[-2] == "contingency":
             self.contr = ContingencyMatrix(self.projectLocation, fname, result)
             self.contr.show()
-        elif pathparts[-2] == "pbis":
-            logging.info(self.tr("Support for {} is coming soon.").format(pathparts[-3]))
+        elif pathparts[-2] == "pb":
+            self.pbr = pb_resultviewer(self.projectLocation, fname, result)
+            self.pbr.show()
         else:
-            logging.info(self.tr("Support for {} is coming soon.").format(pathparts[-3]))
+            logging.info(self.tr("Support for {} is coming soon.").format(pathparts[-2]))
 
 
 class TreeView(QTreeView):
