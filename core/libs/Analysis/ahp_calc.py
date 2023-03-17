@@ -305,12 +305,11 @@ class ahp_calc:
     def _get_consistencyratio_alonso_lamata(self, lambda_max: float, n: int) -> float:
         """
         Calculates the Consistency Ratio (CR) based on Alonso & Lamata 2006.
-        CR = (λ - n) / (2,7699*n - 4,3513) * n
+        CR = (λ - n) / (2,7699*n - 4,3513 - n)
         λ_max = max. eigenvalue
         n = dimension of the matrix
         """
-        CR = (lambda_max - n) / (2.7699 * n - 4.3513) * n
-        return CR
+        return (lambda_max - n) / (2.7699 * n - 4.3513 - n)
 
     def writeoutputraster(self, coefficientpriorities: list, outputname: str, project_path: str):
         """
