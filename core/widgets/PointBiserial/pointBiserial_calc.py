@@ -38,6 +38,10 @@ class PointBiserialCalc(QObject):
             resultsDict["pointBiserialResults"][str(discreteValue)]["s_n"] = s_n
             resultsDict["pointBiserialResults"][str(discreteValue)]["n_1"] = n_1
             resultsDict["pointBiserialResults"][str(discreteValue)]["n_0"] = n_0
+            resultsDict["pointBiserialResults"][str(discreteValue)]["continuousWithDiscreteList"] = continuousWithDiscrete
+            resultsDict["pointBiserialResults"][str(discreteValue)]["continuousWithoutDiscreteList"] = continuousWithoutDiscrete
+            resultsDict["pointBiserialResults"][str(discreteValue)]["continuousWithDiscreteMean"] = np.nanmean(continuousWithDiscrete)
+            resultsDict["pointBiserialResults"][str(discreteValue)]["continuousWithoutDiscreteMean"] = np.nanmean(continuousWithoutDiscrete)
         outputLocation = self.saveResults(resultsDict)
         self.finishSignal.emit(outputLocation)
 
