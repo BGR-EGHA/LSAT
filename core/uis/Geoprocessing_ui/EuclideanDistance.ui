@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>400</height>
+    <width>580</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,9 +95,6 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="QLineEdit" name="inputFeatureLineEdit"/>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="inputFeatureDatasetLabel">
              <property name="text">
@@ -119,6 +116,9 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="0" colspan="3">
+            <widget class="QLineEdit" name="inputFeatureLineEdit"/>
+           </item>
           </layout>
          </item>
         </layout>
@@ -139,7 +139,7 @@
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <layout class="QGridLayout" name="optionalSettingsGroupBoxGridLayout">
-           <item row="2" column="0">
+           <item row="4" column="0">
             <widget class="QLabel" name="fixedBufferValueLabel">
              <property name="text">
               <string>Fixed buffer value</string>
@@ -147,23 +147,37 @@
             </widget>
            </item>
            <item row="0" column="0">
+            <widget class="QLabel" name="minimumDistanceLabel">
+             <property name="text">
+              <string>Minimum distance</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
             <widget class="QLabel" name="maximumDistanceLabel">
              <property name="text">
               <string>Maximum distance</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="3" column="0">
             <widget class="QLineEdit" name="maximumDistanceLineEdit">
              <property name="toolTip">
               <string>The maximum distance to be generated. The nodata value will be used for pixels beyond this distance. </string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="5" column="0">
             <widget class="QLineEdit" name="fixedBufferValueLineEdit">
              <property name="toolTip">
               <string>Specify a value to be applied to all pixels that are within the -maxdist of target pixels (including the target pixels) instead of a distance value</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="minimumDistanceLineEdit">
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
@@ -181,8 +195,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>540</width>
-     <height>18</height>
+     <width>580</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

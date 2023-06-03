@@ -96,13 +96,18 @@ class EuclideanDistance(QMainWindow):
         self.featurePath = self.ui.inputFeatureLineEdit.text()
         self.outRasterPath = self.ui.outRasterLineEdit.text()
         self.maskRasterPath = self.ui.maskRasterLineEdit.text()
+        if self.ui.minimumDistanceLineEdit.text():
+            self.minDistance = float(self.ui.minimumDistanceLineEdit.text())
+        else:
+            self.minDistance = None
         args = (
             self.featurePath,
             self.outRasterPath,
             self.maskRasterPath,
             self.projectLocation,
             options,
-            self.ui.ignoreOutsideCheckBox.isChecked())
+            self.ui.ignoreOutsideCheckBox.isChecked(),
+            self.minDistance)
         self.calcEuclideanDistance = EuclideanDistanceAnalysis(args)
         self.thread = QThread()
         self.calcEuclideanDistance.moveToThread(self.thread)
@@ -128,7 +133,7 @@ class EuclideanDistanceAnalysis(QObject):
 
     def __init__(self, args):
         QObject.__init__(self)
-        self.featurePath, self.outRasterPath, self.maskRasterPath, self.projectLocation, self.options, self.ignoreOutsideMask = args
+        self.featurePath, self.outRasterPath, self.maskRasterPath, self.projectLocation, self.options, self.ignoreOutsideMask, self.minDistance = args
 
     def calcDistance(self):
         """
@@ -177,6 +182,11 @@ class EuclideanDistanceAnalysis(QObject):
         euclideanBand = euclidean.GetRasterBand(1)
         euclideanBand.SetNoDataValue(noDataValue)
         gdal.ComputeProximity(featRasterBand, euclideanBand, self.options, callback=None)
+        if self.minDistance != None:
+            euclideanArray = euclideanBand.ReadAsArray()
+            euclideanArray[(euclideanArray < self.minDistance) & (euclideanArray != noDataValue)] = self.minDistance
+            euclideanBand.WriteArray(euclideanArray)
+            self.updateLoggerSignal.emit(self.tr("Distance values under {} set to {}.").format(self.minDistance, self.minDistance))
         euclideanBand.ComputeStatistics(False)
         featRaster = None
         euclidean = None
