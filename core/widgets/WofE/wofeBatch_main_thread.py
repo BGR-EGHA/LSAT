@@ -435,17 +435,13 @@ class WofETool(QMainWindow):
         # set the analysis type and number of subsamples based on advanced settings
         randomseed = None # only needed for onTheFlySubsample
         if self.onTheFlySubsample:
+            self.analysisType = 2
             self.numberSubsamples = self.advanced.ui.numberResamplesSpinBox.value()
             # If the user only wants one subsample we analyse the complete feature
-            if int(self.numberSubsamples) > 1:
-                self.analysisType = 2
-                if self.numberSubsamples == "" or None:
-                    self.numberSubsamples = 1
-                if self.advanced.ui.randomSeedLineEdit.text(): # only if not empty
-                    randomseed = self.advanced.ui.randomSeedLineEdit.text()
-            else:
-                self.analysisType = 1
+            if self.numberSubsamples in ("", None):
                 self.numberSubsamples = 1
+            if self.advanced.ui.randomSeedLineEdit.text(): # only if not empty
+                randomseed = self.advanced.ui.randomSeedLineEdit.text()
 
         if self.onTheFlySubsample == False and self.predefinedSubsamples == False:
             self.analysisType = 1
@@ -563,8 +559,6 @@ class Worker(QObject):
             self.progressSignal.emit([str(layerName), 100])
             eventRaster = None
             eventRasterPath = None
-            eventRaster = None
-            raster = None
             feature = None
         self.finishSignal.emit()
 
@@ -762,11 +756,10 @@ class Worker(QObject):
 
             barvalue = 0
             barvalue_fraction = float(100 / int(self.numberSubsamples))
-            raster = None
 
             random.seed(self.randomseed)
             for i in range(int(self.numberSubsamples)):
-                raster = Raster(rasterPath)
+                # raster = Raster(rasterPath)
                 outTest = self.outTest
                 outTraining = self.outTraining
                 RandomSampling(self.featurePath, outTraining, outTest, percent=self.sampleSize,
@@ -831,14 +824,21 @@ class Worker(QObject):
             w_neg = resWneg
             contrast = resContrast
             weight = resWeight
-
-            metadata = (
-                self.workspace,
-                self.outputTableLocation,
-                self.sampleSize,
-                self.analysisType,
-                self.numberSubsamples,
-                self.randomseed)
+            if self.randomseed is None:
+                metadata = (
+                    self.workspace,
+                    self.outputTableLocation,
+                    self.sampleSize,
+                    self.analysisType,
+                    self.numberSubsamples)
+            else:
+                metadata = (
+                    self.workspace,
+                    self.outputTableLocation,
+                    self.sampleSize,
+                    self.analysisType,
+                    self.numberSubsamples,
+                    self.randomseed)
             source = (rasterPath, self.featurePath)
             auc = auc
             roc_x = x_auc
@@ -855,7 +855,6 @@ class Worker(QObject):
                                 roc_x=roc_x,
                                 roc_y=roc_y)
             self._writeWeightRaster(self.projectLocation, self.resultTablePath, tab, raster)
-            raster = None
         self.finishSignal.emit()
 
     def _writeWeightRaster(

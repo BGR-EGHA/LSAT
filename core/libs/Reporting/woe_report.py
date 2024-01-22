@@ -82,13 +82,13 @@ class woe_report(QObject):
         basictable.cell(3, 1).text = result["metadata"][2]  # Sample size
         basictable.cell(4, 0).text = self.tr("Number of subsamples")
         basictable.cell(4, 1).text = result["metadata"][4]  # Subsample count
-        try:
-            result["metadata"][5] # Random Seed
-            basictable.add_row()
-            basictable.cell(5, 0).text = self.tr("Seed used to Initialize random")
-            basictable.cell(5, 1).text = result["metadata"][5]  # Random Seed
-        except IndexError: # only on the fly subsampling features a seed
-            pass
+        if result["metadata"][3] == "2": # only on the fly subsampling can use a random seed
+            try:
+                basictable.add_row()
+                basictable.cell(5, 0).text = self.tr("Seed used to Initialize random")
+                basictable.cell(5, 1).text = result["metadata"][5]  # Random Seed
+            except IndexError: # no seed defined
+                basictable.cell(5, 0).text = self.tr("No seed used to initialize random")
         return doc
 
     def _get_subsample_type(self, sampleNrfromMetadata: str) -> str:
