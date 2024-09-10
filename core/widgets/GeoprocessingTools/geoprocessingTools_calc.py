@@ -142,12 +142,13 @@ class GeoprocessingToolsWorker(QObject):
         Gets called by run and reprojectLayer to adjust output geometry type to input
         """
         if geometryName == "POLYGON":
-            geomType = ogr.wkbMultiPolygon
+            return ogr.wkbMultiPolygon
         elif geometryName == "POINT":
-            geomType = ogr.wkbPoint
+            return ogr.wkbPoint
         elif geometryName == "POLYLINE":
-            geomType = ogr.wkbMultiCurve
-        return geomType
+            return ogr.wkbMultiCurve
+        elif geometryName == "LINESTRING":
+            return ogr.wkbLineString
 
 class GDALErrorHandler(object):
     """Used to catch gdal exceptions during processing.
