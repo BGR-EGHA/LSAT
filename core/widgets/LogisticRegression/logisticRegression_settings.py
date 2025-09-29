@@ -18,7 +18,7 @@ class Settings(QWidget):
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_QuitOnClose, False)
         self.configFilePath = os.path.join(
-            "core", "Widgets", "LogisticRegression", "configLogReg.ini")
+            "core", "widgets", "LogisticRegression", "configLogReg.ini")
         self.checkini()
         self.setWindowIcon(QIcon(':/icons/Icons/Settings.png'))
         self.setWindowTitle(self.tr("Advanced Settings"))

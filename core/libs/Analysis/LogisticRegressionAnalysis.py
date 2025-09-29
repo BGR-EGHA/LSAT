@@ -46,8 +46,7 @@ class LogisticRegressionAnalysis(QObject):
     @pyqtSlot()
     def run(self):
         rpw = rasterprepwork()
-        stack, labels, stack_full, noDataArray, nr_of_unique_parameters = rasterprepwork.prepareInputData(
-            rpw, self.maskRaster, self.workspacePath, self.featurePath, self.data_list)
+        stack, labels, stack_full, noDataArray, nr_of_unique_parameters = rpw.prepareInputData(self.maskRaster, self.workspacePath, self.featurePath, self.data_list)
         self.loggingInfoSignal.emit(self.tr("Settings:") + str(self.settings))
         self.loggingInfoSignal.emit(self.tr("Start training..."))
         # Logistic regression with sklearn

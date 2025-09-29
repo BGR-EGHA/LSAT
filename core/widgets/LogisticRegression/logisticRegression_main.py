@@ -287,7 +287,7 @@ class LogRegression(QMainWindow):
             self.progressBar.setRange(0, 0)
             self.featurePath = str(self.ui.landslideInventoryComboBox.currentText())
             name = self.ui.outputlineEdit.text()
-            self.data_list = []
+            data_list = []
             logging.info(self.tr("Start data preparation..."))
             self.root = self.tree.invisibleRootItem()
             for i in range(self.tree.topLevelItemCount()):
@@ -295,15 +295,12 @@ class LogRegression(QMainWindow):
                 rasterPath = self.LM.treeContent[hash(str(item))]['Source']
                 typeBox = self.tree.itemWidget(item, 1)
                 dataType = typeBox.currentText()
-
                 layerName = self.LM.treeContent[hash(str(item))]['Name']
-
-                locals()["dataset" + str(i)] = (rasterPath, dataType, layerName)
-                self.data_list.append(locals()["dataset" + str(i)])
+                data_list.append((rasterPath, dataType, layerName))
             settings = self.getArgsFromConfigFile()
 
             self.logisticRegAnalysis = LogisticRegressionAnalysis(
-                self.projectPath, self.data_list, self.featurePath, self.tablesPath, name, settings)
+                self.projectPath, data_list, self.featurePath, self.tablesPath, name, settings)
             self.thread = QThread()
             self.logisticRegAnalysis.moveToThread(self.thread)
             self.logisticRegAnalysis.doneSignal.connect(self.done)
@@ -325,7 +322,7 @@ class LogRegression(QMainWindow):
         :return: tuple args
         """
         self.config = configparser.ConfigParser()
-        self.config.read(os.path.join("core", "Widgets", "LogisticRegression", "configLogReg.ini"))
+        self.config.read(os.path.join("core", "widgets", "LogisticRegression", "configLogReg.ini"))
         penalty = str(self.config["USER_SETTINGS"]["penalty"])
         dual_str = self.config["USER_SETTINGS"]["dual"]
         if dual_str == "True":

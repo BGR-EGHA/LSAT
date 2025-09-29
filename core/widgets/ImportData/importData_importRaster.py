@@ -219,7 +219,7 @@ class ImportRaster(QObject):
         if os.path.isfile(newrasterpath):
             self.infoSignal.emit(
                 self.tr("{} already exists and will be overwritten.").format(newrasterpath))
-        newraster = gdal.GetDriverByName("Gtiff").Create(
+        newraster = gdal.GetDriverByName("GTiff").Create(
             newrasterpath, mask.cols, mask.rows, 1, datatype)
         # 1 is the number of bands
         newraster.SetGeoTransform(mask.geoTrans)
@@ -227,7 +227,7 @@ class ImportRaster(QObject):
         newraster.GetRasterBand(1).SetNoDataValue(mask.nodata)
         gdalraster = gdal.Open(raster.path, gdalconst.GA_ReadOnly)
         gdal.ReprojectImage(gdalraster, newraster, raster.proj, mask.proj, resamplingtypefunc)
-        newraster.FlushCache()
+        newraster = None
         self.updateNoDataValue(newrasterpath, mask)
         newraster = Raster(newrasterpath)
         self.checkRAT(raster, newraster)
@@ -243,7 +243,4 @@ class ImportRaster(QObject):
         maskarray = mask.getArrayFromBand()
         newrasterarray[maskarray == mask.nodata] = mask.nodata
         band.WriteArray(newrasterarray)
-        band.SetNoDataValue(mask.nodata)
-        band.ComputeStatistics(False)
-        dataset.FlushCache()
         self.infoSignal.emit(self.tr("NoData values updated."))

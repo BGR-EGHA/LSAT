@@ -293,9 +293,13 @@ class ModelBuilder(QMainWindow):
         """
         if osname == "nt":  # Windows
             prop = matplotlib.font_manager.FontProperties(fname="C:\\Windows\\Fonts\\Msyh.ttc")
-        else:  # ubuntu
+        else: # we should just use some default font really.
+            if os.path.isfile("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"):  # ubuntu
+                fontPath = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+            elif os.path.isfile("/usr/share/fonts/google-noto-vf/NotoSans[wght].ttf"): # fedora
+                fontPath = "/usr/share/fonts/google-noto-vf/NotoSans[wght].ttf"
             prop = matplotlib.font_manager.FontProperties(
-                fname="/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
+                fname=fontPath)
         return prop
 
     def loadfeaturefiles(self, projectpath):

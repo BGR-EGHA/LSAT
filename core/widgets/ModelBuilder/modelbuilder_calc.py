@@ -2,6 +2,7 @@ import math
 import random
 import numpy as np
 import os, logging, traceback
+import sys
 from PyQt5.QtCore import *
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.metrics import auc as aucfunc
@@ -81,8 +82,8 @@ class ModelBuilder_calc(QObject):
         for rasterpath in rasterpathlist:
             layerName = os.path.splitext(os.path.basename(rasterpath))[0].replace(".", "").replace(" ","")
             raster = Raster(rasterpath)
-            locals()[layerName] = raster.getArrayFromBand().astype(np.float32)
-            locals()[layerName][locals()[layerName] == -9999] = np.nan
+            sys._getframe(0).f_locals[layerName] = raster.getArrayFromBand().astype(np.float32)
+            sys._getframe(0).f_locals[layerName][sys._getframe(0).f_locals[layerName] == -9999] = np.nan
         try:
             array = eval(expression)
             if not isinstance(array, np.ndarray):
