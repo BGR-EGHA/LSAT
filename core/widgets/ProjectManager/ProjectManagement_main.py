@@ -442,6 +442,8 @@ class NewProject(QDialog):
         resultfolders = ("susceptibility_maps", "statistics")
         for resultfolder in resultfolders:
             os.makedirs(os.path.join(pathProject, "results", resultfolder))
+        os.makedirs(os.path.join(pathProject, "results", "statistics", "contingency"))
+        os.makedirs(os.path.join(pathProject, "results", "statistics", "pb"))
         analysistypes = ("ANN", "AHP", "LR", "WoE")
         for analysis in analysistypes:
             os.makedirs(os.path.join(pathProject, "results", analysis, "tables"))

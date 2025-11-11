@@ -45,6 +45,7 @@ from core.widgets.LookupRaster.lookupRaster_main import LookupRaster
 from core.widgets.GeoprocessingTools.geoprocessingTools_main import GeoprocessingTools
 from core.widgets.SensitivityReclass.SensReclass_main import SensitivityReclass
 from core.widgets.Catalog.catalog_main import Catalog
+from core.widgets.PointBiserial.pointBiserial_main import PointBiserial
 
 gdal.AllRegister()
 
@@ -324,6 +325,11 @@ class MainFrame(QMainWindow):
         spatialToolsPane.addRibbonWidget(QRibbonButton(
             self, self.sensreclass_action, "SmallButton"), (2, 1, 1, 1))
 
+        # Point Biserial
+        self.pointbiserial_action = self.add_action(self.tr("Point-biserial Correlation"), QIcon(
+            ':/icons/Icons/geoviewer.png'), self.tr("Point-biserial Correlation"), True, self.on_pointBiserialCorrelation, None)
+        spatialToolsPane.addRibbonWidget(QRibbonButton(self, self.pointbiserial_action, "SmallButton"), (0, 2, 1, 1))
+
         # GEO VIEWER
         viewPane = dataTab.addRibbonPane(self.tr("Viewer"), "Horizontal")
         self.geoViewer_action = self.add_action(self.tr("Geodata Viewer"), QIcon(
@@ -438,6 +444,10 @@ class MainFrame(QMainWindow):
             self.dockWidgetGeoviewer = QDockWidget(self.tr('GeoViewer'), self)
             self.geoviewer = Viewer(self.projectLocation)
             self.geoviewer.show()
+
+    def on_pointBiserialCorrelation(self):
+        self.pointBiserialCorrelation = PointBiserial(self.projectLocation)
+        self.pointBiserialCorrelation.show()
 
     def on_showCatalog(self):
         """
